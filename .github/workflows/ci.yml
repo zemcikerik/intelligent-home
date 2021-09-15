@@ -8,7 +8,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  frontend:
+    name: Frontend
     runs-on: ubuntu-latest
 
     steps:
