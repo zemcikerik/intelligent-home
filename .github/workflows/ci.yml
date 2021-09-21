@@ -49,3 +49,23 @@ jobs:
       - name: Test
         run: npm run test:ci
         working-directory: frontend
+
+  backend:
+    name: Backend
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Install Java 16
+        uses: actions/setup-java@v2.3.0
+        with:
+          java-version: 16
+        
+      # TODO: cache dependencies
+      
+      - name: Build
+        run: mvnw -B package --file pom.xml
+        working-directory: backend
+        
+      # TODO: test
