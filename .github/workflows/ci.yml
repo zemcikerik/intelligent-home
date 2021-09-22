@@ -61,11 +61,10 @@ jobs:
         uses: actions/setup-java@v2.3.0
         with:
           java-version: 16
-        
-      # TODO: cache dependencies
+          distribution: adopt
+          architecture: x64
+          cache: maven
       
-      - name: Build
-        run: mvnw -B package --file pom.xml
+      - name: Verify
+        run: mvn --batch-mode --update-snapshots verify
         working-directory: backend
-        
-      # TODO: test
