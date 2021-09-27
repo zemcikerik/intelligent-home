@@ -4,6 +4,14 @@ Aplikácia, pomocou ktorej by bolo možné ovládať inteligentné zariadenia v 
 
 ## Členovia tímu
 
-Marek Miho - website interface (frontend and it's coresponding API)
-Juraj Gacho - to be decided
-Erik Zemčík - full stack work, devops
+- Marek Miho - website interface (frontend and it's coresponding API)
+- Juraj Gacho - device integration
+- Erik Zemčík - full stack work, devops
+
+## Goals
+- [ ] reaktívne zobrazenie stavu zariadení v systéme
+- [ ] reaktívna kontrola zariadení v systéme
+- [ ] modulárne pridávanie nových zariadení do systému
+- [ ] automatické pripájanie zariadení do systému
+- [ ] logické pravidlá
+- [ ] topologické zobrazenie
