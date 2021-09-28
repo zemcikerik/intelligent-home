@@ -8,11 +8,21 @@ Aplikácia, pomocou ktorej by bolo možné ovládať inteligentné zariadenia v 
 - Juraj Gacho - device integration
 - Erik Zemčík - full stack work, devops
 
-## Goals
+## Roadmap
+
+### Prvý štvrťrok
 - [ ] reaktívne zobrazenie stavu zariadení v systéme
 - [ ] reaktívna kontrola zariadení v systéme
+- [ ] mockované inteligenté zariadenie
+
+### Druhý štvrťrok
 - [ ] modulárne pridávanie nových typov zariadení do systému
 - [ ] autentifikácia, systém práv
+- [ ] prototyp hardvérového zariadenia, ktorý obsahuje všetky features
+
+### Tretí štvrťrok
 - [ ] automatické pripájanie zariadení do systému
 - [ ] logické pravidlá
+
+### Štvrtý štvrťrok
 - [ ] topologické zobrazenie
