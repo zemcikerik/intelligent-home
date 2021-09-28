@@ -11,7 +11,8 @@ Aplikácia, pomocou ktorej by bolo možné ovládať inteligentné zariadenia v 
 ## Goals
 - [ ] reaktívne zobrazenie stavu zariadení v systéme
 - [ ] reaktívna kontrola zariadení v systéme
-- [ ] modulárne pridávanie nových zariadení do systému
+- [ ] modulárne pridávanie nových typov zariadení do systému
+- [ ] autentifikácia, systém práv
 - [ ] automatické pripájanie zariadení do systému
 - [ ] logické pravidlá
 - [ ] topologické zobrazenie
