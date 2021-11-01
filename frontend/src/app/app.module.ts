@@ -2,21 +2,22 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
+import * as Components from './components';
+import * as Services from './services';
+
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { environment } from '../environments/environment';
 import { EffectsModule } from '@ngrx/effects';
 import { APP_STATE_KEY, AppEffects, AppFacade, appReducer } from './store';
-import { DeviceListComponent } from './components/device-list/device-list.component';
-import { ErrorMessageComponent } from './components/error-message/error-message.component';
-import { LoadingIndicatorComponent } from './components/loading-indicator/loading-indicator.component';
+
+import { environment } from '../environments/environment';
 
 @NgModule({
   declarations: [
     AppComponent,
-    DeviceListComponent,
-    ErrorMessageComponent,
-    LoadingIndicatorComponent
+    Components.DeviceListComponent,
+    Components.ErrorMessageComponent,
+    Components.LoadingIndicatorComponent
   ],
   imports: [
     BrowserModule,
@@ -30,7 +31,9 @@ import { LoadingIndicatorComponent } from './components/loading-indicator/loadin
     EffectsModule.forRoot([AppEffects])
   ],
   providers: [
-    AppFacade
+    AppFacade,
+    Services.ServerConnectionService,
+    { provide: Services.SERVER_URL_TOKEN, useValue: environment.serverUrl }
   ],
   bootstrap: [AppComponent]
 })
