@@ -1,1 +1,9 @@
-Hello, Intelligent Home!
+<app-loading-indicator *ngIf="loading$ | async; else loaded"></app-loading-indicator>
+
+<ng-template #loaded>
+  <app-error-message *ngIf="error$ | async as error; else success" [message]="error"></app-error-message>
+
+  <ng-template #success>
+    <app-device-list></app-device-list>
+  </ng-template>
+</ng-template>
