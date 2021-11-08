@@ -1,4 +1,4 @@
-import { APP_STATE_KEY, AppPartialState, AppState } from '../reducers';
+import { APP_STATE_KEY, AppPartialState } from '../reducers';
 import { createSelector } from '@ngrx/store';
 
 export const selectAppState = (state: AppPartialState) => state[APP_STATE_KEY];
