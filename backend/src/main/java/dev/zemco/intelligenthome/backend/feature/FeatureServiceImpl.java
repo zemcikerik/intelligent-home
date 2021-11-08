@@ -9,8 +9,14 @@ import java.util.*;
 @AllArgsConstructor
 public class FeatureServiceImpl implements FeatureService {
 
+    private final FeatureBroadcastService featureBroadcastService;
     private final Map<UUID, List<Feature>> deviceIdToFeatures = new HashMap<>();
     private final Map<Feature, UUID> featureToDeviceId = new HashMap<>();
+
+    @Override
+    public List<Feature> getFeaturesForDevice(UUID deviceId) {
+        return List.copyOf(this.deviceIdToFeatures.get(deviceId));
+    }
 
     @Override
     public void registerFeature(Feature feature) {
@@ -19,6 +25,12 @@ public class FeatureServiceImpl implements FeatureService {
 
         features.add(feature);
         this.featureToDeviceId.put(feature, deviceId);
+        this.featureBroadcastService.broadcastFeatureAddition(feature);
+    }
+
+    @Override
+    public void updateFeature(Feature feature) {
+        this.featureBroadcastService.broadcastFeatureUpdate(feature);
     }
 
     @Override
@@ -31,6 +43,8 @@ public class FeatureServiceImpl implements FeatureService {
         if (features.size() == 0) {
             this.deviceIdToFeatures.remove(deviceId);
         }
+
+        this.featureBroadcastService.broadcastFeatureRemoval(feature);
     }
 
 }

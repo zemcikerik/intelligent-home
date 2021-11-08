@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 import { FeaturePartialState } from '../reducers';
 import { Observable, of } from 'rxjs';
 import { Feature } from '../../models';
-import { selectAllFeatures } from '../selectors';
+import { selectAllFeatures, selectFeature, selectFeatureIdsByDeviceId } from '../selectors';
 
 @Injectable()
 export class FeatureFacade {
@@ -13,11 +13,11 @@ export class FeatureFacade {
   }
 
   getFeaturesForDevice(deviceId: string): Observable<Feature[]> {
-    return of([
-      { id: 'aaa-aa-a', deviceId: 'fadsfdasfds', name: 'Feature 1' },
-      { id: 'aaa-ba-a', deviceId: 'fadsfdasfds', name: 'Feature 2' },
-      { id: 'aaa-ac-a', deviceId: 'fadsfdasfds', name: 'Feature 3' },
-    ]);
+    return this.store$.select(selectFeatureIdsByDeviceId(deviceId));
+  }
+
+  getFeatureById(featureId: string): Observable<Feature | undefined> {
+    return this.store$.select(selectFeature(featureId));
   }
 
   constructor(

@@ -15,7 +15,7 @@ import {
   appReducer,
   DEVICE_STATE_KEY, DeviceEffects,
   DeviceFacade,
-  deviceReducer, FEATURE_STATE_KEY, FeatureFacade, featureReducer
+  deviceReducer, FEATURE_STATE_KEY, FeatureEffects, FeatureFacade, featureReducer
 } from './store';
 
 import { environment } from '../environments/environment';
@@ -26,6 +26,8 @@ import { environment } from '../environments/environment';
     Components.DeviceComponent,
     Components.DeviceListComponent,
     Components.ErrorMessageComponent,
+    Components.FeatureComponent,
+    Components.FeatureListComponent,
     Components.LoadingIndicatorComponent
   ],
   imports: [
@@ -41,7 +43,7 @@ import { environment } from '../environments/environment';
       }
     }),
     !environment.production ? StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }) : [],
-    EffectsModule.forRoot([AppEffects, DeviceEffects])
+    EffectsModule.forRoot([AppEffects, DeviceEffects, FeatureEffects])
   ],
   providers: [
     AppFacade,

@@ -16,5 +16,8 @@ export const initialFeatureState = featureAdapter.getInitialState();
 
 export const featureReducer = createReducer(
   initialFeatureState,
-  on(FeatureActions.loadFeaturesSuccess, (state, {features}) => featureAdapter.setAll(features, state))
+  on(FeatureActions.loadFeaturesSuccess, (state, {features}) => featureAdapter.setAll(features, state)),
+  on(FeatureActions.addFeature, (state, {feature}) => featureAdapter.addOne(feature, state)),
+  on(FeatureActions.updateFeature, (state, {feature}) => featureAdapter.setOne(feature, state)),
+  on(FeatureActions.removeFeature, (state, {featureId}) => featureAdapter.removeOne(featureId, state))
 );
