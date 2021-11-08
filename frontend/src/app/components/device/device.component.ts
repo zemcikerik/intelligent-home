@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { DeviceFacade } from '../../store';
+import { EMPTY, Observable } from 'rxjs';
+import { Device } from '../../models';
 
 @Component({
   selector: 'app-device',
@@ -7,9 +10,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DeviceComponent implements OnInit {
 
-  constructor() { }
+  @Input() id = '';
+  device$: Observable<Device | undefined> = EMPTY;
+
+  constructor(
+    private deviceFacade: DeviceFacade
+  ) { }
 
   ngOnInit(): void {
+    this.device$ = this.deviceFacade.getDeviceById(this.id);
   }
 
 }

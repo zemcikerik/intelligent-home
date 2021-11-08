@@ -16,15 +16,8 @@ public class DeviceController {
     public List<DeviceDto> getDevices() {
         return this.deviceService.getActiveDevices()
                 .stream()
-                .map(DeviceController::toDto)
+                .map(Device::toDto)
                 .toList();
-    }
-
-    private static DeviceDto toDto(Device device) {
-        DeviceDto dto = new DeviceDto();
-        dto.setId(device.getId());
-        dto.setName(device.getName());
-        return dto;
     }
 
 }

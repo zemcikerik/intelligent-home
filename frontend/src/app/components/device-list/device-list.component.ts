@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { DeviceFacade } from '../../store';
 import { Observable } from 'rxjs';
 import { Device } from '../../models';
@@ -10,10 +10,10 @@ import { Device } from '../../models';
 })
 export class DeviceListComponent {
 
-  devices$: Observable<Device[]>;
+  deviceIds$: Observable<string[]>;
 
   constructor(deviceFacade: DeviceFacade) {
-    this.devices$ = deviceFacade.getAllDevices();
+    this.deviceIds$ = deviceFacade.getAllDeviceIds();
   }
 
 }

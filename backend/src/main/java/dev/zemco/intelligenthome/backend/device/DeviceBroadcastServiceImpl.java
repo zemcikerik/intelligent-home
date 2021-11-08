@@ -12,25 +12,17 @@ public class DeviceBroadcastServiceImpl implements DeviceBroadcastService {
 
     @Override
     public void broadcastDeviceAddition(Device device) {
-        this.simpMessagingTemplate.convertAndSend("/device/add", toDto(device));
+        this.simpMessagingTemplate.convertAndSend("/device/add", device.toDto());
     }
 
     @Override
     public void broadcastDeviceUpdate(Device device) {
-        this.simpMessagingTemplate.convertAndSend("/device/update", toDto(device));
+        this.simpMessagingTemplate.convertAndSend("/device/update", device.toDto());
     }
 
     @Override
     public void broadcastDeviceRemoval(Device device) {
         this.simpMessagingTemplate.convertAndSend("/device/remove", device.getId());
-    }
-
-    // TODO: deduplicate this
-    private static DeviceDto toDto(Device device) {
-        DeviceDto dto = new DeviceDto();
-        dto.setId(device.getId());
-        dto.setName(device.getName());
-        return dto;
     }
 
 }

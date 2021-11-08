@@ -1,5 +1,6 @@
 package dev.zemco.intelligenthome.backend.feature;
 
 public interface FeatureService {
-    void updateFeature(Feature feature);
+    void registerFeature(Feature feature);
+    void unregisterFeature(Feature feature);
 }

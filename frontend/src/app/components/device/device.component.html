@@ -1,1 +1,4 @@
-<p>device works!</p>
+<ng-container *ngIf="device$ | async as device">
+  <p>{{ device.id }}</p>
+  <p>{{ device.name }}</p>
+</ng-container>

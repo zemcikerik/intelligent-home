@@ -1,7 +1,7 @@
 import { Inject, Injectable, InjectionToken } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { RxStomp } from '@stomp/rx-stomp';
-import { catchError, take, timeout } from 'rxjs/operators';
+import { catchError, map, take, timeout } from 'rxjs/operators';
 
 export const SERVER_URL_TOKEN = new InjectionToken<string>('SERVER_URL');
 
@@ -30,6 +30,12 @@ export class ServerConnectionService {
         this.stomp.deactivate();
         return throwError(err);
       })
+    );
+  }
+
+  watch<T = object | string | number>(path: string): Observable<T> {
+    return this.stomp.watch(path).pipe(
+      map(message => JSON.parse(message.body) as T)
     );
   }
 

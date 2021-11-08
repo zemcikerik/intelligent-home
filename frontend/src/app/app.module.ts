@@ -48,6 +48,7 @@ import { environment } from '../environments/environment';
     DeviceFacade,
     FeatureFacade,
     Services.DeviceService,
+    Services.FeatureService,
     Services.ServerConnectionService,
     { provide: Services.SERVER_URL_TOKEN, useValue: environment.serverUrl }
   ],

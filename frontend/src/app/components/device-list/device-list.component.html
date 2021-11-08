@@ -1,5 +1,5 @@
 <ul>
-  <li *ngFor="let device of devices$ | async">
-    <app-device></app-device>
+  <li *ngFor="let id of deviceIds$ | async">
+    <app-device [id]="id"></app-device>
   </li>
 </ul>
