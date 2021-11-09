@@ -7,6 +7,8 @@ import dev.zemco.intelligenthome.backend.feature.Feature;
 import dev.zemco.intelligenthome.backend.feature.FeatureService;
 import dev.zemco.intelligenthome.backend.feature.FeatureType;
 import dev.zemco.intelligenthome.backend.feature.MockFeature;
+import dev.zemco.intelligenthome.backend.feature.state.BooleanFeatureStateImpl;
+import dev.zemco.intelligenthome.backend.feature.state.FeatureState;
 import dev.zemco.intelligenthome.backend.feature.state.ValueFeatureStateImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
@@ -33,7 +35,7 @@ public class MockRunner implements CommandLineRunner {
 
     @Scheduled(fixedRate = 2000L, initialDelay = 2000L)
     public void scheduledAdd() {
-        if (this.shouldAddOnlyFeature()) {
+        if (this.randomBoolean()) {
             List<Device> devices = this.deviceService.getActiveDevices();
             Device device = this.pickRandom(devices);
             this.featureService.registerFeature(this.createMockFeature(device.getId()));
@@ -63,7 +65,10 @@ public class MockRunner implements CommandLineRunner {
     }
 
     private Feature createMockFeature(UUID deviceId) {
-        return new MockFeature(UUID.randomUUID(), deviceId, "Test Feature", FeatureType.VALUE, new ValueFeatureStateImpl());
+        boolean booleanType = this.randomBoolean();
+        FeatureType type = booleanType ? FeatureType.BOOLEAN : FeatureType.VALUE;
+        FeatureState state = booleanType ? new BooleanFeatureStateImpl() : new ValueFeatureStateImpl();
+        return new MockFeature(UUID.randomUUID(), deviceId, "Test Feature", type, state);
     }
 
     private <T> T pickRandom(List<T> choices) {
@@ -71,7 +76,7 @@ public class MockRunner implements CommandLineRunner {
         return choices.get(rng.nextInt(choices.size()));
     }
 
-    private boolean shouldAddOnlyFeature() {
+    private boolean randomBoolean() {
         return new Random().nextBoolean();
     }
 

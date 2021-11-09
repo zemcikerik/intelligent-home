@@ -7,13 +7,13 @@ import java.util.Map;
 
 @Getter
 @Setter
-public class ValueFeatureStateImpl implements ValueFeatureState {
+public class BooleanFeatureStateImpl implements BooleanFeatureState {
 
-    private double value;
+    private boolean enabled;
 
     @Override
     public void toMap(Map<String, String> map) {
-        map.put("value", String.valueOf(this.value));
+        map.put("enabled", String.valueOf(this.enabled));
     }
 
 }

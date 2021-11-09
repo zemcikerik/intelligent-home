@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { DeviceFacade } from '../../store';
 import { Observable } from 'rxjs';
-import { Device } from '../../models';
 
 @Component({
   selector: 'app-device-list',

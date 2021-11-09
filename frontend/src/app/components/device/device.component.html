@@ -1,5 +1,5 @@
-<ng-container *ngIf="device$ | async as device">
-  <p>{{ device.id }}</p>
-  <p>{{ device.name }}</p>
+<div *ngIf="device$ | async as device" class="device-card">
+  <p class="name">{{ device.name }}</p>
+  <p class="model">{{ device.id }}</p>
   <app-feature-list [deviceId]="id"></app-feature-list>
-</ng-container>
+</div>

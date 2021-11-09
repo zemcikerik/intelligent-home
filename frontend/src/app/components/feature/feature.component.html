@@ -1,3 +1,6 @@
-<ng-container *ngIf="feature$ | async as feature">
-  <p>{{ feature.id }} - {{ feature.name }}</p>
+<ng-container *ngIf="featureType$ | async as type">
+  <ng-container [ngSwitch]="type">
+    <app-value-feature *ngSwitchCase="'VALUE'" [id]="id"></app-value-feature>
+    <app-boolean-feature *ngSwitchCase="'BOOLEAN'" [id]="id"></app-boolean-feature>
+  </ng-container>
 </ng-container>

@@ -19,16 +19,22 @@ import {
 } from './store';
 
 import { environment } from '../environments/environment';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MaterialModule } from './material.module';
 
 @NgModule({
   declarations: [
     AppComponent,
+    Components.BooleanFeatureComponent,
     Components.DeviceComponent,
     Components.DeviceListComponent,
     Components.ErrorMessageComponent,
     Components.FeatureComponent,
     Components.FeatureListComponent,
-    Components.LoadingIndicatorComponent
+    Components.HomeComponent,
+    Components.LoadingIndicatorComponent,
+    Components.NavbarComponent,
+    Components.ValueFeatureComponent,
   ],
   imports: [
     BrowserModule,
@@ -43,7 +49,9 @@ import { environment } from '../environments/environment';
       }
     }),
     !environment.production ? StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }) : [],
-    EffectsModule.forRoot([AppEffects, DeviceEffects, FeatureEffects])
+    EffectsModule.forRoot([AppEffects, DeviceEffects, FeatureEffects]),
+    BrowserAnimationsModule,
+    MaterialModule
   ],
   providers: [
     AppFacade,

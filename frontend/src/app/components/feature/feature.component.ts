@@ -1,8 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { EMPTY, Observable } from 'rxjs';
-import { Feature } from '../../models';
+import { FeatureType } from '../../models';
 import { FeatureFacade } from '../../store';
-import { tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-feature',
@@ -12,14 +12,17 @@ import { tap } from 'rxjs/operators';
 export class FeatureComponent implements OnInit {
 
   @Input() id = '';
-  feature$: Observable<Feature | undefined> = EMPTY;
+  featureType$: Observable<FeatureType | undefined> = EMPTY;
 
   constructor(
     private featureFacade: FeatureFacade
   ) { }
 
   ngOnInit(): void {
-    this.feature$ = this.featureFacade.getFeatureById(this.id).pipe(tap(console.log));
+    // TODO: add custom selector for this
+    this.featureType$ = this.featureFacade.getFeatureById(this.id).pipe(
+      map(feature => feature?.type)
+    );
   }
 
 }

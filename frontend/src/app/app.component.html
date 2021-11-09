@@ -4,6 +4,6 @@
   <app-error-message *ngIf="error$ | async as error; else success" [message]="error"></app-error-message>
 
   <ng-template #success>
-    <app-device-list></app-device-list>
+    <app-home></app-home>
   </ng-template>
 </ng-template>
