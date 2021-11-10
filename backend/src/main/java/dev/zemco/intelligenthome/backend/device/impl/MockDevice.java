@@ -1,5 +1,6 @@
-package dev.zemco.intelligenthome.backend.device;
+package dev.zemco.intelligenthome.backend.device.impl;
 
+import dev.zemco.intelligenthome.backend.device.Device;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

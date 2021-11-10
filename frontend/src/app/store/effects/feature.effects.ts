@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { FeatureService } from '../../services';
-import { createEffect } from '@ngrx/effects';
-import { map } from 'rxjs/operators';
-import { addFeature, removeFeature, updateFeature } from '../actions';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { map, tap } from 'rxjs/operators';
+import { addFeature, removeFeature, requestFeatureUpdate, updateFeature } from '../actions';
 
 @Injectable()
 export class FeatureEffects {
@@ -25,7 +25,15 @@ export class FeatureEffects {
     )
   );
 
+  requestFeatureUpdate$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(requestFeatureUpdate),
+      tap(({ id, update }) => this.featureService.requestUpdate(id, update))
+    ), { dispatch: false }
+  );
+
   constructor(
+    private actions$: Actions,
     private featureService: FeatureService
   ) { }
 

@@ -1,5 +1,8 @@
-package dev.zemco.intelligenthome.backend.device;
+package dev.zemco.intelligenthome.backend.device.impl;
 
+import dev.zemco.intelligenthome.backend.device.Device;
+import dev.zemco.intelligenthome.backend.device.DeviceBroadcastService;
+import dev.zemco.intelligenthome.backend.device.DeviceService;
 import org.springframework.stereotype.Service;
 
 import java.util.*;

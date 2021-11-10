@@ -1,5 +1,8 @@
-package dev.zemco.intelligenthome.backend.feature;
+package dev.zemco.intelligenthome.backend.feature.impl;
 
+import dev.zemco.intelligenthome.backend.feature.Feature;
+import dev.zemco.intelligenthome.backend.feature.FeatureBroadcastService;
+import dev.zemco.intelligenthome.backend.feature.FeatureService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +15,12 @@ public class FeatureServiceImpl implements FeatureService {
     private final FeatureBroadcastService featureBroadcastService;
     private final Map<UUID, List<Feature>> deviceIdToFeatures = new HashMap<>();
     private final Map<Feature, UUID> featureToDeviceId = new HashMap<>();
+    private final Map<UUID, Feature> featureIdToFeature = new HashMap<>();
+
+    @Override
+    public Optional<Feature> getFeatureById(UUID id) {
+        return Optional.of(this.featureIdToFeature.get(id));
+    }
 
     @Override
     public List<Feature> getFeaturesForDevice(UUID deviceId) {
@@ -21,10 +30,12 @@ public class FeatureServiceImpl implements FeatureService {
     @Override
     public void registerFeature(Feature feature) {
         UUID deviceId = feature.getDeviceId();
-        List<Feature> features = this.deviceIdToFeatures.computeIfAbsent(deviceId, ignored -> new ArrayList<>());
 
+        List<Feature> features = this.deviceIdToFeatures.computeIfAbsent(deviceId, ignored -> new ArrayList<>());
         features.add(feature);
+
         this.featureToDeviceId.put(feature, deviceId);
+        this.featureIdToFeature.put(feature.getId(), feature);
         this.featureBroadcastService.broadcastFeatureAddition(feature);
     }
 
@@ -36,6 +47,7 @@ public class FeatureServiceImpl implements FeatureService {
     @Override
     public void unregisterFeature(Feature feature) {
         UUID deviceId = this.featureToDeviceId.remove(feature);
+        this.featureIdToFeature.remove(feature.getId());
 
         List<Feature> features = this.deviceIdToFeatures.get(deviceId);
         features.remove(feature);

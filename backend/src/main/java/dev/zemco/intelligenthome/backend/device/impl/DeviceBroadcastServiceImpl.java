@@ -1,5 +1,7 @@
-package dev.zemco.intelligenthome.backend.device;
+package dev.zemco.intelligenthome.backend.device.impl;
 
+import dev.zemco.intelligenthome.backend.device.Device;
+import dev.zemco.intelligenthome.backend.device.DeviceBroadcastService;
 import lombok.AllArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;

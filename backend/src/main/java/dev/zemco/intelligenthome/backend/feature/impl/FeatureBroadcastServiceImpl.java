@@ -1,5 +1,7 @@
-package dev.zemco.intelligenthome.backend.feature;
+package dev.zemco.intelligenthome.backend.feature.impl;
 
+import dev.zemco.intelligenthome.backend.feature.Feature;
+import dev.zemco.intelligenthome.backend.feature.FeatureBroadcastService;
 import lombok.AllArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;

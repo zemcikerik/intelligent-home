@@ -8,4 +8,10 @@ import { BooleanFeature } from '../../models';
   styleUrls: ['./boolean-feature.component.scss']
 })
 export class BooleanFeatureComponent extends BaseFeatureComponent<BooleanFeature> {
+
+  setEnabled(enabled: boolean): void {
+    // TODO: don't toggle switch immediately
+    this.featureFacade.requestFeatureUpdate(this.id, { enabled });
+  }
+
 }

@@ -11,6 +11,10 @@ public interface Feature {
     FeatureType getType();
     FeatureState getState();
 
+    default Class<? extends FeatureUpdateRequestHandler> getUpdateRequestHandlerClass() {
+        return null;
+    }
+
     default FeatureDto toDto() {
         return new FeatureDto(this.getId(), this.getDeviceId(), this.getName(), this.getType(), this.getState().toMap());
     }

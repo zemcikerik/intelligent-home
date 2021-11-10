@@ -2,14 +2,13 @@ package dev.zemco.intelligenthome.backend;
 
 import dev.zemco.intelligenthome.backend.device.Device;
 import dev.zemco.intelligenthome.backend.device.DeviceService;
-import dev.zemco.intelligenthome.backend.device.MockDevice;
-import dev.zemco.intelligenthome.backend.feature.Feature;
-import dev.zemco.intelligenthome.backend.feature.FeatureService;
-import dev.zemco.intelligenthome.backend.feature.FeatureType;
-import dev.zemco.intelligenthome.backend.feature.MockFeature;
-import dev.zemco.intelligenthome.backend.feature.state.BooleanFeatureStateImpl;
+import dev.zemco.intelligenthome.backend.device.impl.MockDevice;
+import dev.zemco.intelligenthome.backend.feature.*;
+import dev.zemco.intelligenthome.backend.feature.impl.MockBooleanFeatureUpdateRequestHandler;
+import dev.zemco.intelligenthome.backend.feature.impl.MockFeature;
+import dev.zemco.intelligenthome.backend.feature.state.impl.BooleanFeatureStateImpl;
 import dev.zemco.intelligenthome.backend.feature.state.FeatureState;
-import dev.zemco.intelligenthome.backend.feature.state.ValueFeatureStateImpl;
+import dev.zemco.intelligenthome.backend.feature.state.impl.ValueFeatureStateImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -27,9 +26,11 @@ public class MockRunner implements CommandLineRunner {
 
     private final DeviceService deviceService;
     private final FeatureService featureService;
+    private final FeatureUpdateRequestService featureUpdateRequestService;
 
     @Override
     public void run(String... args) {
+        this.featureUpdateRequestService.registerHandler(MockBooleanFeatureUpdateRequestHandler.class);
         this.createAndRegisterMockDevice();
     }
 
@@ -68,7 +69,8 @@ public class MockRunner implements CommandLineRunner {
         boolean booleanType = this.randomBoolean();
         FeatureType type = booleanType ? FeatureType.BOOLEAN : FeatureType.VALUE;
         FeatureState state = booleanType ? new BooleanFeatureStateImpl() : new ValueFeatureStateImpl();
-        return new MockFeature(UUID.randomUUID(), deviceId, "Test Feature", type, state);
+        Class<? extends FeatureUpdateRequestHandler> handlerClass = booleanType ? MockBooleanFeatureUpdateRequestHandler.class : null;
+        return new MockFeature(UUID.randomUUID(), deviceId, "Test Feature", type, state, handlerClass);
     }
 
     private <T> T pickRandom(List<T> choices) {

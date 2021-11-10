@@ -10,10 +10,14 @@ export class FeatureService {
   readonly featureUpdate$: Observable<Feature>;
   readonly featureRemove$: Observable<string>;
 
-  constructor(serverConnectionService: ServerConnectionService) {
+  constructor(private serverConnectionService: ServerConnectionService) {
     this.featureAdd$ = serverConnectionService.watch<Feature>('/feature/add');
     this.featureUpdate$ = serverConnectionService.watch<Feature>('/feature/update');
     this.featureRemove$ = serverConnectionService.watch<string>('/feature/remove');
+  }
+
+  requestUpdate(id: string, update: object): void {
+    this.serverConnectionService.send(`/app/feature/request-update/${id}`, update);
   }
 
 }
