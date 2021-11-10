@@ -1,4 +1,4 @@
-<ng-container *ngIf="feature$ | async as feature">
+<div class="boolean-feature-container" *ngIf="feature$ | async as feature">
   <span class="name">{{ feature.name }}</span>
   <mat-slide-toggle [disabled]="!feature.state.enabled"></mat-slide-toggle>
-</ng-container>
+</div>

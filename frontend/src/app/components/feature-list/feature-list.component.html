@@ -1,5 +1,1 @@
-<ul>
-  <li *ngFor="let id of featureIds$ | async">
-    <app-feature [id]="id"></app-feature>
-  </li>
-</ul>
+<app-feature *ngFor="let id of featureIds$ | async" [id]="id"></app-feature>

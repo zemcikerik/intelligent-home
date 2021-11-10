@@ -14,14 +14,14 @@ mat-icon {
   font-size: 48px;
   margin-bottom: 36px;
   color: #FFFFFFCC;
-}
 
-mat-icon:first-child {
-  margin-top: 36px;
-}
+  &:first-child {
+    margin-top: 36px;
+  }
 
-mat-icon:hover {
-  color: #FFFFFFA0;
+  &:hover {
+    color: #FFFFFFA0;
+  }
 }
 
 .spacer {

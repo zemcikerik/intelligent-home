@@ -1,0 +1,20 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+
+  & > div {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: max(256px, 20vw);
+  }
+}
+
+mat-icon {
+  width: 96px;
+  height: 96px;
+  font-size: 96px;
+  margin-bottom: 32px;
+}
