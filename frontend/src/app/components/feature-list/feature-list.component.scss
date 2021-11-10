@@ -1,3 +1,8 @@
-app-feature + app-feature {
-  margin-top: 8px;
+.feature-list-container {
+  display: flex;
+  flex-direction: column;
+
+  & > * + * {
+    margin-top: 4px;
+  }
 }
