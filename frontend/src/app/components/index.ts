@@ -7,4 +7,4 @@ export * from './feature-list/feature-list.component';
 export * from './home/home.component';
 export * from './loading-indicator/loading-indicator.component';
 export * from './navbar/navbar.component';
-export * from './value-feature/value-feature.component';
+export * from './integer-feature/integer-feature.component';

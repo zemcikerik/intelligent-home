@@ -1,4 +1,4 @@
 export enum FeatureType {
-  VALUE = 'VALUE',
+  INTEGER = 'INTEGER',
   BOOLEAN = 'BOOLEAN'
 }

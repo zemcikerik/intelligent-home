@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ValueFeatureComponent } from './value-feature.component';
+import { IntegerFeatureComponent } from './integer-feature.component';
 
-describe('ValueFeatureComponent', () => {
-  let component: ValueFeatureComponent;
-  let fixture: ComponentFixture<ValueFeatureComponent>;
+describe('IntegerFeatureComponent', () => {
+  let component: IntegerFeatureComponent;
+  let fixture: ComponentFixture<IntegerFeatureComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ValueFeatureComponent ]
+      declarations: [ IntegerFeatureComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ValueFeatureComponent);
+    fixture = TestBed.createComponent(IntegerFeatureComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

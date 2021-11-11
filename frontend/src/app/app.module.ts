@@ -34,7 +34,7 @@ import { MaterialModule } from './material.module';
     Components.HomeComponent,
     Components.LoadingIndicatorComponent,
     Components.NavbarComponent,
-    Components.ValueFeatureComponent,
+    Components.IntegerFeatureComponent,
   ],
   imports: [
     BrowserModule,

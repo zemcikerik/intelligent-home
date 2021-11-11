@@ -1,6 +1,6 @@
 package dev.zemco.intelligenthome.backend.feature.state.impl;
 
-import dev.zemco.intelligenthome.backend.feature.state.ValueFeatureState;
+import dev.zemco.intelligenthome.backend.feature.state.IntegerFeatureState;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,9 +8,9 @@ import java.util.Map;
 
 @Getter
 @Setter
-public class ValueFeatureStateImpl implements ValueFeatureState {
+public class IntegerFeatureStateImpl implements IntegerFeatureState {
 
-    private double value;
+    private int value;
 
     @Override
     public void toMap(Map<String, String> map) {

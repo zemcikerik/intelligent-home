@@ -1,5 +1,5 @@
 import { FeatureType } from './feature-type.model';
-import { BooleanFeatureState, FeatureState, ValueFeatureState } from './feature-state.model';
+import { BooleanFeatureState, FeatureState, IntegerFeatureState } from './feature-state.model';
 
 export interface BaseFeature {
   id: string;
@@ -9,9 +9,9 @@ export interface BaseFeature {
   state: FeatureState;
 }
 
-export interface ValueFeature extends BaseFeature {
-  type: FeatureType.VALUE;
-  state: ValueFeatureState;
+export interface IntegerFeature extends BaseFeature {
+  type: FeatureType.INTEGER;
+  state: IntegerFeatureState;
 }
 
 export interface BooleanFeature extends BaseFeature {
@@ -19,4 +19,4 @@ export interface BooleanFeature extends BaseFeature {
   state: BooleanFeatureState;
 }
 
-export type Feature = ValueFeature | BooleanFeature;
+export type Feature = IntegerFeature | BooleanFeature;

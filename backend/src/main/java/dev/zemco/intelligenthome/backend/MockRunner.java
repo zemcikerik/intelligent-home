@@ -8,7 +8,7 @@ import dev.zemco.intelligenthome.backend.feature.impl.MockBooleanFeatureUpdateRe
 import dev.zemco.intelligenthome.backend.feature.impl.MockFeature;
 import dev.zemco.intelligenthome.backend.feature.state.impl.BooleanFeatureStateImpl;
 import dev.zemco.intelligenthome.backend.feature.state.FeatureState;
-import dev.zemco.intelligenthome.backend.feature.state.impl.ValueFeatureStateImpl;
+import dev.zemco.intelligenthome.backend.feature.state.impl.IntegerFeatureStateImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -67,8 +67,8 @@ public class MockRunner implements CommandLineRunner {
 
     private Feature createMockFeature(UUID deviceId) {
         boolean booleanType = this.randomBoolean();
-        FeatureType type = booleanType ? FeatureType.BOOLEAN : FeatureType.VALUE;
-        FeatureState state = booleanType ? new BooleanFeatureStateImpl() : new ValueFeatureStateImpl();
+        FeatureType type = booleanType ? FeatureType.BOOLEAN : FeatureType.INTEGER;
+        FeatureState state = booleanType ? new BooleanFeatureStateImpl() : new IntegerFeatureStateImpl();
         Class<? extends FeatureUpdateRequestHandler> handlerClass = booleanType ? MockBooleanFeatureUpdateRequestHandler.class : null;
         return new MockFeature(UUID.randomUUID(), deviceId, "Test Feature", type, state, handlerClass);
     }

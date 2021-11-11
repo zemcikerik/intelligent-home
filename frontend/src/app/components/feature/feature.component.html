@@ -1,6 +1,6 @@
 <ng-container *ngIf="featureType$ | async as type">
   <ng-container [ngSwitch]="type">
-    <app-value-feature *ngSwitchCase="'VALUE'" [id]="id"></app-value-feature>
+    <app-integer-feature *ngSwitchCase="'INTEGER'" [id]="id"></app-integer-feature>
     <app-boolean-feature *ngSwitchCase="'BOOLEAN'" [id]="id"></app-boolean-feature>
   </ng-container>
 </ng-container>
