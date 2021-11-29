@@ -23,6 +23,12 @@ public class FeatureServiceImpl implements FeatureService {
     }
 
     @Override
+    public List<Feature> getAllFeatures() {
+        // TODO: should we also store all features in single list?
+        return this.featureIdToFeature.values().stream().toList();
+    }
+
+    @Override
     public List<Feature> getFeaturesForDevice(UUID deviceId) {
         return List.copyOf(this.deviceIdToFeatures.get(deviceId));
     }

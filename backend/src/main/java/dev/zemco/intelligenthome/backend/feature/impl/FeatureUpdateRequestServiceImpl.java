@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -19,28 +18,19 @@ public class FeatureUpdateRequestServiceImpl implements FeatureUpdateRequestServ
 
     private final BeanFactory beanFactory;
     private final FeatureService featureService;
-    private final Map<Class<?>, FeatureUpdateRequestHandler> handlers = new HashMap<>();
 
     @Override
     public void handleFeatureUpdateRequest(UUID featureId, Map<String, String> update) {
         Optional<Feature> foundFeature = this.featureService.getFeatureById(featureId);
         Feature feature = foundFeature.orElseThrow();
+        Class<? extends FeatureUpdateRequestHandler> handlerClass = feature.getUpdateRequestHandlerClass();
 
-        Class<?> handlerClass = feature.getUpdateRequestHandlerClass();
-        FeatureUpdateRequestHandler handler = this.handlers.get(handlerClass); // TODO: throw if not found
-        handler.handleUpdateRequest(feature, update);
-    }
+        if (handlerClass == null) {
+            return;
+        }
 
-    @Override
-    public void registerHandler(Class<? extends FeatureUpdateRequestHandler> handlerClass) {
-        // TODO: check if bean exists
         FeatureUpdateRequestHandler handler = this.beanFactory.getBean(handlerClass);
-        this.handlers.put(handlerClass, handler);
-    }
-
-    @Override
-    public void unregisterHandler(Class<? extends FeatureUpdateRequestHandler> handlerClass) {
-        this.handlers.remove(handlerClass);
+        handler.handleUpdateRequest(feature, update);
     }
 
 }

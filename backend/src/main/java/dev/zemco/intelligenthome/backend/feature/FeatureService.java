@@ -6,6 +6,7 @@ import java.util.UUID;
 
 public interface FeatureService {
     Optional<Feature> getFeatureById(UUID id);
+    List<Feature> getAllFeatures();
     List<Feature> getFeaturesForDevice(UUID deviceId);
 
     void registerFeature(Feature feature);

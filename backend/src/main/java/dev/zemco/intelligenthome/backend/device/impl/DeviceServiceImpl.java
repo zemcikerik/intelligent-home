@@ -31,7 +31,6 @@ public class DeviceServiceImpl implements DeviceService {
 
     @Override
     public void registerDevice(Device device) {
-        // should we check if device was already added before?
         this.devices.add(device);
         this.deviceBroadcastService.broadcastDeviceAddition(device);
     }
@@ -43,7 +42,6 @@ public class DeviceServiceImpl implements DeviceService {
 
     @Override
     public void unregisterDevice(Device device) {
-        // should we check if device was added?
         this.devices.remove(device);
         this.deviceBroadcastService.broadcastDeviceRemoval(device);
     }

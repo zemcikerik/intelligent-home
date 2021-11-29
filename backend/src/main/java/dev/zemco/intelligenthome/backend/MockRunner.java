@@ -30,11 +30,10 @@ public class MockRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        this.featureUpdateRequestService.registerHandler(MockBooleanFeatureUpdateRequestHandler.class);
         this.createAndRegisterMockDevice();
     }
 
-    @Scheduled(fixedRate = 2000L, initialDelay = 2000L)
+    @Scheduled(fixedRate = 3000L, initialDelay = 3000L)
     public void scheduledAdd() {
         if (this.randomBoolean()) {
             List<Device> devices = this.deviceService.getActiveDevices();
@@ -45,7 +44,7 @@ public class MockRunner implements CommandLineRunner {
         }
     }
 
-    @Scheduled(fixedRate = 5000L, initialDelay = 5000L)
+    @Scheduled(fixedRate = 6000L, initialDelay = 6000L)
     public void scheduledRemove() {
         List<Device> devices = this.deviceService.getActiveDevices();
         Device device = this.pickRandom(devices);

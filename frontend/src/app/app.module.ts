@@ -21,6 +21,8 @@ import {
 import { environment } from '../environments/environment';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material.module';
+import { PRODUCTION_TOKEN } from './production.token';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -51,7 +53,8 @@ import { MaterialModule } from './material.module';
     !environment.production ? StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }) : [],
     EffectsModule.forRoot([AppEffects, DeviceEffects, FeatureEffects]),
     BrowserAnimationsModule,
-    MaterialModule
+    MaterialModule,
+    HttpClientModule
   ],
   providers: [
     AppFacade,
@@ -59,8 +62,11 @@ import { MaterialModule } from './material.module';
     FeatureFacade,
     Services.DeviceService,
     Services.FeatureService,
+    Services.InitialStateService,
     Services.ServerConnectionService,
-    { provide: Services.SERVER_URL_TOKEN, useValue: environment.serverUrl }
+    { provide: Services.SERVER_URL_TOKEN, useValue: environment.serverUrl },
+    { provide: Services.WS_SERVER_URL_TOKEN, useValue: environment.wsServerUrl },
+    { provide: PRODUCTION_TOKEN, useValue: environment.production }
   ],
   bootstrap: [AppComponent]
 })

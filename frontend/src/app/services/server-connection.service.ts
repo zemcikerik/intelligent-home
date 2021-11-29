@@ -1,39 +1,47 @@
 import { Inject, Injectable, InjectionToken } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
-import { RxStomp } from '@stomp/rx-stomp';
+import { RxStomp, RxStompConfig } from '@stomp/rx-stomp';
 import { catchError, map, take, timeout } from 'rxjs/operators';
+import { PRODUCTION_TOKEN } from '../production.token';
 
-export const SERVER_URL_TOKEN = new InjectionToken<string>('SERVER_URL');
+export const WS_SERVER_URL_TOKEN = new InjectionToken<string>('WS_SERVER_URL');
 
 @Injectable()
 export class ServerConnectionService {
 
-  stomp: RxStomp;
+  stomp = new RxStomp();
 
-  constructor(@Inject(SERVER_URL_TOKEN) private serverUrl: string) {
-    this.stomp = new RxStomp();
-  }
+  constructor(
+    @Inject(WS_SERVER_URL_TOKEN) private wsServerUrl: string,
+    @Inject(PRODUCTION_TOKEN) private production: boolean
+  ) { }
 
   connect(): Observable<any> {
-    this.stomp.configure({
-      brokerURL: this.serverUrl,
-      debug: console.log,
+    const config: RxStompConfig = {
+      brokerURL: this.wsServerUrl,
       reconnectDelay: 200
-    });
+    };
 
+    if (!this.production) {
+      config.debug = console.log;
+    }
+
+    this.stomp.configure(config);
     this.stomp.activate();
 
     return this.stomp.connected$.pipe(
       take(1),
       timeout(5000),
       catchError(err => {
+        // not awaiting as it's not needed when connection was not established
+        // noinspection JSIgnoredPromiseFromCall
         this.stomp.deactivate();
         return throwError(err);
       })
     );
   }
 
-  send<T>(destination: string, content: T): void {
+  send(destination: string, content: object): void {
     this.stomp.publish({ destination, body: JSON.stringify(content) });
   }
 
