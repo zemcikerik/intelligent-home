@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { FeaturePartialState } from '../reducers';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Feature } from '../../models';
 import { selectAllFeatures, selectFeature, selectFeatureIdsByDeviceId } from '../selectors';
 import { requestFeatureUpdate } from '../actions';

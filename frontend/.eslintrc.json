@@ -35,7 +35,10 @@
             "prefix": "app",
             "style": "kebab-case"
           }
-        ]
+        ],
+        "ngrx/prefer-effect-callback-in-block-statement": "off",
+        "ngrx/no-typed-global-store": "off",
+        "ngrx/use-consistent-global-store-name": ["warn", "store$"]
       },
       "plugins": [
         "ngrx"
