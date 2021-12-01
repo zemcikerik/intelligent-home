@@ -1,28 +1,20 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MockBuilder, MockedComponentFixture, MockRender } from 'ng-mocks';
 import { AppComponent } from './app.component';
+import { AppModule } from './app.module';
 
 describe('AppComponent', () => {
-  let fixture: ComponentFixture<AppComponent>;
+  let fixture: MockedComponentFixture<AppComponent>;
   let component: AppComponent;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [
-        AppComponent
-      ],
-    }).compileComponents();
-  });
+  beforeEach(() => MockBuilder(AppComponent, AppModule));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AppComponent);
-    component = fixture.componentInstance;
+    fixture = MockRender(AppComponent);
+    component = fixture.point.componentInstance;
+    fixture.detectChanges();
   });
 
   it('should create the app', () => {
     expect(component).toBeTruthy();
-  });
-
-  it('should display hello message', () => {
-    expect(fixture.debugElement.nativeElement.textContent).toContain('Hello');
   });
 });
