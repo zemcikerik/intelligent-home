@@ -5,11 +5,13 @@ import dev.zemco.intelligenthome.backend.device.DeviceService;
 import dev.zemco.intelligenthome.backend.device.impl.MockDevice;
 import dev.zemco.intelligenthome.backend.feature.*;
 import dev.zemco.intelligenthome.backend.feature.impl.MockBooleanFeatureUpdateRequestHandler;
+import dev.zemco.intelligenthome.backend.feature.impl.MockDropdownFeatureUpdateRequestHandler;
 import dev.zemco.intelligenthome.backend.feature.impl.MockFeature;
 import dev.zemco.intelligenthome.backend.feature.state.impl.BooleanFeatureStateImpl;
 import dev.zemco.intelligenthome.backend.feature.state.FeatureState;
+import dev.zemco.intelligenthome.backend.feature.state.impl.DropdownFeatureStateImpl;
 import dev.zemco.intelligenthome.backend.feature.state.impl.IntegerFeatureStateImpl;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -20,13 +22,13 @@ import java.util.Random;
 import java.util.UUID;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 @EnableScheduling
 public class MockRunner implements CommandLineRunner {
 
     private final DeviceService deviceService;
     private final FeatureService featureService;
-    private final FeatureUpdateRequestService featureUpdateRequestService;
+    private final Random rng = new Random();
 
     @Override
     public void run(String... args) {
@@ -35,7 +37,7 @@ public class MockRunner implements CommandLineRunner {
 
     @Scheduled(fixedRate = 3000L, initialDelay = 3000L)
     public void scheduledAdd() {
-        if (this.randomBoolean()) {
+        if (rng.nextBoolean()) {
             List<Device> devices = this.deviceService.getActiveDevices();
             Device device = this.pickRandom(devices);
             this.featureService.registerFeature(this.createMockFeature(device.getId()));
@@ -65,20 +67,39 @@ public class MockRunner implements CommandLineRunner {
     }
 
     private Feature createMockFeature(UUID deviceId) {
-        boolean booleanType = this.randomBoolean();
-        FeatureType type = booleanType ? FeatureType.BOOLEAN : FeatureType.INTEGER;
-        FeatureState state = booleanType ? new BooleanFeatureStateImpl() : new IntegerFeatureStateImpl();
-        Class<? extends FeatureUpdateRequestHandler> handlerClass = booleanType ? MockBooleanFeatureUpdateRequestHandler.class : null;
+        FeatureType type = this.pickRandom(FeatureType.values());
+
+        return switch (type) {
+            case BOOLEAN -> this.createMockBooleanFeature(deviceId);
+            case DROPDOWN -> this.createMockDropdownFeature(deviceId);
+            case INTEGER -> this.createMockIntegerFeature(deviceId);
+            default -> throw new IndexOutOfBoundsException();
+        };
+    }
+
+    private Feature createMockBooleanFeature(UUID deviceId) {
+        return this.createMockFeature(deviceId, FeatureType.BOOLEAN, new BooleanFeatureStateImpl(), MockBooleanFeatureUpdateRequestHandler.class);
+    }
+
+    private Feature createMockDropdownFeature(UUID deviceId) {
+        List<String> choices = List.of("First", "Second", "Third");
+        return this.createMockFeature(deviceId, FeatureType.DROPDOWN, new DropdownFeatureStateImpl(choices), MockDropdownFeatureUpdateRequestHandler.class);
+    }
+
+    private Feature createMockIntegerFeature(UUID deviceId) {
+        return this.createMockFeature(deviceId, FeatureType.INTEGER, new IntegerFeatureStateImpl(), null);
+    }
+
+    private Feature createMockFeature(UUID deviceId, FeatureType type, FeatureState state, Class<? extends FeatureUpdateRequestHandler> handlerClass) {
         return new MockFeature(UUID.randomUUID(), deviceId, "Test Feature", type, state, handlerClass);
     }
 
     private <T> T pickRandom(List<T> choices) {
-        Random rng = new Random();
         return choices.get(rng.nextInt(choices.size()));
     }
 
-    private boolean randomBoolean() {
-        return new Random().nextBoolean();
+    private <T> T pickRandom(T[] choices) {
+        return choices[rng.nextInt(choices.length)];
     }
 
 }

@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public interface FeatureState {
-    void toMap(Map<String, String> map);
+    void toMap(Map<String, Object> map);
 
-    default Map<String, String> toMap() {
-        Map<String, String> map = new HashMap<>();
+    default Map<String, Object> toMap() {
+        Map<String, Object> map = new HashMap<>();
         this.toMap(map);
         return map;
     }

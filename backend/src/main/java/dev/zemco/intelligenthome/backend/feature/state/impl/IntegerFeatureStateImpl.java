@@ -13,8 +13,8 @@ public class IntegerFeatureStateImpl implements IntegerFeatureState {
     private int value;
 
     @Override
-    public void toMap(Map<String, String> map) {
-        map.put("value", String.valueOf(this.value));
+    public void toMap(Map<String, Object> map) {
+        map.put("value", this.value);
     }
 
 }

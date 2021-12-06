@@ -13,8 +13,8 @@ public class BooleanFeatureStateImpl implements BooleanFeatureState {
     private boolean enabled;
 
     @Override
-    public void toMap(Map<String, String> map) {
-        map.put("enabled", String.valueOf(this.enabled));
+    public void toMap(Map<String, Object> map) {
+        map.put("enabled", this.enabled);
     }
 
 }

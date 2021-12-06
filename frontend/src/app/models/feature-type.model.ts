@@ -1,4 +1,5 @@
 export enum FeatureType {
   INTEGER = 'INTEGER',
-  BOOLEAN = 'BOOLEAN'
+  BOOLEAN = 'BOOLEAN',
+  DROPDOWN = 'DROPDOWN'
 }

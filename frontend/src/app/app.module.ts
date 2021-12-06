@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
 import * as Components from './components';
+import * as Pipes from './pipes';
 import * as Services from './services';
 
 import { StoreModule } from '@ngrx/store';
@@ -23,6 +24,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material.module';
 import { PRODUCTION_TOKEN } from './production.token';
 import { HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -30,6 +32,7 @@ import { HttpClientModule } from '@angular/common/http';
     Components.BooleanFeatureComponent,
     Components.DeviceComponent,
     Components.DeviceListComponent,
+    Components.DropdownFeatureComponent,
     Components.ErrorMessageComponent,
     Components.FeatureComponent,
     Components.FeatureListComponent,
@@ -37,6 +40,7 @@ import { HttpClientModule } from '@angular/common/http';
     Components.LoadingIndicatorComponent,
     Components.NavbarComponent,
     Components.IntegerFeatureComponent,
+    Pipes.KeysPipe,
   ],
   imports: [
     BrowserModule,
@@ -54,7 +58,8 @@ import { HttpClientModule } from '@angular/common/http';
     EffectsModule.forRoot([AppEffects, DeviceEffects, FeatureEffects]),
     BrowserAnimationsModule,
     MaterialModule,
-    HttpClientModule
+    HttpClientModule,
+    FormsModule
   ],
   providers: [
     AppFacade,

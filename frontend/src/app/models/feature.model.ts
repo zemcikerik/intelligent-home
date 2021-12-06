@@ -1,5 +1,5 @@
 import { FeatureType } from './feature-type.model';
-import { BooleanFeatureState, FeatureState, IntegerFeatureState } from './feature-state.model';
+import { BooleanFeatureState, DropdownFeatureState, FeatureState, IntegerFeatureState } from './feature-state.model';
 
 export interface BaseFeature {
   id: string;
@@ -19,4 +19,9 @@ export interface BooleanFeature extends BaseFeature {
   state: BooleanFeatureState;
 }
 
-export type Feature = IntegerFeature | BooleanFeature;
+export interface DropdownFeature extends BaseFeature {
+  type: FeatureType.DROPDOWN;
+  state: DropdownFeatureState;
+}
+
+export type Feature = IntegerFeature | BooleanFeature | DropdownFeature;

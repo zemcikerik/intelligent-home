@@ -17,5 +17,5 @@ public class FeatureDto {
     private UUID deviceId;
     private String name;
     private FeatureType type;
-    private Map<String, String> state;
+    private Map<String, Object> state;
 }

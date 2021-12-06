@@ -8,4 +8,8 @@ export interface BooleanFeatureState extends BaseFeatureState {
   enabled: boolean;
 }
 
-export type FeatureState = IntegerFeatureState | BooleanFeatureState;
+export interface DropdownFeatureState extends BaseFeatureState {
+  [option: string]: boolean;
+}
+
+export type FeatureState = IntegerFeatureState | BooleanFeatureState | DropdownFeatureState;
