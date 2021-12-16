@@ -25,6 +25,7 @@ import { MaterialModule } from './material.module';
 import { PRODUCTION_TOKEN } from './production.token';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
@@ -41,6 +42,7 @@ import { FormsModule } from '@angular/forms';
     Components.NavbarComponent,
     Components.IntegerFeatureComponent,
     Pipes.KeysPipe,
+    Components.DeviceAddDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -59,7 +61,8 @@ import { FormsModule } from '@angular/forms';
     BrowserAnimationsModule,
     MaterialModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    MatDialogModule
   ],
   providers: [
     AppFacade,

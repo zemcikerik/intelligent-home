@@ -23,7 +23,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-@EnableScheduling
+//@EnableScheduling
 public class MockRunner implements CommandLineRunner {
 
     private final DeviceService deviceService;
