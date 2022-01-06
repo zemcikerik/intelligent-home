@@ -6,4 +6,5 @@ public interface DropdownFeatureState extends FeatureState {
     String getSelected();
     void setSelected(String selected);
     List<String> getChoices();
+    void setChoices(List<String> choices);
 }

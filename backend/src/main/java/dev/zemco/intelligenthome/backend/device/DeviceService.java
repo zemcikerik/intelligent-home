@@ -9,6 +9,5 @@ public interface DeviceService {
     List<Device> getActiveDevices();
 
     void registerDevice(Device device);
-    void updateDevice(Device device);
     void unregisterDevice(Device device);
 }

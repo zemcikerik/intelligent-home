@@ -9,7 +9,8 @@ export interface BooleanFeatureState extends BaseFeatureState {
 }
 
 export interface DropdownFeatureState extends BaseFeatureState {
-  [option: string]: boolean;
+  choices: string[];
+  selected: string;
 }
 
 export type FeatureState = IntegerFeatureState | BooleanFeatureState | DropdownFeatureState;

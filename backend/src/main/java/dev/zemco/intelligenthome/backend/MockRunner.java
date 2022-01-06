@@ -4,26 +4,25 @@ import dev.zemco.intelligenthome.backend.device.Device;
 import dev.zemco.intelligenthome.backend.device.DeviceService;
 import dev.zemco.intelligenthome.backend.device.impl.MockDevice;
 import dev.zemco.intelligenthome.backend.feature.*;
-import dev.zemco.intelligenthome.backend.feature.impl.MockBooleanFeatureUpdateRequestHandler;
-import dev.zemco.intelligenthome.backend.feature.impl.MockDropdownFeatureUpdateRequestHandler;
+import dev.zemco.intelligenthome.backend.feature.impl.BooleanFeatureUpdateHandler;
+import dev.zemco.intelligenthome.backend.feature.impl.DropdownFeatureUpdateHandler;
 import dev.zemco.intelligenthome.backend.feature.impl.MockFeature;
+import dev.zemco.intelligenthome.backend.feature.state.DropdownFeatureState;
 import dev.zemco.intelligenthome.backend.feature.state.impl.BooleanFeatureStateImpl;
 import dev.zemco.intelligenthome.backend.feature.state.FeatureState;
 import dev.zemco.intelligenthome.backend.feature.state.impl.DropdownFeatureStateImpl;
 import dev.zemco.intelligenthome.backend.feature.state.impl.IntegerFeatureStateImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
-@Component
+//@Component
 @RequiredArgsConstructor
-@EnableScheduling
+//@EnableScheduling
 public class MockRunner implements CommandLineRunner {
 
     private final DeviceService deviceService;
@@ -78,19 +77,21 @@ public class MockRunner implements CommandLineRunner {
     }
 
     private Feature createMockBooleanFeature(UUID deviceId) {
-        return this.createMockFeature(deviceId, FeatureType.BOOLEAN, new BooleanFeatureStateImpl(), MockBooleanFeatureUpdateRequestHandler.class);
+        return this.createMockFeature(deviceId, FeatureType.BOOLEAN, new BooleanFeatureStateImpl(), BooleanFeatureUpdateHandler.class);
     }
 
     private Feature createMockDropdownFeature(UUID deviceId) {
-        List<String> choices = List.of("First", "Second", "Third");
-        return this.createMockFeature(deviceId, FeatureType.DROPDOWN, new DropdownFeatureStateImpl(choices), MockDropdownFeatureUpdateRequestHandler.class);
+        DropdownFeatureState state = new DropdownFeatureStateImpl();
+        state.setChoices(List.of("First", "Second", "Third"));
+        state.setSelected("First");
+        return this.createMockFeature(deviceId, FeatureType.DROPDOWN, state, DropdownFeatureUpdateHandler.class);
     }
 
     private Feature createMockIntegerFeature(UUID deviceId) {
         return this.createMockFeature(deviceId, FeatureType.INTEGER, new IntegerFeatureStateImpl(), null);
     }
 
-    private Feature createMockFeature(UUID deviceId, FeatureType type, FeatureState state, Class<? extends FeatureUpdateRequestHandler> handlerClass) {
+    private Feature createMockFeature(UUID deviceId, FeatureType type, FeatureState state, Class<? extends FeatureUpdateHandler> handlerClass) {
         return new MockFeature(UUID.randomUUID(), deviceId, "Test Feature", type, state, handlerClass);
     }
 

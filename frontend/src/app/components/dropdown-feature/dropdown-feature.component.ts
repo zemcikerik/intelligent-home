@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { BaseFeatureComponent } from '../base-feature.component';
-import { DropdownFeature, DropdownFeatureState } from '../../models';
+import { DropdownFeature } from '../../models';
 
 @Component({
   selector: 'app-dropdown-feature',
@@ -9,17 +9,8 @@ import { DropdownFeature, DropdownFeatureState } from '../../models';
 })
 export class DropdownFeatureComponent extends BaseFeatureComponent<DropdownFeature> {
 
-  getSelection(choices: DropdownFeatureState): string | null {
-    for (const choice in choices) {
-      if (choices[choice]) {
-        return choice;
-      }
-    }
-    return null;
-  }
-
-  setSelection(choice: string): void {
-    this.featureFacade.requestFeatureUpdate(this.id, { [choice]: true });
+  setSelection(selected: string): void {
+    this.featureFacade.requestFeatureUpdate(this.id, { selected });
   }
 
 }

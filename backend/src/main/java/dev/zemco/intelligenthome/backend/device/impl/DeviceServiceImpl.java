@@ -36,11 +36,6 @@ public class DeviceServiceImpl implements DeviceService {
     }
 
     @Override
-    public void updateDevice(Device device) {
-        this.deviceBroadcastService.broadcastDeviceUpdate(device);
-    }
-
-    @Override
     public void unregisterDevice(Device device) {
         this.devices.remove(device);
         this.deviceBroadcastService.broadcastDeviceRemoval(device);

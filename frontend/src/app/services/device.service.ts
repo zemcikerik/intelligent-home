@@ -7,12 +7,10 @@ import { Device } from '../models';
 export class DeviceService {
 
   readonly deviceAdd$: Observable<Device>;
-  readonly deviceUpdate$: Observable<Device>;
   readonly deviceRemove$: Observable<string>;
 
   constructor(serverConnectionService: ServerConnectionService) {
     this.deviceAdd$ = serverConnectionService.watch<Device>('/device/add');
-    this.deviceUpdate$ = serverConnectionService.watch<Device>('/device/update');
     this.deviceRemove$ = serverConnectionService.watch<string>('/device/remove');
   }
 

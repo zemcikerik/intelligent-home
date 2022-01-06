@@ -46,7 +46,7 @@ export class ServerConnectionService {
   }
 
   watch<T = object | string | number>(path: string): Observable<T> {
-    return this.stomp.watch(`/client${path}`).pipe(
+    return this.stomp.watch(`/topic/client${path}`).pipe(
       map(message => JSON.parse(message.body) as T)
     );
   }

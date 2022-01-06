@@ -11,7 +11,11 @@ public interface Feature {
     FeatureType getType();
     FeatureState getState();
 
-    default Class<? extends FeatureUpdateRequestHandler> getUpdateRequestHandlerClass() {
+    default Class<? extends FeatureUpdateHandler> getUpdateHandlerClass() {
+        return null;
+    }
+
+    default Class<? extends FeatureUpdateHandler> getUpdateRequestHandlerClass() {
         return null;
     }
 

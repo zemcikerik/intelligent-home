@@ -18,6 +18,5 @@ export const deviceReducer = createReducer(
   initialDeviceState,
   on(DeviceActions.loadDevicesSuccess, (state, {devices}) => deviceAdapter.setAll(devices, state)),
   on(DeviceActions.addDevice, (state, {device}) => deviceAdapter.addOne(device, state)),
-  on(DeviceActions.updateDevice, (state, {device}) => deviceAdapter.setOne(device, state)),
   on(DeviceActions.removeDevice, (state, {deviceId}) => deviceAdapter.removeOne(deviceId, state))
 );

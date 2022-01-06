@@ -2,23 +2,18 @@ package dev.zemco.intelligenthome.backend.feature.state.impl;
 
 import dev.zemco.intelligenthome.backend.feature.state.DropdownFeatureState;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 public class DropdownFeatureStateImpl implements DropdownFeatureState {
 
-    private final List<String> choices;
+    private List<String> choices;
     private String selected;
-
-    public DropdownFeatureStateImpl(List<String> choices) {
-        this.choices = Collections.unmodifiableList(choices);
-        this.selected = choices.get(0);
-    }
 
     @Override
     public void toMap(Map<String, Object> map) {
-        this.choices.forEach(choice -> map.put(choice, this.selected.equals(choice)));
+        map.put("choices", this.choices);
+        map.put("selected", this.selected);
     }
 
     @Override
@@ -34,6 +29,11 @@ public class DropdownFeatureStateImpl implements DropdownFeatureState {
     @Override
     public List<String> getChoices() {
         return this.choices;
+    }
+
+    @Override
+    public void setChoices(List<String> choices) {
+        this.choices = choices;
     }
 
 }
