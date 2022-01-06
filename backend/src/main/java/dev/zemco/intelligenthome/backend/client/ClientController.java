@@ -20,8 +20,7 @@ public class ClientController {
     private final DeviceService deviceService;
     private final FeatureService featureService;
 
-    // TODO: rename me
-    @GetMapping("/client-current-state")
+    @GetMapping("/client/current-state")
     public ClientDto getCurrentStateForClient() {
         List<DeviceDto> deviceInfo = this.deviceService.getActiveDevices()
                 .stream()

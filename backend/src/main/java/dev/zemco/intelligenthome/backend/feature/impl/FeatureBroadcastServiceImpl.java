@@ -14,17 +14,17 @@ public class FeatureBroadcastServiceImpl implements FeatureBroadcastService {
 
     @Override
     public void broadcastFeatureAddition(Feature feature) {
-        this.simpMessagingTemplate.convertAndSend("/feature/add", feature.toDto());
+        this.simpMessagingTemplate.convertAndSend("/client/feature/add", feature.toDto());
     }
 
     @Override
     public void broadcastFeatureUpdate(Feature feature) {
-        this.simpMessagingTemplate.convertAndSend("/feature/update", feature.toDto());
+        this.simpMessagingTemplate.convertAndSend("/client/feature/update", feature.toDto());
     }
 
     @Override
     public void broadcastFeatureRemoval(Feature feature) {
-        this.simpMessagingTemplate.convertAndSend("/feature/remove", feature.getId());
+        this.simpMessagingTemplate.convertAndSend("/client/feature/remove", feature.getId());
     }
 
 }

@@ -17,7 +17,7 @@ export class FeatureService {
   }
 
   requestUpdate(id: string, update: object): void {
-    this.serverConnectionService.send(`/app/feature/request-update/${id}`, update);
+    this.serverConnectionService.send(`/feature/request-update/${id}`, update);
   }
 
 }

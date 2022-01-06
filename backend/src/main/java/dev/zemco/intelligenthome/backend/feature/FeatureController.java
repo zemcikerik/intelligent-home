@@ -15,7 +15,7 @@ public class FeatureController {
 
     private final FeatureUpdateRequestService featureUpdateRequestService;
 
-    @MessageMapping("/feature/request-update/{id}")
+    @MessageMapping("/client/feature/request-update/{id}")
     public void requestFeatureUpdate(@DestinationVariable UUID id, @Payload Map<String, String> update) {
         this.featureUpdateRequestService.handleFeatureUpdateRequest(id, update);
     }

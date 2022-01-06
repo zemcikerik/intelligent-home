@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   serverUrl: 'http://localhost:8080',
-  wsServerUrl: 'ws://localhost:8080/client'
+  wsServerUrl: 'ws://localhost:8080/ws'
 };
 
 /*

@@ -42,11 +42,11 @@ export class ServerConnectionService {
   }
 
   send(destination: string, content: object): void {
-    this.stomp.publish({ destination, body: JSON.stringify(content) });
+    this.stomp.publish({ destination: `/app/client${destination}`, body: JSON.stringify(content) });
   }
 
   watch<T = object | string | number>(path: string): Observable<T> {
-    return this.stomp.watch(path).pipe(
+    return this.stomp.watch(`/client${path}`).pipe(
       map(message => JSON.parse(message.body) as T)
     );
   }
