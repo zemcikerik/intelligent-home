@@ -1,6 +1,6 @@
 <mat-form-field *ngIf="feature$ | async as feature" appearance="fill">
   <label>{{ feature.name }}</label>
-  <mat-select [value]="feature.state.selected" (selectionChange)="setSelection($event.value)">
+  <mat-select [value]="feature.state.selected" (selectionChange)="setSelection($event, feature.state.selected)">
     <mat-option *ngFor="let choice of feature.state.choices" [value]="choice">{{ choice }}</mat-option>
   </mat-select>
 </mat-form-field>
