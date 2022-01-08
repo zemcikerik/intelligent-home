@@ -1,4 +1,4 @@
 <div class="boolean-feature-container" *ngIf="feature$ | async as feature">
   <span class="name">{{ feature.name }}</span>
-  <mat-slide-toggle [checked]="feature.state.enabled" draggable="false" (change)="setEnabled($event.checked)"></mat-slide-toggle>
+  <mat-slide-toggle [checked]="feature.state.enabled" draggable="false" (click)="onClick($event, !feature.state.enabled)"></mat-slide-toggle>
 </div>

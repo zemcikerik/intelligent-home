@@ -9,8 +9,8 @@ import { BooleanFeature } from '../../models';
 })
 export class BooleanFeatureComponent extends BaseFeatureComponent<BooleanFeature> {
 
-  setEnabled(enabled: boolean): void {
-    // TODO: don't toggle switch immediately
+  onClick(event: MouseEvent, enabled: boolean): void {
+    event.preventDefault();
     this.featureFacade.requestFeatureUpdate(this.id, { enabled });
   }
 

@@ -19,7 +19,7 @@ public class FeatureServiceImpl implements FeatureService {
 
     @Override
     public Optional<Feature> getFeatureById(UUID id) {
-        return Optional.of(this.featureIdToFeature.get(id));
+        return Optional.ofNullable(this.featureIdToFeature.get(id));
     }
 
     @Override
