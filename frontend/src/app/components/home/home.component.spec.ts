@@ -1,21 +1,16 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { MockBuilder, MockedComponentFixture, MockRender } from 'ng-mocks';
 import { HomeComponent } from './home.component';
+import { AppModule } from '../../app.module';
 
 describe('HomeComponent', () => {
+  let fixture: MockedComponentFixture<HomeComponent>;
   let component: HomeComponent;
-  let fixture: ComponentFixture<HomeComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ HomeComponent ]
-    })
-    .compileComponents();
-  });
+  beforeEach(() => MockBuilder(HomeComponent, AppModule));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(HomeComponent);
-    component = fixture.componentInstance;
+    fixture = MockRender(HomeComponent);
+    component = fixture.point.componentInstance;
     fixture.detectChanges();
   });
 

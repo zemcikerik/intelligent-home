@@ -14,15 +14,17 @@ import dev.zemco.intelligenthome.backend.feature.state.impl.DropdownFeatureState
 import dev.zemco.intelligenthome.backend.feature.state.impl.IntegerFeatureStateImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
-//@Component
+@Component
 @RequiredArgsConstructor
-//@EnableScheduling
+@EnableScheduling
 public class MockRunner implements CommandLineRunner {
 
     private final DeviceService deviceService;

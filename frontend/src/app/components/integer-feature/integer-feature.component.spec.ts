@@ -1,21 +1,16 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { MockBuilder, MockedComponentFixture, MockRender } from 'ng-mocks';
 import { IntegerFeatureComponent } from './integer-feature.component';
+import { AppModule } from '../../app.module';
 
 describe('IntegerFeatureComponent', () => {
+  let fixture: MockedComponentFixture<IntegerFeatureComponent>;
   let component: IntegerFeatureComponent;
-  let fixture: ComponentFixture<IntegerFeatureComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ IntegerFeatureComponent ]
-    })
-    .compileComponents();
-  });
+  beforeEach(() => MockBuilder(IntegerFeatureComponent, AppModule));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(IntegerFeatureComponent);
-    component = fixture.componentInstance;
+    fixture = MockRender(IntegerFeatureComponent);
+    component = fixture.point.componentInstance;
     fixture.detectChanges();
   });
 

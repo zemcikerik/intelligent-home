@@ -1,21 +1,16 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { MockBuilder, MockedComponentFixture, MockRender } from 'ng-mocks';
 import { LoadingIndicatorComponent } from './loading-indicator.component';
+import { AppModule } from '../../app.module';
 
 describe('LoadingIndicatorComponent', () => {
+  let fixture: MockedComponentFixture<LoadingIndicatorComponent>;
   let component: LoadingIndicatorComponent;
-  let fixture: ComponentFixture<LoadingIndicatorComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ LoadingIndicatorComponent ]
-    })
-    .compileComponents();
-  });
+  beforeEach(() => MockBuilder(LoadingIndicatorComponent, AppModule));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(LoadingIndicatorComponent);
-    component = fixture.componentInstance;
+    fixture = MockRender(LoadingIndicatorComponent);
+    component = fixture.point.componentInstance;
     fixture.detectChanges();
   });
 

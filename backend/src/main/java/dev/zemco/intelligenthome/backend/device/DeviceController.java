@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
-// TODO: in future we should bind devices to session id
-
 @RestController
 @RequiredArgsConstructor
 public class DeviceController {

@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-// TODO: should this be here?
 @RestController
 @RequiredArgsConstructor
 public class ClientController {

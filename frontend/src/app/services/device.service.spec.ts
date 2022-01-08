@@ -27,11 +27,6 @@ describe('DeviceService', () => {
     expect(service.deviceAdd$).toBeObservable(hot('a', { a: '/device/add' }));
   });
 
-  it('should watch device update', () => {
-    expect(spyWatch).toHaveBeenCalledWith('/device/update');
-    expect(service.deviceUpdate$).toBeObservable(hot('a', { a: '/device/update' }));
-  });
-
   it('should watch device removal', () => {
     expect(spyWatch).toHaveBeenCalledWith('/device/remove');
     expect(service.deviceRemove$).toBeObservable(hot('a', { a: '/device/remove' }));

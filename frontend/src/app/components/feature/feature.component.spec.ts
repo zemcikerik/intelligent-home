@@ -1,21 +1,16 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { MockBuilder, MockedComponentFixture, MockRender } from 'ng-mocks';
 import { FeatureComponent } from './feature.component';
+import { AppModule } from '../../app.module';
 
 describe('FeatureComponent', () => {
+  let fixture: MockedComponentFixture<FeatureComponent>;
   let component: FeatureComponent;
-  let fixture: ComponentFixture<FeatureComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ FeatureComponent ]
-    })
-    .compileComponents();
-  });
+  beforeEach(() => MockBuilder(FeatureComponent, AppModule));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(FeatureComponent);
-    component = fixture.componentInstance;
+    fixture = MockRender(FeatureComponent);
+    component = fixture.point.componentInstance;
     fixture.detectChanges();
   });
 

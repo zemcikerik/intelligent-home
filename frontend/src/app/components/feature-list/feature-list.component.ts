@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FeatureFacade } from '../../store';
 import { EMPTY, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-feature-list',
@@ -18,10 +17,7 @@ export class FeatureListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // TODO: create special selector for this
-    this.featureIds$ = this.featureFacade.getFeaturesForDevice(this.deviceId).pipe(
-      map(features => features.map(feature => feature.id))
-    );
+    this.featureIds$ = this.featureFacade.getFeatureIdsForDevice(this.deviceId);
   }
 
 }

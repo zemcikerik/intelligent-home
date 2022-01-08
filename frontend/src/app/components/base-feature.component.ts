@@ -17,7 +17,7 @@ export class BaseFeatureComponent<T extends BaseFeature> implements OnInit {
 
   ngOnInit(): void {
     this.feature$ = this.featureFacade.getFeatureById(this.id).pipe(
-      filter(feature => !!feature) // TODO: check for correct type
+      filter(feature => !!feature)
     ) as Observable<T>;
   }
 
