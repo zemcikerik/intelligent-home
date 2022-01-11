@@ -8,4 +8,12 @@ import { IntegerFeature } from '../../models';
   styleUrls: ['./integer-feature.component.scss']
 })
 export class IntegerFeatureComponent extends BaseFeatureComponent<IntegerFeature> {
+
+  setValue(event: Event, oldValue: number): void {
+    const element = event.target as HTMLInputElement;
+    const value = element.valueAsNumber;
+    element.valueAsNumber = oldValue;
+    this.featureFacade.requestFeatureUpdate(this.id, { value });
+  }
+
 }

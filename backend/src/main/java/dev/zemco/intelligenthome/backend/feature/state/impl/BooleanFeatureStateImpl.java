@@ -1,13 +1,9 @@
 package dev.zemco.intelligenthome.backend.feature.state.impl;
 
 import dev.zemco.intelligenthome.backend.feature.state.BooleanFeatureState;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.Map;
 
-@Getter
-@Setter
 public class BooleanFeatureStateImpl implements BooleanFeatureState {
 
     private boolean enabled;
@@ -15,6 +11,16 @@ public class BooleanFeatureStateImpl implements BooleanFeatureState {
     @Override
     public void toMap(Map<String, Object> map) {
         map.put("enabled", this.enabled);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.enabled;
+    }
+
+    @Override
+    public void setEnabled(boolean value) {
+        this.enabled = value;
     }
 
 }

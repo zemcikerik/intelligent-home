@@ -4,14 +4,10 @@ import dev.zemco.intelligenthome.backend.device.Device;
 import dev.zemco.intelligenthome.backend.device.DeviceService;
 import dev.zemco.intelligenthome.backend.device.impl.MockDevice;
 import dev.zemco.intelligenthome.backend.feature.*;
-import dev.zemco.intelligenthome.backend.feature.impl.BooleanFeatureUpdateHandler;
-import dev.zemco.intelligenthome.backend.feature.impl.DropdownFeatureUpdateHandler;
 import dev.zemco.intelligenthome.backend.feature.impl.MockFeature;
 import dev.zemco.intelligenthome.backend.feature.state.DropdownFeatureState;
-import dev.zemco.intelligenthome.backend.feature.state.impl.BooleanFeatureStateImpl;
 import dev.zemco.intelligenthome.backend.feature.state.FeatureState;
-import dev.zemco.intelligenthome.backend.feature.state.impl.DropdownFeatureStateImpl;
-import dev.zemco.intelligenthome.backend.feature.state.impl.IntegerFeatureStateImpl;
+import dev.zemco.intelligenthome.backend.feature.state.FeatureStateFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -29,6 +25,8 @@ public class MockRunner implements CommandLineRunner {
 
     private final DeviceService deviceService;
     private final FeatureService featureService;
+    private final FeatureStateFactory featureStateFactory;
+    private final FeatureUpdateHandlerClassProvider featureUpdateHandlerClassProvider;
     private final Random rng = new Random();
 
     @Override
@@ -41,7 +39,7 @@ public class MockRunner implements CommandLineRunner {
         if (rng.nextBoolean()) {
             List<Device> devices = this.deviceService.getActiveDevices();
             Device device = this.pickRandom(devices);
-            this.featureService.registerFeature(this.createMockFeature(device.getId()));
+            this.createAndRegisterMockFeature(device.getId());
         } else {
             this.createAndRegisterMockDevice();
         }
@@ -64,37 +62,23 @@ public class MockRunner implements CommandLineRunner {
     private void createAndRegisterMockDevice() {
         UUID deviceId = UUID.randomUUID();
         this.deviceService.registerDevice(new MockDevice(deviceId, "Test Device"));
-        this.featureService.registerFeature(this.createMockFeature(deviceId));
+        this.createAndRegisterMockFeature(deviceId);
     }
 
-    private Feature createMockFeature(UUID deviceId) {
+    private void createAndRegisterMockFeature(UUID deviceId) {
+        UUID id = UUID.randomUUID();
         FeatureType type = this.pickRandom(FeatureType.values());
+        FeatureState state = this.featureStateFactory.createFeatureState(type);
+        Class<? extends FeatureUpdateHandler> updateHandler = this.featureUpdateHandlerClassProvider.getFeatureUpdateHandlerClass(type);
 
-        return switch (type) {
-            case BOOLEAN -> this.createMockBooleanFeature(deviceId);
-            case DROPDOWN -> this.createMockDropdownFeature(deviceId);
-            case INTEGER -> this.createMockIntegerFeature(deviceId);
-            default -> throw new IndexOutOfBoundsException();
-        };
-    }
+        if (type == FeatureType.DROPDOWN) {
+            DropdownFeatureState dropdownState = (DropdownFeatureState) state;
+            dropdownState.setChoices(List.of("First", "Second", "Third"));
+            dropdownState.setSelected("First");
+        }
 
-    private Feature createMockBooleanFeature(UUID deviceId) {
-        return this.createMockFeature(deviceId, FeatureType.BOOLEAN, new BooleanFeatureStateImpl(), BooleanFeatureUpdateHandler.class);
-    }
-
-    private Feature createMockDropdownFeature(UUID deviceId) {
-        DropdownFeatureState state = new DropdownFeatureStateImpl();
-        state.setChoices(List.of("First", "Second", "Third"));
-        state.setSelected("First");
-        return this.createMockFeature(deviceId, FeatureType.DROPDOWN, state, DropdownFeatureUpdateHandler.class);
-    }
-
-    private Feature createMockIntegerFeature(UUID deviceId) {
-        return this.createMockFeature(deviceId, FeatureType.INTEGER, new IntegerFeatureStateImpl(), null);
-    }
-
-    private Feature createMockFeature(UUID deviceId, FeatureType type, FeatureState state, Class<? extends FeatureUpdateHandler> handlerClass) {
-        return new MockFeature(UUID.randomUUID(), deviceId, "Test Feature", type, state, handlerClass);
+        Feature feature = new MockFeature(id, deviceId, "Test Feature", type, state, updateHandler);
+        this.featureService.registerFeature(feature);
     }
 
     private <T> T pickRandom(List<T> choices) {
