@@ -22,27 +22,32 @@ public class FeatureUpdateServiceImpl implements FeatureUpdateService {
     public void handleFeatureUpdate(UUID featureId, Map<String, Object> update) {
         Feature feature = this.getFeatureById(featureId);
         Class<? extends FeatureUpdateHandler> handlerClass = feature.getUpdateHandlerClass();
-        this.internalHandleUpdate(feature, update, handlerClass);
+        this.handleFeatureUpdate(feature, update, handlerClass);
     }
 
     @Override
     public void handleFeatureUpdateRequest(UUID featureId, Map<String, Object> update) {
         Feature feature = this.getFeatureById(featureId);
         Class<? extends FeatureUpdateHandler> handlerClass = feature.getUpdateRequestHandlerClass();
-        this.internalHandleUpdate(feature, update, handlerClass);
+        this.handleFeatureUpdate(feature, update, handlerClass);
+    }
+
+    @Override
+    public void handleFeatureUpdate(
+            Feature feature,
+            Map<String, Object> update,
+            Class<? extends FeatureUpdateHandler> updateHandlerClass
+    ) {
+        if (updateHandlerClass == null) {
+            return;
+        }
+
+        FeatureUpdateHandler handler = this.beanFactory.getBean(updateHandlerClass);
+        handler.handleUpdate(feature, update);
     }
 
     private Feature getFeatureById(UUID featureId) {
         return this.featureService.getFeatureById(featureId).orElseThrow();
-    }
-
-    private void internalHandleUpdate(Feature feature, Map<String, Object> update, Class<? extends FeatureUpdateHandler> handlerClass) {
-        if (handlerClass == null) {
-            return;
-        }
-
-        FeatureUpdateHandler handler = this.beanFactory.getBean(handlerClass);
-        handler.handleUpdate(feature, update);
     }
 
 }

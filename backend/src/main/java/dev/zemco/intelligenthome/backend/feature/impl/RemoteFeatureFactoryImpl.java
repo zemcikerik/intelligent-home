@@ -12,6 +12,7 @@ public class RemoteFeatureFactoryImpl implements RemoteFeatureFactory {
 
     private final FeatureStateFactory featureStateFactory;
     private final FeatureUpdateHandlerClassProvider featureUpdateHandlerClassProvider;
+    private final FeatureUpdateService featureUpdateService;
 
     @Override
     public RemoteFeature createRemoteFeature(FeatureDto featureDto, String sessionId) {
@@ -29,7 +30,10 @@ public class RemoteFeatureFactoryImpl implements RemoteFeatureFactory {
                 sessionId
         );
 
-        // TODO: handle original state
+        if (featureDto.getState() != null) {
+            this.featureUpdateService.handleFeatureUpdate(feature, featureDto.getState(), updateHandler);
+        }
+
         return feature;
     }
 

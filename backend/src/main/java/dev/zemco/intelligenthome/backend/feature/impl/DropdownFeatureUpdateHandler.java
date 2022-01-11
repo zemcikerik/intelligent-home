@@ -7,6 +7,7 @@ import dev.zemco.intelligenthome.backend.feature.state.DropdownFeatureState;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -18,7 +19,15 @@ public class DropdownFeatureUpdateHandler implements FeatureUpdateHandler {
     @Override
     public void handleUpdate(Feature feature, Map<String, Object> update) {
         DropdownFeatureState state = (DropdownFeatureState) feature.getState();
+
+        @SuppressWarnings("unchecked")
+        List<String> choices = (List<String>) update.get("choices");
         state.setSelected((String) update.get("selected"));
+
+        if (choices != null) {
+            state.setChoices(choices);
+        }
+
         this.featureService.updateFeature(feature);
     }
 
