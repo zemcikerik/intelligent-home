@@ -30,6 +30,7 @@ import { FormsModule } from '@angular/forms';
   declarations: [
     AppComponent,
     Components.BooleanFeatureComponent,
+    Components.ButtonFeatureComponent,
     Components.DeviceComponent,
     Components.DeviceListComponent,
     Components.DropdownFeatureComponent,

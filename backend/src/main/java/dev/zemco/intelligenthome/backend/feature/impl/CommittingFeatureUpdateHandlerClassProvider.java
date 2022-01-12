@@ -12,6 +12,7 @@ public class CommittingFeatureUpdateHandlerClassProvider implements FeatureUpdat
     public Class<? extends FeatureUpdateHandler> getFeatureUpdateHandlerClass(FeatureType type) {
         return switch (type) {
             case BOOLEAN -> BooleanFeatureUpdateHandler.class;
+            case BUTTON -> IgnoreFeatureUpdateHandler.class;
             case DROPDOWN -> DropdownFeatureUpdateHandler.class;
             case INTEGER -> IntegerFeatureUpdateHandler.class;
 

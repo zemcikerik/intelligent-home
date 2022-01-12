@@ -1,4 +1,5 @@
 export * from './boolean-feature/boolean-feature.component';
+export * from './button-feature/button-feature.component';
 export * from './device/device.component';
 export * from './device-list/device-list.component';
 export * from './dropdown-feature/dropdown-feature.component';

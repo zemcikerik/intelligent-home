@@ -2,6 +2,7 @@
   <ng-container [ngSwitch]="type">
     <app-integer-feature *ngSwitchCase="'INTEGER'" [id]="id"></app-integer-feature>
     <app-boolean-feature *ngSwitchCase="'BOOLEAN'" [id]="id"></app-boolean-feature>
+    <app-button-feature *ngSwitchCase="'BUTTON'" [id]="id"></app-button-feature>
     <app-dropdown-feature *ngSwitchCase="'DROPDOWN'" [id]="id"></app-dropdown-feature>
   </ng-container>
 </ng-container>
