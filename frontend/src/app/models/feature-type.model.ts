@@ -3,5 +3,6 @@ export enum FeatureType {
   BOOLEAN = 'BOOLEAN',
   BUTTON = 'BUTTON',
   DROPDOWN = 'DROPDOWN',
-  TEXT = 'TEXT'
+  TEXT = 'TEXT',
+  STRING = 'STRING'
 }
