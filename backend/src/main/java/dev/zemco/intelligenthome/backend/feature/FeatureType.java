@@ -5,5 +5,6 @@ public enum FeatureType {
     BOOLEAN,
     BUTTON,
     DROPDOWN,
-    TEXT
+    TEXT,
+    RGB
 }

@@ -1,0 +1,4 @@
+<mat-form-field *ngIf="feature$ | async as feature" appearance="outline">
+    <mat-label>{{ feature.name }}</mat-label>
+    <input matInput type="color" [value]="getHexValue(feature.state)" (input)="setValue($event)" required>
+  </mat-form-field>
