@@ -16,6 +16,7 @@ public class CommittingFeatureUpdateHandlerClassProvider implements FeatureUpdat
             case DROPDOWN -> DropdownFeatureUpdateHandler.class;
             case INTEGER -> IntegerFeatureUpdateHandler.class;
             case TEXT -> TextFeatureUpdateHandler.class;
+            case STRING -> StringFeatureUpdateHandler.class;
 
             //noinspection UnnecessaryDefault
             default -> throw new IndexOutOfBoundsException();

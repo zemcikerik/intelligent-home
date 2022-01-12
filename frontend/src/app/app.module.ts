@@ -42,6 +42,7 @@ import { FormsModule } from '@angular/forms';
     Components.NavbarComponent,
     Components.IntegerFeatureComponent,
     Components.TextFeatureComponent,
+    Components.StringFeatureComponent,
     Pipes.KeysPipe,
   ],
   imports: [
