@@ -14,7 +14,7 @@ const materialModules: Type<any>[] = [
   MatInputModule,
   MatProgressBarModule,
   MatSelectModule,
-  MatSlideToggleModule
+  MatSlideToggleModule,
 ];
 
 @NgModule({

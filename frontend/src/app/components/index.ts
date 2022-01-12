@@ -11,5 +11,6 @@ export * from './loading-indicator/loading-indicator.component';
 export * from './navbar/navbar.component';
 export * from './integer-feature/integer-feature.component';
 export * from './text-feature/text-feature.component';
+export * from './string-feature/string-feature.component';
 export * from './rgb-feature/rgb-feature.component';
 

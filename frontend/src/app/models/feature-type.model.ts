@@ -4,5 +4,6 @@ export enum FeatureType {
   BUTTON = 'BUTTON',
   DROPDOWN = 'DROPDOWN',
   TEXT = 'TEXT',
+  STRING = 'STRING',
   RGB = 'RGB'
 }

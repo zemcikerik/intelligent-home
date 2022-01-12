@@ -19,6 +19,10 @@ export interface TextFeatureState extends BaseFeatureState {
   text: string;
 }
 
+export interface StringFeatureState extends BaseFeatureState {
+  text: string;
+}
+
 export interface RgbFeatureState extends BaseFeatureState {
   r: number;
   g: number;
@@ -30,4 +34,5 @@ export type FeatureState = IntegerFeatureState
   | ButtonFeatureState
   | DropdownFeatureState
   | TextFeatureState
+  | StringFeatureState
   | RgbFeatureState;

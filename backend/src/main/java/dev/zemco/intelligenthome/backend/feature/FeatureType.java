@@ -6,5 +6,6 @@ public enum FeatureType {
     BUTTON,
     DROPDOWN,
     TEXT,
+    STRING,
     RGB
 }

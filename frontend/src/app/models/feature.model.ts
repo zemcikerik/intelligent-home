@@ -6,6 +6,7 @@ import {
   FeatureState,
   IntegerFeatureState,
   TextFeatureState,
+  StringFeatureState,
   RgbFeatureState
 } from './feature-state.model';
 
@@ -42,9 +43,14 @@ export interface TextFeature extends BaseFeature {
   state: TextFeatureState;
 }
 
+export interface StringFeature extends BaseFeature {
+  type: FeatureType.STRING;
+  state: StringFeatureState;
+}
+
 export interface RgbFeature extends BaseFeature {
   type: FeatureType.RGB;
   state: RgbFeatureState;
 }
 
-export type Feature = IntegerFeature | BooleanFeature | ButtonFeature | DropdownFeature | TextFeature | RgbFeature;
+export type Feature = IntegerFeature | BooleanFeature | ButtonFeature | DropdownFeature | TextFeature | StringFeature | RgbFeature;
