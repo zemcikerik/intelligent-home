@@ -15,4 +15,12 @@ export interface DropdownFeatureState extends BaseFeatureState {
   selected: string;
 }
 
-export type FeatureState = IntegerFeatureState | BooleanFeatureState | ButtonFeatureState | DropdownFeatureState;
+export interface TextFeatureState extends BaseFeatureState {
+  text: string;
+}
+
+export type FeatureState = IntegerFeatureState
+  | BooleanFeatureState
+  | ButtonFeatureState
+  | DropdownFeatureState
+  | TextFeatureState;

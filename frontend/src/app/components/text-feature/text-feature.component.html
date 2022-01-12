@@ -1,0 +1,3 @@
+<ng-container *ngIf="feature$ | async as feature">
+  <span>{{ feature.name }}</span>: <span>{{ feature.state.text }}</span>
+</ng-container>

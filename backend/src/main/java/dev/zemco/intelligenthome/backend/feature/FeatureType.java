@@ -4,5 +4,6 @@ public enum FeatureType {
     INTEGER,
     BOOLEAN,
     BUTTON,
-    DROPDOWN
+    DROPDOWN,
+    TEXT
 }

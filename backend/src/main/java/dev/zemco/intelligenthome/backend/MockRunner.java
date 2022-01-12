@@ -8,6 +8,7 @@ import dev.zemco.intelligenthome.backend.feature.impl.MockFeature;
 import dev.zemco.intelligenthome.backend.feature.state.DropdownFeatureState;
 import dev.zemco.intelligenthome.backend.feature.state.FeatureState;
 import dev.zemco.intelligenthome.backend.feature.state.FeatureStateFactory;
+import dev.zemco.intelligenthome.backend.feature.state.TextFeatureState;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -75,6 +76,9 @@ public class MockRunner implements CommandLineRunner {
             DropdownFeatureState dropdownState = (DropdownFeatureState) state;
             dropdownState.setChoices(List.of("First", "Second", "Third"));
             dropdownState.setSelected("First");
+        } else if (type == FeatureType.TEXT) {
+            TextFeatureState textState = (TextFeatureState) state;
+            textState.setText("Hello, World!");
         }
 
         Feature feature = new MockFeature(id, deviceId, "Test Feature", type, state, updateHandler);

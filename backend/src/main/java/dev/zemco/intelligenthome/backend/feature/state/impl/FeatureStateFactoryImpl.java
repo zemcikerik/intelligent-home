@@ -15,6 +15,7 @@ public class FeatureStateFactoryImpl implements FeatureStateFactory {
             case BOOLEAN -> new BooleanFeatureStateImpl();
             case BUTTON -> new ButtonFeatureStateImpl();
             case DROPDOWN -> new DropdownFeatureStateImpl();
+            case TEXT -> new TextFeatureStateImpl();
 
             //noinspection UnnecessaryDefault
             default -> throw new IndexOutOfBoundsException();
