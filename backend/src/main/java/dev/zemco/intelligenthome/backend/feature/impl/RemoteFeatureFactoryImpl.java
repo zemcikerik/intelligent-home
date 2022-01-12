@@ -23,6 +23,7 @@ public class RemoteFeatureFactoryImpl implements RemoteFeatureFactory {
         Class<? extends FeatureUpdateHandler> handlerClass = switch (featureDto.getType()) {
             case BOOLEAN -> BooleanFeatureUpdateHandler.class;
             case DROPDOWN -> DropdownFeatureUpdateHandler.class;
+            case TEXT -> TextFeatureUpdateHandler.class;
             default -> throw new IndexOutOfBoundsException();
         };
 

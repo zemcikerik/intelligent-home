@@ -14,6 +14,7 @@ public class FeatureStateFactoryImpl implements FeatureStateFactory {
             case INTEGER -> new IntegerFeatureStateImpl();
             case BOOLEAN -> new BooleanFeatureStateImpl();
             case DROPDOWN -> new DropdownFeatureStateImpl();
+            case TEXT -> new TextFeatureStateImpl();
         };
     }
 

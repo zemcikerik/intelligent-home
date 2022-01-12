@@ -7,11 +7,13 @@ import dev.zemco.intelligenthome.backend.feature.*;
 import dev.zemco.intelligenthome.backend.feature.impl.BooleanFeatureUpdateHandler;
 import dev.zemco.intelligenthome.backend.feature.impl.DropdownFeatureUpdateHandler;
 import dev.zemco.intelligenthome.backend.feature.impl.MockFeature;
+import dev.zemco.intelligenthome.backend.feature.impl.TextFeatureUpdateHandler;
 import dev.zemco.intelligenthome.backend.feature.state.DropdownFeatureState;
 import dev.zemco.intelligenthome.backend.feature.state.impl.BooleanFeatureStateImpl;
 import dev.zemco.intelligenthome.backend.feature.state.FeatureState;
 import dev.zemco.intelligenthome.backend.feature.state.impl.DropdownFeatureStateImpl;
 import dev.zemco.intelligenthome.backend.feature.state.impl.IntegerFeatureStateImpl;
+import dev.zemco.intelligenthome.backend.feature.state.impl.TextFeatureStateImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -74,6 +76,7 @@ public class MockRunner implements CommandLineRunner {
             case BOOLEAN -> this.createMockBooleanFeature(deviceId);
             case DROPDOWN -> this.createMockDropdownFeature(deviceId);
             case INTEGER -> this.createMockIntegerFeature(deviceId);
+            case TEXT -> this.createMockTextFeature(deviceId);
             default -> throw new IndexOutOfBoundsException();
         };
     }
@@ -91,6 +94,10 @@ public class MockRunner implements CommandLineRunner {
 
     private Feature createMockIntegerFeature(UUID deviceId) {
         return this.createMockFeature(deviceId, FeatureType.INTEGER, new IntegerFeatureStateImpl(), null);
+    }
+
+    private Feature createMockTextFeature(UUID deviceId) {
+        return this.createMockFeature(deviceId, FeatureType.TEXT, new TextFeatureStateImpl(), TextFeatureUpdateHandler.class);
     }
 
     private Feature createMockFeature(UUID deviceId, FeatureType type, FeatureState state, Class<? extends FeatureUpdateHandler> handlerClass) {
