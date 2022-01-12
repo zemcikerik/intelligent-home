@@ -24,7 +24,6 @@ public class FeatureController {
 
     @MessageMapping("/device/feature/register")
     public void registerFeature(@Payload FeatureDto featureDto) {
-        // TODO: refactor this to service?
         RemoteFeature feature = this.remoteFeatureFactory.createRemoteFeature(featureDto);
         this.featureService.registerFeature(feature);
     }

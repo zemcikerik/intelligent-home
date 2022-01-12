@@ -13,35 +13,30 @@ import java.util.*;
 public class FeatureServiceImpl implements FeatureService {
 
     private final FeatureBroadcastService featureBroadcastService;
-    private final Map<UUID, List<Feature>> deviceIdToFeatures = new HashMap<>();
-    private final Map<Feature, UUID> featureToDeviceId = new HashMap<>();
-    private final Map<UUID, Feature> featureIdToFeature = new HashMap<>();
+    private final List<Feature> features = Collections.synchronizedList(new ArrayList<>());
 
     @Override
     public Optional<Feature> getFeatureById(UUID id) {
-        return Optional.ofNullable(this.featureIdToFeature.get(id));
+        return this.features.stream()
+                .filter(feature -> feature.getId().equals(id))
+                .findAny();
     }
 
     @Override
     public List<Feature> getAllFeatures() {
-        // TODO: should we also store all features in single list?
-        return this.featureIdToFeature.values().stream().toList();
+        return List.copyOf(this.features);
     }
 
     @Override
     public List<Feature> getFeaturesForDevice(UUID deviceId) {
-        return List.copyOf(this.deviceIdToFeatures.get(deviceId));
+        return this.features.stream()
+                .filter(feature -> feature.getDeviceId().equals(deviceId))
+                .toList();
     }
 
     @Override
     public void registerFeature(Feature feature) {
-        UUID deviceId = feature.getDeviceId();
-
-        List<Feature> features = this.deviceIdToFeatures.computeIfAbsent(deviceId, ignored -> new ArrayList<>());
-        features.add(feature);
-
-        this.featureToDeviceId.put(feature, deviceId);
-        this.featureIdToFeature.put(feature.getId(), feature);
+        this.features.add(feature);
         this.featureBroadcastService.broadcastFeatureAddition(feature);
     }
 
@@ -52,16 +47,7 @@ public class FeatureServiceImpl implements FeatureService {
 
     @Override
     public void unregisterFeature(Feature feature) {
-        UUID deviceId = this.featureToDeviceId.remove(feature);
-        this.featureIdToFeature.remove(feature.getId());
-
-        List<Feature> features = this.deviceIdToFeatures.get(deviceId);
-        features.remove(feature);
-
-        if (features.size() == 0) {
-            this.deviceIdToFeatures.remove(deviceId);
-        }
-
+        this.features.add(feature);
         this.featureBroadcastService.broadcastFeatureRemoval(feature);
     }
 

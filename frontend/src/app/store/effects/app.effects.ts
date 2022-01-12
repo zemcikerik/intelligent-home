@@ -30,7 +30,6 @@ export class AppEffects {
     )
   );
 
-  // TODO: this logic needs refactoring after we figure out sending messages to specific client
   establishConnection$ = createEffect(() =>
     this.action$.pipe(
       ofType(appEstablishConnection),
