@@ -16,7 +16,8 @@
       },
       "extends": [
         "plugin:@angular-eslint/recommended",
-        "plugin:@angular-eslint/template/process-inline-templates"
+        "plugin:@angular-eslint/template/process-inline-templates",
+        "plugin:ngrx/recommended"
       ],
       "rules": {
         "@angular-eslint/directive-selector": [
@@ -34,8 +35,14 @@
             "prefix": "app",
             "style": "kebab-case"
           }
-        ]
-      }
+        ],
+        "ngrx/prefer-effect-callback-in-block-statement": "off",
+        "ngrx/no-typed-global-store": "off",
+        "ngrx/use-consistent-global-store-name": ["warn", "store$"]
+      },
+      "plugins": [
+        "ngrx"
+      ]
     },
     {
       "files": [

@@ -1,0 +1,20 @@
+.container {
+  padding: 0 128px;
+}
+
+h2 {
+  font-size: 48px;
+  line-height: 56px;
+  color: rgba(0, 0, 0, 0.8);
+  margin-bottom: 64px;
+
+  // simulating header (search + user)
+  margin-top: 164px;
+}
+
+.devices {
+  display: grid;
+  grid-auto-flow: row;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
