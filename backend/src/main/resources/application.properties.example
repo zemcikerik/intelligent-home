@@ -1,0 +1,3 @@
+jwt.issuer=IntelligentHome
+jwt.authorities-claim-name=authorities
+jwt.expiration.hours=48

@@ -1,5 +1,7 @@
 package dev.zemco.intelligenthome.backend.auth;
 
+import dev.zemco.intelligenthome.backend.auth.dto.UserCreationDto;
+
 import java.util.List;
 import java.util.Optional;
 

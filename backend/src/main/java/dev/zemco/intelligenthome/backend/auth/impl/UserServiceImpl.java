@@ -1,7 +1,7 @@
 package dev.zemco.intelligenthome.backend.auth.impl;
 
 import dev.zemco.intelligenthome.backend.auth.User;
-import dev.zemco.intelligenthome.backend.auth.UserCreationDto;
+import dev.zemco.intelligenthome.backend.auth.dto.UserCreationDto;
 import dev.zemco.intelligenthome.backend.auth.UserRepository;
 import dev.zemco.intelligenthome.backend.auth.UserService;
 import dev.zemco.intelligenthome.backend.auth.exception.UserAlreadyExistsException;

@@ -1,16 +1,21 @@
 package dev.zemco.intelligenthome.backend.auth.impl;
 
 import dev.zemco.intelligenthome.backend.auth.User;
+import dev.zemco.intelligenthome.backend.auth.WrappingUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
 @RequiredArgsConstructor
-public class UserDetailsImpl implements UserDetails {
+public class WrappingUserDetailsImpl implements WrappingUserDetails {
 
     private final User user;
+
+    @Override
+    public User getUser() {
+        return this.user;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

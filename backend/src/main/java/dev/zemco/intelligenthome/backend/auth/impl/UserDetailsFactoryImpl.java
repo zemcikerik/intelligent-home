@@ -10,7 +10,7 @@ public class UserDetailsFactoryImpl implements UserDetailsFactory {
 
     @Override
     public UserDetails createUserDetails(User user) {
-        return new UserDetailsImpl(user);
+        return new WrappingUserDetailsImpl(user);
     }
 
 }

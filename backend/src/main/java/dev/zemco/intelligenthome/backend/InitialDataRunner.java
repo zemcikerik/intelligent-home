@@ -1,7 +1,7 @@
 package dev.zemco.intelligenthome.backend;
 
 import dev.zemco.intelligenthome.backend.auth.Role;
-import dev.zemco.intelligenthome.backend.auth.UserCreationDto;
+import dev.zemco.intelligenthome.backend.auth.dto.UserCreationDto;
 import dev.zemco.intelligenthome.backend.auth.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
