@@ -6,6 +6,7 @@ import { from, of } from 'rxjs';
 import * as Actions from '../actions';
 
 const CONNECT_ERROR = 'There was an error establishing connection to the server!';
+const LOAD_ERROR = 'There was an error obtaining initial state from server!';
 
 @Injectable()
 export class AppEffects {
@@ -39,7 +40,7 @@ export class AppEffects {
             Actions.loadFeatures({ features }),
             Actions.appLoadSuccess(),
           ])),
-          catchError(() => of(Actions.appLoadFailure({ error: '' })))
+          catchError(() => of(Actions.appLoadFailure({ error: LOAD_ERROR })))
         )
       )
     )
