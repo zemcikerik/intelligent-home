@@ -1,49 +1,53 @@
 import { Injectable } from '@angular/core';
-import { Actions, createEffect, ofType, ROOT_EFFECTS_INIT } from '@ngrx/effects';
+import { Actions as NgrxActions, createEffect, ofType, ROOT_EFFECTS_INIT } from '@ngrx/effects';
 import { catchError, map, mergeMap, switchMap } from 'rxjs/operators';
-import {
-  appEstablishConnection,
-  appLoadingFailure,
-  appLoadingSuccess,
-  loadDevicesSuccess,
-  loadFeaturesSuccess
-} from '../actions';
 import { InitialStateService, ServerConnectionService } from '../../services';
 import { from, of } from 'rxjs';
+import * as Actions from '../actions';
+
+const CONNECT_ERROR = 'There was an error establishing connection to the server!';
+const LOAD_ERROR = 'There was an error obtaining initial state from server!';
 
 @Injectable()
 export class AppEffects {
 
-  init$ = createEffect(() =>
+  auth$ = createEffect(() =>
     this.action$.pipe(
       ofType(ROOT_EFFECTS_INIT),
+      map(() => Actions.appAuthSuccess())
+    )
+  );
+
+  connect$ = createEffect(() =>
+    this.action$.pipe(
+      ofType(Actions.appAuthSuccess),
       mergeMap(() =>
-        this.initialStateService.getInitialState().pipe(
-          switchMap(({ devices, features }) => from([
-            appEstablishConnection(),
-            loadDevicesSuccess({ devices }),
-            loadFeaturesSuccess({ features })
-          ])),
-          catchError(() => of(appLoadingFailure({ error: 'There was an error obtaining initial state from server!' })))
+        this.serverConnectionService.connect().pipe(
+          map(() => Actions.appConnectSuccess()),
+          catchError(() => of(Actions.appConnectFailure({ error: CONNECT_ERROR })))
         )
       )
     )
   );
 
-  establishConnection$ = createEffect(() =>
+  load$ = createEffect(() =>
     this.action$.pipe(
-      ofType(appEstablishConnection),
+      ofType(Actions.appConnectSuccess),
       mergeMap(() =>
-        this.serverConnectionService.connect().pipe(
-          map(() => appLoadingSuccess()),
-          catchError(() => of(appLoadingFailure({ error: 'There was an error establishing connection to the server!' })))
+        this.initialStateService.getInitialState().pipe(
+          switchMap(({ devices, features }) => from([
+            Actions.loadDevices({ devices }),
+            Actions.loadFeatures({ features }),
+            Actions.appLoadSuccess(),
+          ])),
+          catchError(() => of(Actions.appLoadFailure({ error: LOAD_ERROR })))
         )
       )
     )
   );
 
   constructor(
-    private action$: Actions,
+    private action$: NgrxActions,
     private initialStateService: InitialStateService,
     private serverConnectionService: ServerConnectionService
   ) { }

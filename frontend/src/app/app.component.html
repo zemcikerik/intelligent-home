@@ -3,7 +3,7 @@
 <ng-template #loaded>
   <app-error-message *ngIf="error$ | async as error; else success" [message]="error"></app-error-message>
 
-  <ng-template #success>
-    <app-home></app-home>
+  <ng-template #success [ngSwitch]="phase$ | async">
+    <router-outlet *ngSwitchDefault></router-outlet>
   </ng-template>
 </ng-template>
