@@ -25,7 +25,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material.module';
 import { PRODUCTION_TOKEN } from './production.token';
 import { HttpClientModule } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -40,6 +40,7 @@ import { FormsModule } from '@angular/forms';
     Components.FeatureListComponent,
     Components.HomeComponent,
     Components.LoadingIndicatorComponent,
+    Components.LoginComponent,
     Components.NavbarComponent,
     Components.IntegerFeatureComponent,
     Components.TextFeatureComponent,
@@ -64,16 +65,19 @@ import { FormsModule } from '@angular/forms';
     BrowserAnimationsModule,
     MaterialModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule,
   ],
   providers: [
     AppFacade,
     DeviceFacade,
     FeatureFacade,
+    Services.AuthService,
     Services.DeviceService,
     Services.FeatureService,
     Services.InitialStateService,
     Services.ServerConnectionService,
+    Services.TokenStorageService,
     { provide: Services.SERVER_URL_TOKEN, useValue: environment.serverUrl },
     { provide: Services.WS_SERVER_URL_TOKEN, useValue: environment.wsServerUrl },
     { provide: PRODUCTION_TOKEN, useValue: environment.production }

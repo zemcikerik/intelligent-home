@@ -4,6 +4,7 @@
   <app-error-message *ngIf="error$ | async as error; else success" [message]="error"></app-error-message>
 
   <ng-template #success [ngSwitch]="phase$ | async">
+    <app-login *ngSwitchCase="'LOGIN'"></app-login>
     <router-outlet *ngSwitchDefault></router-outlet>
   </ng-template>
 </ng-template>

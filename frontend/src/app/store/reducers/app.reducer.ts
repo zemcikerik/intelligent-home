@@ -23,6 +23,7 @@ export const initialAppState: AppState = {
 export const appReducer = createReducer(
   initialAppState,
   on(AppActions.appAuthSuccess, (state): AppState => ({ ...state, phase: AppPhase.CONNECT, loading: true })),
+  on(AppActions.appAuthFailure, (state): AppState => ({ ...state, phase: AppPhase.LOGIN, loading: false })),
   on(AppActions.appConnectSuccess, (state): AppState => ({ ...state, phase: AppPhase.LOAD })),
   on(AppActions.appConnectFailure, (state, { error }): AppState => ({ ...state, loading: false, error })),
   on(AppActions.appLoadSuccess, (state): AppState => ({ ...state, phase: AppPhase.READY, loading: false })),

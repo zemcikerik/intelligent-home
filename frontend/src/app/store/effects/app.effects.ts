@@ -14,7 +14,7 @@ export class AppEffects {
   auth$ = createEffect(() =>
     this.action$.pipe(
       ofType(ROOT_EFFECTS_INIT),
-      map(() => Actions.appAuthSuccess())
+      map(() => Actions.appAuthFailure())
     )
   );
 
