@@ -14,7 +14,7 @@
         <input matInput type="password" formControlName="password">
       </mat-form-field>
 
-      <button mat-stroked-button type="submit" [disabled]="!submittable">Login</button>
+      <button mat-stroked-button type="submit" [disabled]="!loginForm.valid || (loading$ | async)">Login</button>
     </form>
   </div>
 </div>

@@ -15,17 +15,26 @@ import {
   AppEffects,
   AppFacade,
   appReducer,
-  DEVICE_STATE_KEY, DeviceEffects,
+  DEVICE_STATE_KEY,
+  DeviceEffects,
   DeviceFacade,
-  deviceReducer, FEATURE_STATE_KEY, FeatureEffects, FeatureFacade, featureReducer
+  deviceReducer,
+  FEATURE_STATE_KEY,
+  FeatureEffects,
+  FeatureFacade,
+  featureReducer,
+  LOGIN_STATE_KEY, LoginEffects,
+  LoginFacade,
+  loginReducer
 } from './store';
 
 import { environment } from '../environments/environment';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material.module';
 import { PRODUCTION_TOKEN } from './production.token';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -53,7 +62,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     StoreModule.forRoot({
       [APP_STATE_KEY]: appReducer,
       [DEVICE_STATE_KEY]: deviceReducer,
-      [FEATURE_STATE_KEY]: featureReducer
+      [FEATURE_STATE_KEY]: featureReducer,
+      [LOGIN_STATE_KEY]: loginReducer,
     }, {
       runtimeChecks: {
         strictActionImmutability: true,
@@ -61,7 +71,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
       }
     }),
     !environment.production ? StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }) : [],
-    EffectsModule.forRoot([AppEffects, DeviceEffects, FeatureEffects]),
+    EffectsModule.forRoot([AppEffects, DeviceEffects, FeatureEffects, LoginEffects]),
     BrowserAnimationsModule,
     MaterialModule,
     HttpClientModule,
@@ -72,6 +82,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     AppFacade,
     DeviceFacade,
     FeatureFacade,
+    LoginFacade,
     Services.AuthService,
     Services.DeviceService,
     Services.FeatureService,
@@ -80,7 +91,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     Services.TokenStorageService,
     { provide: Services.SERVER_URL_TOKEN, useValue: environment.serverUrl },
     { provide: Services.WS_SERVER_URL_TOKEN, useValue: environment.wsServerUrl },
-    { provide: PRODUCTION_TOKEN, useValue: environment.production }
+    { provide: PRODUCTION_TOKEN, useValue: environment.production },
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
   ],
   bootstrap: [AppComponent]
 })
