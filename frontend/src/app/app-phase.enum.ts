@@ -1,6 +1,6 @@
 export enum AppPhase {
-  AUTH,
-  CONNECT,
-  LOAD,
-  READY
+  AUTH = 'AUTH',
+  CONNECT = 'CONNECT',
+  LOAD = 'LOAD',
+  READY = 'READY',
 }
