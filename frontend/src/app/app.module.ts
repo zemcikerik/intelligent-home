@@ -14,7 +14,7 @@ import {
   APP_STATE_KEY,
   AppEffects,
   AppFacade,
-  appReducer,
+  appReducer, AuthEffects,
   DEVICE_STATE_KEY,
   DeviceEffects,
   DeviceFacade,
@@ -71,7 +71,7 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
       }
     }),
     !environment.production ? StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }) : [],
-    EffectsModule.forRoot([AppEffects, DeviceEffects, FeatureEffects, LoginEffects]),
+    EffectsModule.forRoot([AppEffects, AuthEffects, DeviceEffects, FeatureEffects, LoginEffects]),
     BrowserAnimationsModule,
     MaterialModule,
     HttpClientModule,
