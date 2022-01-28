@@ -20,7 +20,6 @@ export class AuthInterceptor implements HttpInterceptor {
       catchError((err: HttpErrorResponse) => {
         if (token !== null && err.status === 403) {
           this.tokenStorageService.eraseToken();
-          // TODO: maybe show global error?
         }
         throw err;
       })
