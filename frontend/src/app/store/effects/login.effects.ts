@@ -25,7 +25,8 @@ export class LoginEffects {
     this.action$.pipe(
       ofType(loginSuccess),
       tap(({ token })  => this.tokenStorageService.setToken(token)),
-      map(() => appAuthSuccess())
+      map(({ token }) => this.authService.parseToken(token)),
+      map(jwt => appAuthSuccess({ jwt }))
     )
   );
 

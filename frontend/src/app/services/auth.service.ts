@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { SERVER_URL_TOKEN } from './server-url.token';
 import { map } from 'rxjs/operators';
+import { Jwt } from '../models';
 
 @Injectable()
 export class AuthService {
@@ -25,6 +26,24 @@ export class AuthService {
         return header.substring('Bearer '.length);
       })
     );
+  }
+
+  isTokenValid(jwt: Jwt): boolean {
+    return (Date.now() / 1000) < jwt.expiresOn;
+  }
+
+  parseToken(token: string): Jwt {
+    const [, encodedPayload] = token.split('.');
+    const jsonPayload = atob(encodedPayload);
+    const payload = JSON.parse(jsonPayload);
+
+    return {
+      username: payload['sub'],
+      expiresOn: payload['exp'],
+      issuedBy: payload['iss'],
+      authorities: payload['authorities'],
+      rawToken: token,
+    };
   }
 
 }
