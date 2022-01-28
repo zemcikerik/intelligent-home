@@ -1,14 +1,13 @@
 package dev.zemco.intelligenthome.backend.auth.impl;
 
+import dev.zemco.intelligenthome.backend.auth.JwtKeyService;
 import dev.zemco.intelligenthome.backend.auth.JwtService;
 import dev.zemco.intelligenthome.backend.auth.User;
+import dev.zemco.intelligenthome.backend.auth.config.JwtProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,7 +15,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
-import java.security.Key;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -28,35 +26,26 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class JwtServiceImpl implements JwtService {
 
-    @Value("${jwt.issuer}")
-    private String issuer;
-
-    @Value("${jwt.authorities-claim-name}")
-    private String authoritiesName;
-
-    @Value("${jwt.expiration.hours}")
-    private int expirationHours;
-
-    // TODO: non-random signing key
-    private final Key signingKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private final JwtProperties jwtProperties;
+    private final JwtKeyService jwtKeyService;
     private final UserDetailsService userDetailsService;
 
     @Override
     public String createJwtForUser(User user) {
         return Jwts.builder()
-                .signWith(this.signingKey)
-                .setIssuer(this.issuer)
+                .signWith(this.jwtKeyService.getSigningKey())
+                .setIssuer(this.jwtProperties.getIssuer())
                 .setSubject(user.getUsername())
                 .setExpiration(this.createExpirationDate())
-                .claim(this.authoritiesName, this.getClaimAuthorities(user))
+                .claim(this.jwtProperties.getClaimNames().getAuthorities(), this.getClaimAuthorities(user))
                 .compact();
     }
 
     @Override
     public Authentication createAuthentication(String jwt) {
         Jws<Claims> jws = Jwts.parserBuilder()
-                .setSigningKey(this.signingKey)
-                .requireIssuer(this.issuer)
+                .setSigningKey(this.jwtKeyService.getSigningKey())
+                .requireIssuer(this.jwtProperties.getIssuer())
                 .build()
                 .parseClaimsJws(jwt);
 
@@ -74,7 +63,7 @@ public class JwtServiceImpl implements JwtService {
     }
 
     private Date createExpirationDate() {
-        LocalDateTime time = LocalDateTime.now().plusHours(this.expirationHours);
+        LocalDateTime time = LocalDateTime.now().plusHours(this.jwtProperties.getExpirationHours());
         Instant instant = time.atZone(ZoneId.systemDefault()).toInstant();
         return Date.from(instant);
     }

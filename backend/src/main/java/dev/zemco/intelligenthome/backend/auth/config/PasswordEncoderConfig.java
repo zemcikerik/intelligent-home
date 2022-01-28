@@ -1,4 +1,4 @@
-package dev.zemco.intelligenthome.backend.auth;
+package dev.zemco.intelligenthome.backend.auth.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

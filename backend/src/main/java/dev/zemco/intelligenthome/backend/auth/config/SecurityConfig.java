@@ -1,5 +1,6 @@
-package dev.zemco.intelligenthome.backend.auth;
+package dev.zemco.intelligenthome.backend.auth.config;
 
+import dev.zemco.intelligenthome.backend.auth.JwtTokenFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
