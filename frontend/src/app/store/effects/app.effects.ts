@@ -5,8 +5,8 @@ import {
   appEstablishConnection,
   appLoadingFailure,
   appLoadingSuccess,
-  loadDevicesSuccess,
-  loadFeaturesSuccess
+  loadDevices,
+  loadFeatures
 } from '../actions';
 import { InitialStateService, ServerConnectionService } from '../../services';
 import { from, of } from 'rxjs';
@@ -21,8 +21,8 @@ export class AppEffects {
         this.initialStateService.getInitialState().pipe(
           switchMap(({ devices, features }) => from([
             appEstablishConnection(),
-            loadDevicesSuccess({ devices }),
-            loadFeaturesSuccess({ features })
+            loadDevices({ devices }),
+            loadFeatures({ features })
           ])),
           catchError(() => of(appLoadingFailure({ error: 'There was an error obtaining initial state from server!' })))
         )
