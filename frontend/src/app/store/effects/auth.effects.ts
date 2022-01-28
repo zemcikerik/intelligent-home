@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType, ROOT_EFFECTS_INIT } from '@ngrx/effects';
-import { AuthService, TokenStorageService } from '../../services';
-import { map, tap } from 'rxjs/operators';
-import { appAuthFailure, appAuthSuccess } from '../actions';
+import { AuthService, ServerConnectionService, TokenStorageService } from '../../services';
+import { map, mergeMap, tap } from 'rxjs/operators';
+import { appAuthFailure, appAuthSuccess, appLogout } from '../actions';
 
 @Injectable()
 export class AuthEffects {
@@ -30,10 +30,19 @@ export class AuthEffects {
     ), { dispatch: false }
   );
 
+  logout$ = createEffect(() =>
+    this.action$.pipe(
+      ofType(appLogout),
+      tap(() => this.tokenStorageService.eraseToken()),
+      mergeMap(() => this.serverConnectionService.disconnect())
+    ), { dispatch: false }
+  )
+
   constructor(
     private action$: Actions,
     private authService: AuthService,
     private tokenStorageService: TokenStorageService,
+    private serverConnectionService: ServerConnectionService,
   ) { }
 
 }

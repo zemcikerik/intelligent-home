@@ -1,5 +1,5 @@
 import { Inject, Injectable, InjectionToken } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
+import { from, Observable, throwError } from 'rxjs';
 import { RxStomp, RxStompConfig } from '@stomp/rx-stomp';
 import { catchError, map, take, timeout } from 'rxjs/operators';
 import { PRODUCTION_TOKEN } from '../production.token';
@@ -39,6 +39,10 @@ export class ServerConnectionService {
         return throwError(err);
       })
     );
+  }
+
+  disconnect(): Observable<any> {
+    return from(this.stomp.deactivate());
   }
 
   send(destination: string, content: object): void {

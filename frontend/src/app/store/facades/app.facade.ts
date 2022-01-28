@@ -4,6 +4,7 @@ import { AppPartialState } from '../reducers';
 import { Observable } from 'rxjs';
 import { selectAppError, selectAppLoading, selectAppPhase } from '../selectors';
 import { AppPhase } from '../../app-phase.enum';
+import { appLogout } from '../actions';
 
 @Injectable()
 export class AppFacade {
@@ -18,6 +19,10 @@ export class AppFacade {
 
   isAppLoading(): Observable<boolean> {
     return this.store$.select(selectAppLoading);
+  }
+
+  logout(): void {
+    this.store$.dispatch(appLogout());
   }
 
   constructor(

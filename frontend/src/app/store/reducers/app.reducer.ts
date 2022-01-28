@@ -31,4 +31,5 @@ export const appReducer = createReducer(
   on(AppActions.appConnectFailure, (state, { error }): AppState => ({ ...state, loading: false, error })),
   on(AppActions.appLoadSuccess, (state): AppState => ({ ...state, phase: AppPhase.READY, loading: false })),
   on(AppActions.appLoadFailure, (state, { error }): AppState => ({ ...state, loading: false, error })),
+  on(AppActions.appLogout, (state): AppState => ({ ...state, phase: AppPhase.LOGIN, jwt: null })),
 );
