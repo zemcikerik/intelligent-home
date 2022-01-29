@@ -16,23 +16,23 @@ import javax.validation.constraints.NotNull;
 public class JwtProperties {
 
     @NotEmpty
-    private String issuer;
+    private String issuer = "IntelligentHome";
 
     @Min(1)
-    private int expirationHours;
+    private int expirationHours = 48;
 
     @NotNull
     private ClaimNames claimNames = new ClaimNames();
 
     @NotEmpty
-    private String signingKey;
+    private String signingKey = null;
 
     @Getter
     @Setter
     public static class ClaimNames {
 
         @NotEmpty
-        private String authorities;
+        private String authorities = "authorities";
 
     }
 
