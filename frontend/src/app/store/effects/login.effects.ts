@@ -5,6 +5,7 @@ import { appAuthSuccess, login, loginFailure, loginSuccess } from '../actions';
 import { catchError, map, mergeMap, tap } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
 import { of } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class LoginEffects {
@@ -30,10 +31,19 @@ export class LoginEffects {
     )
   );
 
+  // enforces that device list is displayed after login
+  redirectOnLogin$ = createEffect(() =>
+    this.action$.pipe(
+      ofType(loginSuccess),
+      mergeMap(() => this.router.navigateByUrl(''))
+    ), { dispatch: false }
+  );
+
   constructor(
     private action$: Actions,
     private authService: AuthService,
     private tokenStorageService: TokenStorageService,
+    private router: Router,
   ) { }
 
 }
