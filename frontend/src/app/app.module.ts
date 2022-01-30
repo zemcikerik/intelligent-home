@@ -43,6 +43,7 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     Components.ButtonFeatureComponent,
     Components.DeviceComponent,
     Components.DeviceListComponent,
+    Components.DeviceManagementComponent,
     Components.DropdownFeatureComponent,
     Components.ErrorMessageComponent,
     Components.FeatureComponent,
@@ -54,6 +55,7 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     Components.IntegerFeatureComponent,
     Components.TextFeatureComponent,
     Components.StringFeatureComponent,
+    Components.UserManagementComponent,
     Pipes.KeysPipe,
   ],
   imports: [
