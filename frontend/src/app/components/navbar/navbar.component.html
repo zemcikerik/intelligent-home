@@ -1,7 +1,14 @@
 <nav>
-  <mat-icon>home</mat-icon>
-  <mat-icon>dashboard</mat-icon>
-  <mat-icon>people</mat-icon>
+  <ng-container *ngFor="let entry of entries">
+    <mat-icon
+      *ngIf="hasAuthority(entry.authority) | async"
+      [matTooltip]="entry.name"
+      matTooltipPosition="right"
+      [routerLink]="entry.link"
+      routerLinkActive="active"
+    >{{ entry.icon }}</mat-icon>
+  </ng-container>
+
   <div class="spacer"></div>
-  <mat-icon (click)="logout()">logout</mat-icon>
+  <mat-icon matTooltip="Logout" matTooltipPosition="right" (click)="logout()">logout</mat-icon>
 </nav>
