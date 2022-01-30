@@ -1,0 +1,6 @@
+jwt.issuer=IntelligentHome
+jwt.expiration-hours=48
+jwt.claim-names.authorities=authorities
+
+# replace me before deployment
+jwt.signing-key=oODWArDwcU6CxzaVj2auel34lquRVI5DueCd5Jez1U4=

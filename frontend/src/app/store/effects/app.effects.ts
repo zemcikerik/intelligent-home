@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Actions as NgrxActions, createEffect, ofType, ROOT_EFFECTS_INIT } from '@ngrx/effects';
+import { Actions as NgrxActions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, mergeMap, switchMap } from 'rxjs/operators';
 import { InitialStateService, ServerConnectionService } from '../../services';
 import { from, of } from 'rxjs';
@@ -10,13 +10,6 @@ const LOAD_ERROR = 'There was an error obtaining initial state from server!';
 
 @Injectable()
 export class AppEffects {
-
-  auth$ = createEffect(() =>
-    this.action$.pipe(
-      ofType(ROOT_EFFECTS_INIT),
-      map(() => Actions.appAuthSuccess())
-    )
-  );
 
   connect$ = createEffect(() =>
     this.action$.pipe(

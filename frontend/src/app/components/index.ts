@@ -8,6 +8,7 @@ export * from './feature/feature.component';
 export * from './feature-list/feature-list.component';
 export * from './home/home.component';
 export * from './loading-indicator/loading-indicator.component';
+export * from './login/login.component';
 export * from './navbar/navbar.component';
 export * from './integer-feature/integer-feature.component';
 export * from './text-feature/text-feature.component';

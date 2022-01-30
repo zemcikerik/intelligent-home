@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AppFacade } from '../../store';
 
 @Component({
   selector: 'app-navbar',
@@ -6,4 +7,11 @@ import { Component } from '@angular/core';
   styleUrls: ['./navbar.component.scss']
 })
 export class NavbarComponent {
+
+  constructor(private appFacade: AppFacade) { }
+
+  logout(): void {
+    this.appFacade.logout();
+  }
+
 }
