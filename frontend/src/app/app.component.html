@@ -5,6 +5,6 @@
 
   <ng-template #success [ngSwitch]="phase$ | async">
     <app-login *ngSwitchCase="'LOGIN'"></app-login>
-    <router-outlet *ngSwitchDefault></router-outlet>
+    <app-home *ngSwitchCase="'READY'"></app-home>
   </ng-template>
 </ng-template>
