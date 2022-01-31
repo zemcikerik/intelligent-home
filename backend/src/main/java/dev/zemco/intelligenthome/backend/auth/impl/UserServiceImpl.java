@@ -4,7 +4,10 @@ import dev.zemco.intelligenthome.backend.auth.User;
 import dev.zemco.intelligenthome.backend.auth.dto.UserCreationDto;
 import dev.zemco.intelligenthome.backend.auth.UserRepository;
 import dev.zemco.intelligenthome.backend.auth.UserService;
+import dev.zemco.intelligenthome.backend.auth.dto.UserDto;
+import dev.zemco.intelligenthome.backend.auth.dto.UserUpdateDto;
 import dev.zemco.intelligenthome.backend.auth.exception.UserAlreadyExistsException;
+import dev.zemco.intelligenthome.backend.auth.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -32,13 +35,47 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void deleteUserById(long id) {
+        if (!this.userRepository.existsById(id)) {
+            throw new UserNotFoundException();
+        }
+
+        this.userRepository.deleteById(id);
+    }
+
+    @Override
     public List<User> getAllUsers() {
         return this.userRepository.findAll();
     }
 
     @Override
+    public List<UserDto> getAllUserDtos() {
+        List<User> users = this.getAllUsers();
+
+        return users.stream()
+                .map(this::mapToDto)
+                .toList();
+    }
+
+    @Override
     public Optional<User> getUserByUsername(String username) {
         return this.userRepository.findByUsername(username);
+    }
+
+    @Override
+    public User updateUserById(long id, UserUpdateDto userUpdateDto) {
+        User user = this.userRepository.findById(id)
+                .orElseThrow(UserNotFoundException::new);
+
+        if (userUpdateDto.getPassword() != null) {
+            user.setPassword(this.passwordEncoder.encode(userUpdateDto.getPassword()));
+        }
+
+        if (userUpdateDto.getRole() != null) {
+            user.setRole(userUpdateDto.getRole());
+        }
+
+        return this.userRepository.save(user);
     }
 
     private void throwIfUserWithUsernameExists(String username) {
@@ -47,6 +84,10 @@ public class UserServiceImpl implements UserService {
         if (foundUser.isPresent()) {
             throw new UserAlreadyExistsException(username);
         }
+    }
+
+    private UserDto mapToDto(User user) {
+        return new UserDto(user.getId(), user.getUsername(), user.getRole());
     }
 
 }
