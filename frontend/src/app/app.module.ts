@@ -91,6 +91,7 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     Services.InitialStateService,
     Services.ServerConnectionService,
     Services.TokenStorageService,
+    Services.UserService,
     { provide: Services.SERVER_URL_TOKEN, useValue: environment.serverUrl },
     { provide: Services.WS_SERVER_URL_TOKEN, useValue: environment.wsServerUrl },
     { provide: PRODUCTION_TOKEN, useValue: environment.production },
