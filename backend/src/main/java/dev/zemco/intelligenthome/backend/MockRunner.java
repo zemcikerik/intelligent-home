@@ -19,9 +19,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
-@Component
+//@Component
 @RequiredArgsConstructor
-@EnableScheduling
+//@EnableScheduling
 public class MockRunner implements CommandLineRunner {
 
     private final DeviceService deviceService;

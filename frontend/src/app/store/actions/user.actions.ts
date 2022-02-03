@@ -1,11 +1,11 @@
 import { createAction, props } from '@ngrx/store';
-import { UserCreationDto, UserDto, UserUpdateDto } from '../../dto';
+import { UserCreateDto, UserDto, UserUpdateDto } from '../../dto';
 
 export const loadUsers = createAction('[User] Load Users');
 export const loadUsersSuccess = createAction('[User] Load Users Success', props<{ users: UserDto[] }>());
 export const loadUsersFailure = createAction('[User] Load Users Failure', props<{ error: string }>());
 
-export const createUser = createAction('[User] Create User', props<{ userCreationDto: UserCreationDto }>());
+export const createUser = createAction('[User] Create User', props<{ userCreationDto: UserCreateDto }>());
 export const createUserSuccess = createAction('[User] Create User Success', props<{ user: UserDto }>());
 export const createUserFailure = createAction('[User] Create User Failure', props<{ error: string }>());
 

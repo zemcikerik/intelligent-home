@@ -1,10 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { UserDto, UserUpdateDto } from '../../dto';
+import { UserCreateDto, UserDto, UserUpdateDto } from '../../dto';
 import { UserFacade } from '../../store';
 import { MatDialog } from '@angular/material/dialog';
 import { UserEditDialogComponent } from '../user-edit-dialog/user-edit-dialog.component';
 import { filter, takeUntil, tap } from 'rxjs/operators';
+import { UserCreateDialogComponent } from '../user-create-dialog/user-create-dialog.component';
 
 @Component({
   selector: 'app-user-management',
@@ -25,6 +26,14 @@ export class UserManagementComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.userFacade.loadUsers();
+  }
+
+  createUser(): void {
+    this.matDialog.open(UserCreateDialogComponent).afterClosed().pipe(
+      takeUntil(this.unsubscribe$),
+      filter((data?: UserCreateDto) => !!data),
+      tap(data => this.userFacade.createUser(data!)),
+    ).subscribe();
   }
 
   editUser(user: UserDto): void {

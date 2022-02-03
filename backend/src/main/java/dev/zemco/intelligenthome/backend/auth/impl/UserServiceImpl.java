@@ -1,7 +1,7 @@
 package dev.zemco.intelligenthome.backend.auth.impl;
 
 import dev.zemco.intelligenthome.backend.auth.User;
-import dev.zemco.intelligenthome.backend.auth.dto.UserCreationDto;
+import dev.zemco.intelligenthome.backend.auth.dto.UserCreateDto;
 import dev.zemco.intelligenthome.backend.auth.UserRepository;
 import dev.zemco.intelligenthome.backend.auth.UserService;
 import dev.zemco.intelligenthome.backend.auth.dto.UserDto;
@@ -23,20 +23,20 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public User createUser(UserCreationDto userCreationDto) {
-        this.throwIfUserWithUsernameExists(userCreationDto.getUsername());
+    public User createUser(UserCreateDto userCreateDto) {
+        this.throwIfUserWithUsernameExists(userCreateDto.getUsername());
 
         User user = new User();
-        user.setUsername(userCreationDto.getUsername());
-        user.setPassword(this.passwordEncoder.encode(userCreationDto.getPassword()));
-        user.setRole(userCreationDto.getRole());
+        user.setUsername(userCreateDto.getUsername());
+        user.setPassword(this.passwordEncoder.encode(userCreateDto.getPassword()));
+        user.setRole(userCreateDto.getRole());
 
         return this.userRepository.save(user);
     }
 
     @Override
-    public UserDto createUserDto(UserCreationDto userCreationDto) {
-        User user = this.createUser(userCreationDto);
+    public UserDto createUserDto(UserCreateDto userCreateDto) {
+        User user = this.createUser(userCreateDto);
         return this.mapToDto(user);
     }
 

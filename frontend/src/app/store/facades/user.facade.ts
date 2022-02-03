@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { UserPartialState } from '../reducers';
 import { Observable } from 'rxjs';
-import { UserCreationDto, UserDto, UserUpdateDto } from '../../dto';
+import { UserCreateDto, UserDto, UserUpdateDto } from '../../dto';
 import { selectAreUsersLoading, selectUsers } from '../selectors';
 import { createUser, deleteUser, loadUsers, updateUser } from '../actions';
 
@@ -17,7 +17,7 @@ export class UserFacade {
     return this.store$.select(selectAreUsersLoading);
   }
 
-  createUser(userCreationDto: UserCreationDto): void {
+  createUser(userCreationDto: UserCreateDto): void {
     this.store$.dispatch(createUser({ userCreationDto }));
   }
 

@@ -55,6 +55,7 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     Components.IntegerFeatureComponent,
     Components.TextFeatureComponent,
     Components.StringFeatureComponent,
+    Components.UserCreateDialogComponent,
     Components.UserEditDialogComponent,
     Components.UserEntryComponent,
     Components.UserManagementComponent,

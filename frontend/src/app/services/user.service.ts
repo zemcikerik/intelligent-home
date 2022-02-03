@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { SERVER_URL_TOKEN } from './server-url.token';
 import { Observable } from 'rxjs';
-import { UserCreationDto, UserDto, UserUpdateDto } from '../dto';
+import { UserCreateDto, UserDto, UserUpdateDto } from '../dto';
 
 @Injectable()
 export class UserService {
@@ -16,7 +16,7 @@ export class UserService {
     return this.httpClient.get<UserDto[]>(`${this.serverUrl}/user`);
   }
 
-  createUser(userCreationDto: UserCreationDto): Observable<UserDto> {
+  createUser(userCreationDto: UserCreateDto): Observable<UserDto> {
     return this.httpClient.post<UserDto>(`${this.serverUrl}/user`, userCreationDto);
   }
 

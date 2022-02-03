@@ -1,6 +1,6 @@
 package dev.zemco.intelligenthome.backend.auth;
 
-import dev.zemco.intelligenthome.backend.auth.dto.UserCreationDto;
+import dev.zemco.intelligenthome.backend.auth.dto.UserCreateDto;
 import dev.zemco.intelligenthome.backend.auth.dto.UserDto;
 import dev.zemco.intelligenthome.backend.auth.dto.UserUpdateDto;
 import dev.zemco.intelligenthome.backend.auth.exception.UserAlreadyExistsException;
@@ -29,9 +29,9 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserDto> createUser(@RequestBody @NotNull @Valid UserCreationDto userCreationDto) {
+    public ResponseEntity<UserDto> createUser(@RequestBody @NotNull @Valid UserCreateDto userCreateDto) {
         try {
-            UserDto user = this.userService.createUserDto(userCreationDto);
+            UserDto user = this.userService.createUserDto(userCreateDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(user);
         } catch (UserAlreadyExistsException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
