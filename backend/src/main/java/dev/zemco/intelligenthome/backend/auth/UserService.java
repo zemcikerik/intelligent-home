@@ -9,9 +9,11 @@ import java.util.Optional;
 
 public interface UserService {
     User createUser(UserCreationDto userCreationDto);
+    UserDto createUserDto(UserCreationDto userCreationDto);
     void deleteUserById(long id);
     List<User> getAllUsers();
     List<UserDto> getAllUserDtos();
     Optional<User> getUserByUsername(String username);
     User updateUserById(long id, UserUpdateDto userUpdateDto);
+    UserDto updateUserByIdDto(long id, UserUpdateDto userUpdateDto);
 }

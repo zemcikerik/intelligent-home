@@ -35,6 +35,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDto createUserDto(UserCreationDto userCreationDto) {
+        User user = this.createUser(userCreationDto);
+        return this.mapToDto(user);
+    }
+
+    @Override
     public void deleteUserById(long id) {
         if (!this.userRepository.existsById(id)) {
             throw new UserNotFoundException();
@@ -76,6 +82,12 @@ public class UserServiceImpl implements UserService {
         }
 
         return this.userRepository.save(user);
+    }
+
+    @Override
+    public UserDto updateUserByIdDto(long id, UserUpdateDto userUpdateDto) {
+        User user = this.updateUserById(id, userUpdateDto);
+        return this.mapToDto(user);
     }
 
     private void throwIfUserWithUsernameExists(String username) {

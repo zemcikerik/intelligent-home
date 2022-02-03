@@ -29,23 +29,23 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createUser(@RequestBody @NotNull @Valid UserCreationDto userCreationDto) {
+    public ResponseEntity<UserDto> createUser(@RequestBody @NotNull @Valid UserCreationDto userCreationDto) {
         try {
-            this.userService.createUser(userCreationDto);
-            return ResponseEntity.status(HttpStatus.CREATED).build();
+            UserDto user = this.userService.createUserDto(userCreationDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(user);
         } catch (UserAlreadyExistsException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<?> updateUser(
+    public ResponseEntity<UserDto> updateUser(
             @PathVariable long id,
             @RequestBody @NotNull @Valid UserUpdateDto userUpdateDto
     ) {
         try {
-            this.userService.updateUserById(id, userUpdateDto);
-            return ResponseEntity.noContent().build();
+            UserDto user = this.userService.updateUserByIdDto(id, userUpdateDto);
+            return ResponseEntity.ok(user);
         } catch (UserNotFoundException e) {
             return ResponseEntity.notFound().build();
         }

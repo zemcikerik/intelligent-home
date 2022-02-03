@@ -1,0 +1,18 @@
+<h2 mat-dialog-title>Edit user {{ user.username }}</h2>
+<form mat-dialog-content [formGroup]="editForm">
+  <mat-form-field appearance="outline">
+    <mat-label>Role</mat-label>
+    <mat-select formControlName="role">
+      <mat-option value="USER">User</mat-option>
+      <mat-option value="ADMIN">Admin</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="outline" floatLabel="always">
+    <mat-label>Password</mat-label>
+    <input matInput formControlName="password" type="password" placeholder="(unchanged)">
+  </mat-form-field>
+</form>
+<div mat-dialog-actions>
+  <button mat-stroked-button [mat-dialog-close]="null">Cancel</button>
+  <button mat-stroked-button [disabled]="!submittable" (click)="submit()">Confirm</button>
+</div>

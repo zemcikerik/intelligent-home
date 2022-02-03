@@ -1,6 +1,6 @@
 import { Role } from '../models';
 
-export interface UserRegistrationDto {
+export interface UserCreationDto {
   username: string;
   password: string;
   role: Role;

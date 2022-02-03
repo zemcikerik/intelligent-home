@@ -25,7 +25,7 @@ import {
   featureReducer,
   LOGIN_STATE_KEY, LoginEffects,
   LoginFacade,
-  loginReducer
+  loginReducer, USER_STATE_KEY, UserEffects, UserFacade, userReducer
 } from './store';
 
 import { environment } from '../environments/environment';
@@ -55,6 +55,8 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     Components.IntegerFeatureComponent,
     Components.TextFeatureComponent,
     Components.StringFeatureComponent,
+    Components.UserEditDialogComponent,
+    Components.UserEntryComponent,
     Components.UserManagementComponent,
     Pipes.KeysPipe,
   ],
@@ -66,6 +68,7 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
       [DEVICE_STATE_KEY]: deviceReducer,
       [FEATURE_STATE_KEY]: featureReducer,
       [LOGIN_STATE_KEY]: loginReducer,
+      [USER_STATE_KEY]: userReducer,
     }, {
       runtimeChecks: {
         strictActionImmutability: true,
@@ -73,7 +76,7 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
       }
     }),
     !environment.production ? StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }) : [],
-    EffectsModule.forRoot([AppEffects, AuthEffects, DeviceEffects, FeatureEffects, LoginEffects]),
+    EffectsModule.forRoot([AppEffects, AuthEffects, DeviceEffects, FeatureEffects, LoginEffects, UserEffects]),
     BrowserAnimationsModule,
     MaterialModule,
     HttpClientModule,
@@ -85,6 +88,7 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     DeviceFacade,
     FeatureFacade,
     LoginFacade,
+    UserFacade,
     Services.AuthService,
     Services.DeviceService,
     Services.FeatureService,

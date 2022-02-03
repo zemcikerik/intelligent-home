@@ -1,1 +1,13 @@
-<p>user-management works!</p>
+<div class="header">
+  <h2>User Management</h2>
+  <div class="spacer"></div>
+  <button mat-stroked-button>Add</button>
+</div>
+<div class="users">
+  <app-user-entry
+    *ngFor="let user of users$ | async"
+    [user]="user"
+    (edit)="editUser(user)"
+    (delete)="deleteUser(user)"
+  ></app-user-entry>
+</div>
