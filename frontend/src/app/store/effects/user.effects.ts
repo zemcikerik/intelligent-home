@@ -12,6 +12,7 @@ import { routerNavigatedAction } from '@ngrx/router-store';
 @Injectable()
 export class UserEffects {
 
+  // TODO: reset after logout
   firstNavigation$ = createEffect(() =>
     this.action$.pipe(
       ofType(routerNavigatedAction),

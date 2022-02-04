@@ -1,11 +1,13 @@
 <div *ngIf="user" class="container">
   <mat-icon>person</mat-icon>
   <span>{{ user.username }}</span>
-  <button mat-icon-button [disabled]="disableActions" [matMenuTriggerFor]="userMenu">
-    <mat-icon>more_vert</mat-icon>
-  </button>
-  <mat-menu #userMenu="matMenu">
-    <button mat-menu-item (click)="onEdit()">Edit</button>
-    <button mat-menu-item (click)="onDelete()">Delete</button>
-  </mat-menu>
+  <ng-container *ngIf="(currentUser$ | async) === false">
+    <button mat-icon-button [matMenuTriggerFor]="userMenu">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #userMenu="matMenu">
+      <button mat-menu-item (click)="onEdit()">Edit</button>
+      <button mat-menu-item (click)="onDelete()">Delete</button>
+    </mat-menu>
+  </ng-container>
 </div>
