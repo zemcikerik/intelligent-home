@@ -1,15 +1,25 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { UserService } from '../../services';
-import { catchError, map, mergeMap } from 'rxjs/operators';
+import { catchError, filter, map, mergeMap, take } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import * as Action from '../actions';
+import { routerNavigatedAction } from '@ngrx/router-store';
 
 // TODO: handle error messages
 
 @Injectable()
 export class UserEffects {
+
+  firstNavigation$ = createEffect(() =>
+    this.action$.pipe(
+      ofType(routerNavigatedAction),
+      filter(({ payload }) => payload.event.urlAfterRedirects === '/users'),
+      take(1),
+      map(() => Action.loadUsers()),
+    )
+  );
 
   loadUsers$ = createEffect(() =>
     this.action$.pipe(

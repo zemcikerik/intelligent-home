@@ -35,6 +35,7 @@ import { PRODUCTION_TOKEN } from './production.token';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { routerReducer, StoreRouterConnectingModule } from '@ngrx/router-store';
 
 @NgModule({
   declarations: [
@@ -70,6 +71,7 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
       [FEATURE_STATE_KEY]: featureReducer,
       [LOGIN_STATE_KEY]: loginReducer,
       [USER_STATE_KEY]: userReducer,
+      router: routerReducer,
     }, {
       runtimeChecks: {
         strictActionImmutability: true,
@@ -83,6 +85,7 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
+    StoreRouterConnectingModule.forRoot(),
   ],
   providers: [
     AppFacade,

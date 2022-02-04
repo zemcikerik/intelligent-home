@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { UserCreateDto, UserDto, UserUpdateDto } from '../../dto';
 import { UserFacade } from '../../store';
@@ -12,7 +12,7 @@ import { UserCreateDialogComponent } from '../user-create-dialog/user-create-dia
   templateUrl: './user-management.component.html',
   styleUrls: ['./user-management.component.scss']
 })
-export class UserManagementComponent implements OnInit, OnDestroy {
+export class UserManagementComponent implements OnDestroy {
 
   users$: Observable<UserDto[]>;
   private unsubscribe$ = new Subject();
@@ -22,10 +22,6 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     private userFacade: UserFacade,
   ) {
     this.users$ = userFacade.getUsers();
-  }
-
-  ngOnInit(): void {
-    this.userFacade.loadUsers();
   }
 
   createUser(): void {
