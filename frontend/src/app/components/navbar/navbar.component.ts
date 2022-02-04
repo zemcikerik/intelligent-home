@@ -7,6 +7,7 @@ interface NavbarEntry {
   name: string;
   icon: string;
   link: string;
+  exact: boolean;
   authority: Authority;
 }
 
@@ -18,9 +19,9 @@ interface NavbarEntry {
 export class NavbarComponent {
 
   readonly entries: NavbarEntry[] = [
-    { name: 'Home', icon: 'home', link: '', authority: Authority.USER },
-    { name: 'Device Management', icon: 'dashboard', link: 'devices', authority: Authority.ADMIN },
-    { name: 'User Management', icon: 'people', link: 'users', authority: Authority.ADMIN },
+    { name: 'Home', icon: 'home', link: '/', exact: true, authority: Authority.USER },
+    { name: 'Device Management', icon: 'dashboard', link: '/devices', exact: false, authority: Authority.ADMIN },
+    { name: 'User Management', icon: 'people', link: '/users', exact: false, authority: Authority.ADMIN },
   ];
 
   constructor(private appFacade: AppFacade) { }
