@@ -61,6 +61,7 @@ import { routerReducer, StoreRouterConnectingModule } from '@ngrx/router-store';
     Components.UserEntryComponent,
     Components.UserManagementComponent,
     Pipes.KeysPipe,
+    Pipes.RolePipe,
   ],
   imports: [
     AppRoutingModule,

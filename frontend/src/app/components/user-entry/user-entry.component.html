@@ -1,7 +1,11 @@
 <div *ngIf="user" class="container">
-  <mat-icon>person</mat-icon>
-  <span>{{ user.username }}</span>
-  <ng-container *ngIf="(currentUser$ | async) === false">
+  <mat-icon class="icon">person</mat-icon>
+  <p>{{ user.username }}</p>
+
+  <mat-icon class="group-icon">group</mat-icon>
+  <p>{{ user.role | role }}</p>
+
+  <ng-container *ngIf="(currentUser$ | async) === false; else currentUser">
     <button mat-icon-button [matMenuTriggerFor]="userMenu">
       <mat-icon>more_vert</mat-icon>
     </button>
@@ -10,4 +14,10 @@
       <button mat-menu-item (click)="onDelete()">Delete</button>
     </mat-menu>
   </ng-container>
+
+  <ng-template #currentUser>
+    <button mat-icon-button disabled>
+      <mat-icon matTooltip="You cannot edit yourself!">more_vert</mat-icon>
+    </button>
+  </ng-template>
 </div>

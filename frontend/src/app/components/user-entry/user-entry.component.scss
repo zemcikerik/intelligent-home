@@ -3,6 +3,18 @@
   align-items: center;
 }
 
-span {
+.icon {
+  font-size: 32px;
+  line-height: 32px;
+  width: 32px;
+  height: 32px;
+}
+
+.group-icon {
+  margin-right: 4px;
+}
+
+p {
   flex-grow: 1;
+  margin-bottom: 0;
 }
