@@ -18,5 +18,5 @@
 </form>
 <div mat-dialog-actions>
   <button mat-stroked-button [mat-dialog-close]="null">Cancel</button>
-  <button mat-stroked-button [disabled]="!createForm.valid" (click)="submit()">Create</button>
+  <button mat-raised-button color="primary" [disabled]="!createForm.valid" (click)="submit()">Create</button>
 </div>
