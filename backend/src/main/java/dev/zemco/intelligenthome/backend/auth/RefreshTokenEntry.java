@@ -8,26 +8,27 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+@Entity
 @Getter
 @Setter
-@Entity
-public class User {
+@Table(name = "refresh_token")
+public class RefreshTokenEntry {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @NotNull
-    @NotBlank
-    @Size(min = 4, max = 32)
-    private String username;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "user_id", nullable = false, insertable = false, updatable = false)
+    private User user;
+
+    @Column(name = "user_id", nullable = false)
+    private long userId;
 
     @NotNull
     @NotBlank
-    private String password;
-
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    private Role role;
+    @Size(min = 32, max = 32)
+    private String token;
 
 }
