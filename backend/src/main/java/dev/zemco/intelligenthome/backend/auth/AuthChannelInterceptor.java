@@ -21,7 +21,7 @@ public class AuthChannelInterceptor implements ChannelInterceptor {
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
         if (accessor != null && accessor.getCommand() == StompCommand.CONNECT) {
-            String header = accessor.getFirstNativeHeader("Authentication");
+            String header = accessor.getFirstNativeHeader("Authorization");
 
             if (header != null) {
                 String token = header.substring("Bearer ".length());
