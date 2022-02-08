@@ -68,7 +68,7 @@ public class JwtServiceImpl implements JwtService {
     }
 
     private Date createExpirationDate() {
-        LocalDateTime time = LocalDateTime.now().plusSeconds(this.jwtProperties.getExpirationHours());
+        LocalDateTime time = LocalDateTime.now().plusHours(this.jwtProperties.getExpirationHours());
         Instant instant = time.atZone(ZoneId.systemDefault()).toInstant();
         return Date.from(instant);
     }
