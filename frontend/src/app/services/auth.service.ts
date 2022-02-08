@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { SERVER_URL_TOKEN } from './server-url.token';
 import { map } from 'rxjs/operators';
 import { Jwt } from '../models';
@@ -16,16 +16,24 @@ export class AuthService {
   login(username: string, password: string): Observable<string> {
     const body = { username, password };
     return this.httpClient.post(`${this.serverUrl}/login`, body, { observe: 'response' }).pipe(
-      map(response => {
-        const header = response.headers.get('Authorization');
-
-        if (!header || !header.startsWith('Bearer ')) {
-          throw new Error('Valid authorization header not found!');
-        }
-
-        return header.substring('Bearer '.length);
-      })
+      map(response => this.extractToken(response)),
     );
+  }
+
+  refresh(refreshToken: string): Observable<string> {
+    return this.httpClient.post(`${this.serverUrl}/refresh`, refreshToken, { observe: 'response' }).pipe(
+      map(response => this.extractToken(response)),
+    );
+  }
+
+  extractToken(response: HttpResponse<object>): string {
+    const header = response.headers.get('Authorization');
+
+    if (!header || !header.startsWith('Bearer ')) {
+      throw new Error('Valid authorization header not found!');
+    }
+
+    return header.substring('Bearer '.length);
   }
 
   isTokenValid(jwt: Jwt): boolean {
@@ -42,6 +50,7 @@ export class AuthService {
       expiresOn: payload['exp'],
       issuedBy: payload['iss'],
       authorities: payload['authorities'],
+      refreshToken: payload['refresh_token'],
       rawToken: token,
     };
   }
