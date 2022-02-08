@@ -10,12 +10,14 @@ export interface UserPartialState {
 
 export interface UserState {
   users: UserDto[];
+  initialized: boolean;
   loading: boolean;
   error: string | null;
 }
 
 export const initialUserState: UserState = {
   users: [],
+  initialized: false,
   loading: false,
   error: null,
 }
@@ -23,8 +25,8 @@ export const initialUserState: UserState = {
 export const userReducer = createReducer(
   initialUserState,
 
-  on(UserActions.loadUsers, (state): UserState => ({ ...state, loading: true, error: null })),
-  on(UserActions.loadUsersSuccess, (state, { users }): UserState => ({ users, loading: false, error: null })),
+  on(UserActions.loadUsers, (state): UserState => ({ ...state, loading: true, initialized: true, error: null })),
+  on(UserActions.loadUsersSuccess, (state, { users }): UserState => ({ ...state, users, loading: false, error: null })),
   on(UserActions.loadUsersFailure, (state, { error }): UserState => ({ ...state, loading: false, error })),
 
   on(UserActions.createUser, (state): UserState => ({ ...state, loading: true, error: null })),
@@ -50,4 +52,6 @@ export const userReducer = createReducer(
     loading: false,
   })),
   on(UserActions.deleteUserFailure, (state, { error }): UserState => ({ ...state, loading: false, error })),
+
+  on(UserActions.resetUsers, (state): UserState => ({ ...state, users: [], initialized: false })),
 );

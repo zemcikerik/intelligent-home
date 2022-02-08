@@ -1,22 +1,30 @@
 import { Injectable } from '@angular/core';
-import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { UserService } from '../../services';
-import { catchError, filter, map, mergeMap, take } from 'rxjs/operators';
+import { catchError, filter, map, mergeMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import * as Action from '../actions';
 import { routerNavigatedAction } from '@ngrx/router-store';
+import { UserFacade } from '../facades';
 
 @Injectable()
 export class UserEffects {
 
-  // TODO: reset after logout
-  firstNavigation$ = createEffect(() =>
+  userNavigation$ = createEffect(() =>
     this.action$.pipe(
       ofType(routerNavigatedAction),
       filter(({ payload }) => payload.event.urlAfterRedirects === '/users'),
-      take(1),
+      concatLatestFrom(() => this.userFacade.areUsersInitialized()),
+      filter(([, initialized]) => !initialized),
       map(() => Action.loadUsers()),
+    )
+  );
+
+  resetOnLogout = createEffect(() =>
+    this.action$.pipe(
+      ofType(Action.appLogout),
+      map(() => Action.resetUsers()),
     )
   );
 
@@ -71,6 +79,7 @@ export class UserEffects {
   constructor(
     private action$: Actions,
     private userService: UserService,
+    private userFacade: UserFacade,
   ) { }
 
 }

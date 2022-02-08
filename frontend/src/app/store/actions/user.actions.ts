@@ -16,3 +16,5 @@ export const updateUserFailure = createAction('[User] Update User Failure', prop
 export const deleteUser = createAction('[User] Delete User', props<{ userId: number }>());
 export const deleteUserSuccess = createAction('[User] Delete User Success', props<{ userId: number }>());
 export const deleteUserFailure = createAction('[User] Delete User Failure', props<{ error: string }>());
+
+export const resetUsers = createAction('[User] Reset Users');
