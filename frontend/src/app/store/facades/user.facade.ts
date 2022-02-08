@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 import { UserPartialState } from '../reducers';
 import { Observable } from 'rxjs';
 import { UserCreateDto, UserDto, UserUpdateDto } from '../../dto';
-import { selectAreUsersLoading, selectUsers } from '../selectors';
+import { selectAreUsersLoading, selectUserError, selectUsers } from '../selectors';
 import { createUser, deleteUser, loadUsers, updateUser } from '../actions';
 
 @Injectable()
@@ -15,6 +15,10 @@ export class UserFacade {
 
   areUsersLoading(): Observable<boolean> {
     return this.store$.select(selectAreUsersLoading);
+  }
+
+  getUserError(): Observable<string | null> {
+    return this.store$.select(selectUserError);
   }
 
   createUser(userCreationDto: UserCreateDto): void {

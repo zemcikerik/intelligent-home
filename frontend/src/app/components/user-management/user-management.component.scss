@@ -13,3 +13,16 @@ h2 {
   color: rgba(0, 0, 0, 0.8);
   margin: 64px 0;
 }
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+}
+
+.error {
+  border: 1px red solid;
+  padding: 12px;
+  color: red;
+  font-size: 16px;
+  border-radius: 16px;
+}

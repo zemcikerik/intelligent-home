@@ -15,6 +15,8 @@ import { UserCreateDialogComponent } from '../user-create-dialog/user-create-dia
 export class UserManagementComponent implements OnDestroy {
 
   users$: Observable<UserDto[]>;
+  loading$: Observable<boolean>;
+  error$: Observable<string | null>;
   private unsubscribe$ = new Subject();
 
   constructor(
@@ -22,6 +24,8 @@ export class UserManagementComponent implements OnDestroy {
     private userFacade: UserFacade,
   ) {
     this.users$ = userFacade.getUsers();
+    this.loading$ = userFacade.areUsersLoading();
+    this.error$ = userFacade.getUserError();
   }
 
   createUser(): void {

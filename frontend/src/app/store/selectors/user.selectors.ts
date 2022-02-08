@@ -4,3 +4,4 @@ import { createSelector } from '@ngrx/store';
 export const selectUserState = (state: UserPartialState) => state[USER_STATE_KEY];
 export const selectUsers = createSelector(selectUserState, state => state.users);
 export const selectAreUsersLoading = createSelector(selectUserState, state => state.loading);
+export const selectUserError = createSelector(selectUserState, state => state.error);

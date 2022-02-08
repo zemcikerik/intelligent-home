@@ -7,8 +7,6 @@ import { HttpErrorResponse } from '@angular/common/http';
 import * as Action from '../actions';
 import { routerNavigatedAction } from '@ngrx/router-store';
 
-// TODO: handle error messages
-
 @Injectable()
 export class UserEffects {
 
@@ -28,7 +26,7 @@ export class UserEffects {
       mergeMap(() =>
         this.userService.getUsers().pipe(
           map(users => Action.loadUsersSuccess({ users })),
-          catchError(() => of(Action.loadUsersFailure({ error: '' }))),
+          catchError((err: HttpErrorResponse) => of(Action.loadUsersFailure({ error: err.message }))),
         )
       ),
     )
@@ -40,7 +38,7 @@ export class UserEffects {
       mergeMap(({ userCreationDto }) =>
         this.userService.createUser(userCreationDto).pipe(
           map(user => Action.createUserSuccess({ user })),
-          catchError(() => of(Action.createUserFailure({ error: '' }))),
+          catchError((err: HttpErrorResponse) => of(Action.createUserFailure({ error: err.message }))),
         )
       ),
     )
@@ -52,7 +50,7 @@ export class UserEffects {
       mergeMap(({ userId, userUpdateDto }) =>
         this.userService.updateUser(userId, userUpdateDto).pipe(
           map(user => Action.updateUserSuccess({ user })),
-          catchError(() => of(Action.updateUserFailure({ error: '' }))),
+          catchError((err: HttpErrorResponse) => of(Action.updateUserFailure({ error: err.message }))),
         )
       ),
     )
