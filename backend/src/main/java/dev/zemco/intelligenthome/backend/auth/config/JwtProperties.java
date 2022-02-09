@@ -34,6 +34,9 @@ public class JwtProperties {
         @NotEmpty
         private String authorities = "authorities";
 
+        @NotEmpty
+        private String refreshToken = "refresh_token";
+
     }
 
 }

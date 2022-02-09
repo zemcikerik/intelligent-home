@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Service
@@ -18,6 +19,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
 
     @Override
     public String attemptLogin(LoginDto loginDto) {
@@ -34,6 +36,13 @@ public class AuthServiceImpl implements AuthService {
             throw new WrongPasswordException();
         }
 
+        return this.jwtService.createJwtForUser(user);
+    }
+
+    @Override
+    @Transactional
+    public String attemptRefresh(String refreshToken) {
+        User user = this.refreshTokenService.useRefreshToken(refreshToken);
         return this.jwtService.createJwtForUser(user);
     }
 
