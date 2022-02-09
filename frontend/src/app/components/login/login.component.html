@@ -1,20 +1,33 @@
 <div class="container">
-  <div>
-    <h1>Intelligent Home</h1>
-    <h2>Login</h2>
+  <mat-card>
+    <div class="image-container">
+      <img src="assets/login-preview.jpg" alt="Login page image">
+    </div>
+    <div class="form-container">
+      <mat-progress-bar *ngIf="loading$ | async" mode="indeterminate"></mat-progress-bar>
+      <div>
+        <h2>Login</h2>
 
-    <form [formGroup]="loginForm" (ngSubmit)="login()">
-      <mat-form-field appearance="outline">
-        <mat-label>Username</mat-label>
-        <input matInput formControlName="username">
-      </mat-form-field>
+        <form [formGroup]="loginForm" (ngSubmit)="login()">
+          <mat-form-field appearance="fill">
+            <mat-label>Username</mat-label>
+            <input matInput formControlName="username">
+          </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Password</mat-label>
-        <input matInput type="password" formControlName="password">
-      </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>Password</mat-label>
+            <input matInput type="password" formControlName="password">
+          </mat-form-field>
 
-      <button mat-stroked-button type="submit" [disabled]="!loginForm.valid || (loading$ | async)">Login</button>
-    </form>
-  </div>
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="!loginForm.valid || (loading$ | async)"
+          >Login</button>
+        </form>
+      </div>
+      <mat-error *ngIf="error$ | async as error">{{ error }}</mat-error>
+    </div>
+  </mat-card>
 </div>

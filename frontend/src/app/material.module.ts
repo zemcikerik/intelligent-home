@@ -1,5 +1,6 @@
 import { NgModule, Type } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button'
+import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -14,6 +15,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 const materialModules: Type<any>[] = [
   MatButtonModule,
+  MatCardModule,
   MatCheckboxModule,
   MatDialogModule,
   MatFormFieldModule,
