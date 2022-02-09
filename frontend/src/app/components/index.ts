@@ -14,4 +14,7 @@ export * from './navbar/navbar.component';
 export * from './integer-feature/integer-feature.component';
 export * from './text-feature/text-feature.component';
 export * from './string-feature/string-feature.component';
+export * from './user-create-dialog/user-create-dialog.component';
+export * from './user-edit-dialog/user-edit-dialog.component';
+export * from './user-entry/user-entry.component';
 export * from './user-management/user-management.component';

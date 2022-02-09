@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserCreationDto {
+public class UserCreateDto {
 
     @NotEmpty
     @Size(min = 4, max = 32)

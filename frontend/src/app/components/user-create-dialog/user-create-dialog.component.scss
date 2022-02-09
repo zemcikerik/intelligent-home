@@ -1,0 +1,11 @@
+form {
+  overflow: hidden;
+}
+
+form > * {
+  display: block;
+}
+
+div[mat-dialog-actions] {
+  float: right;
+}

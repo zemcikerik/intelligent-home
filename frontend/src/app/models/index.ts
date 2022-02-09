@@ -4,3 +4,4 @@ export * from './feature-state.model';
 export * from './feature-type.model';
 export * from './initial-state.model';
 export * from './jwt.model';
+export * from './role.model';

@@ -1,6 +1,4 @@
-<div class="container">
-  <h2>Devices</h2>
-  <div class="devices">
-    <app-device *ngFor="let deviceId of deviceIds$ | async" [id]="deviceId"></app-device>
-  </div>
+<h2>Devices</h2>
+<div class="devices">
+  <app-device *ngFor="let deviceId of deviceIds$ | async" [id]="deviceId"></app-device>
 </div>
