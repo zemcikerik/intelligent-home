@@ -3,6 +3,7 @@ import { from, Observable, throwError } from 'rxjs';
 import { RxStomp, RxStompConfig } from '@stomp/rx-stomp';
 import { catchError, map, take, timeout } from 'rxjs/operators';
 import { PRODUCTION_TOKEN } from '../production.token';
+import { TokenStorageService } from './token-storage.service';
 
 export const WS_SERVER_URL_TOKEN = new InjectionToken<string>('WS_SERVER_URL');
 
@@ -12,6 +13,7 @@ export class ServerConnectionService {
   stomp = new RxStomp();
 
   constructor(
+    private tokenStorageService: TokenStorageService,
     @Inject(WS_SERVER_URL_TOKEN) private wsServerUrl: string,
     @Inject(PRODUCTION_TOKEN) private production: boolean
   ) { }
@@ -19,7 +21,10 @@ export class ServerConnectionService {
   connect(): Observable<any> {
     const config: RxStompConfig = {
       brokerURL: this.wsServerUrl,
-      reconnectDelay: 200
+      reconnectDelay: 200,
+      connectHeaders: {
+        Authorization: `Bearer ${this.tokenStorageService.getToken()}`
+      }
     };
 
     if (!this.production) {
