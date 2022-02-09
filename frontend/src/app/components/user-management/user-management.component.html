@@ -1,1 +1,24 @@
-<p>user-management works!</p>
+<div class="header">
+  <h2>User Management</h2>
+  <div class="spacer"></div>
+  <button mat-stroked-button (click)="createUser()">Add</button>
+</div>
+
+<div *ngIf="loading$ | async; else error" class="loading-container">
+  <mat-progress-spinner diameter="64" mode="indeterminate"></mat-progress-spinner>
+</div>
+
+<ng-template #error>
+  <div *ngIf="error$ | async as error; else users" class="error">{{ error }}</div>
+</ng-template>
+
+<ng-template #users>
+  <div class="users">
+    <app-user-entry
+      *ngFor="let user of users$ | async"
+      [user]="user"
+      (edit)="editUser(user)"
+      (delete)="deleteUser(user)"
+    ></app-user-entry>
+  </div>
+</ng-template>
