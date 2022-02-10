@@ -1,15 +1,24 @@
 #include "stomp.hpp"
 
-ih::stomp_client::stomp_client(WebSocketsClient& ws_client) : ws_client_(ws_client), state_(ih::stomp_state::waiting)
-{ }
+void handle_websocket_event_helper(void* stomper_ptr, esp_event_base_t event_base, int32_t event_id, void* event_data) {
+  auto client = reinterpret_cast<ih::stomp_client*>(stomper_ptr);
+  auto ws_event_data = reinterpret_cast<esp_websocket_event_data_t*>(event_data);
+  client->handle_websocket_event_(event_base, static_cast<esp_websocket_event_id_t>(event_id), ws_event_data);
+}
+
+ih::stomp_client::stomp_client() : state_(ih::stomp_state::waiting) {
+}
 
 void ih::stomp_client::begin(const std::string hostname, const int port, const std::string path) {
-  this->ws_client_.onEvent([this](const WStype_t type, uint8_t* payload, const size_t length) {
-    this->handle_websocket_event_(type, payload, length);
-  });
+  esp_websocket_client_config_t config{};
+  config.host = hostname.c_str();
+  config.port = port;
+  config.path = path.c_str();
 
-  this->ws_client_.begin(hostname.c_str(), port, path.c_str());
-  this->ws_client_.setExtraHeaders();
+  this->client_handle_ = esp_websocket_client_init(&config);
+  esp_websocket_register_events(this->client_handle_, WEBSOCKET_EVENT_ANY, handle_websocket_event_helper, this);
+  esp_websocket_client_start(this->client_handle_);
+
   this->state_ = ih::stomp_state::connecting;
 }
 
@@ -71,20 +80,21 @@ ih::stomp_state ih::stomp_client::get_state() const {
   return this->state_;
 }
 
-void ih::stomp_client::handle_websocket_event_(const WStype_t& type, uint8_t* payload, const size_t& length) {
-  switch (type) {
-    case WStype_DISCONNECTED:
+void ih::stomp_client::handle_websocket_event_(esp_event_base_t base, esp_websocket_event_id_t id, esp_websocket_event_data_t* data) {
+  switch (id) {
+    case esp_websocket_event_id_t::WEBSOCKET_EVENT_DISCONNECTED:
       // TODO: handle disconnect
       this->state_ = ih::stomp_state::disconnected;
       break;
 
-    case WStype_CONNECTED:
+    case esp_websocket_event_id_t::WEBSOCKET_EVENT_CONNECTED:
       this->connect_();
       break;
 
-    case WStype_TEXT:
+    case esp_websocket_event_id_t::WEBSOCKET_EVENT_DATA:
+      // TODO: currently ignoring byte data
       ih::stomp_message message;
-      this->parse_message_(std::string{ reinterpret_cast<char*>(payload) }, message);
+      this->parse_message_(data->data_ptr, message);
       
       if (message.command == "CONNECTED") {
         this->handle_connect_(message);
@@ -192,5 +202,5 @@ void ih::stomp_client::connect_() {
 
 void ih::stomp_client::send_sstream_(std::ostringstream& ss) {
   const std::string txt = ss.str();
-  this->ws_client_.sendTXT(txt.c_str(), txt.size() + 1);
+  esp_websocket_client_send_text(this->client_handle_, txt.c_str(), txt.length() + 1, 5000 / portTICK_RATE_MS); // TODO: adjust timeout value properly
 }

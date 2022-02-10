@@ -1,14 +1,12 @@
 #include <Arduino.h>
 
 #include <WiFi.h>
-#include <WebSocketsClient.h>
 #include <string>
 
 #include "intelligent_home.hpp"
 #include "config.hpp"
 
-WebSocketsClient ws_client;
-ih::stomp_client stomper{ ws_client };
+ih::stomp_client stomper;
 ih::home_manager home_manager{ stomper };
 ih::web_interface web_interface{ 80 };
 
@@ -31,6 +29,8 @@ void sample(void*);
 void buzzer(void*);
 
 void setup() {
+  esp_log_level_set("*", ESP_LOG_DEBUG);
+
   Serial.begin(115200);
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH);
@@ -96,7 +96,6 @@ void buzzer(void*) {
 }
 
 void loop() {
-  ws_client.loop();
   web_interface.loop();
 }
 
