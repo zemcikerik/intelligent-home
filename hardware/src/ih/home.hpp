@@ -21,6 +21,7 @@ public:
   void update_feature(feature& feature);
 
   void on_feature_update_request(feature& feature, feature_update_request_handler handler);
+  void connect_callback(const stomp_message& message);
 
 private:
   stomp_client& stomper_;
@@ -28,7 +29,6 @@ private:
   std::vector<std::reference_wrapper<feature>> features_;
   std::vector<feature_update_request_handler_entry> update_handler_entries_;
 
-  void on_connect_();
   void send_add_device_message_if_connected_(const device& device);
   void send_add_feature_message_if_connected_(const feature& feature);
   void handle_feature_update_request_message_(const ih::stomp_message& message);

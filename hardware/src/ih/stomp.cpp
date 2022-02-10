@@ -192,6 +192,5 @@ void ih::stomp_client::connect_() {
 
 void ih::stomp_client::send_sstream_(std::ostringstream& ss) {
   const std::string txt = ss.str();
-  Serial.println(txt.c_str());
   this->ws_client_.sendTXT(txt.c_str(), txt.size() + 1);
 }

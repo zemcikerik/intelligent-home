@@ -3,9 +3,6 @@
 std::string get_path_with_id(std::string base, std::string& id);
 
 ih::home_manager::home_manager(ih::stomp_client& stomper): stomper_(stomper) {
-  stomper.on_connect([this](const ih::stomp_message&) {
-    this->on_connect_();
-  });
 }
 
 void ih::home_manager::register_device(ih::device& device) {
@@ -29,7 +26,7 @@ void ih::home_manager::on_feature_update_request(ih::feature& feature, feature_u
   this->update_handler_entries_.push_back({ feature, handler });
 }
 
-void ih::home_manager::on_connect_() {
+void ih::home_manager::connect_callback(const ih::stomp_message&) {
   this->stomper_.subscribe("/user/queue/device/feature/request-update", [this](const ih::stomp_message& message) {
     this->handle_feature_update_request_message_(message);
   });

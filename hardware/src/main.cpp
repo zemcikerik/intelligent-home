@@ -10,6 +10,7 @@
 WebSocketsClient ws_client;
 ih::stomp_client stomper{ ws_client };
 ih::home_manager home_manager{ stomper };
+ih::web_interface web_interface{ 80 };
 
 ih::device device{ "d081dc06-284b-4378-8ce5-24e71911c60d", "ESP32" };
 ih::feature buzzer_feature{ "a081dc0a-284b-4378-8ce5-24e71911c60d", device.id, "Buzzer", ih::feature_type::button, nullptr };
@@ -43,7 +44,7 @@ void setup() {
   home_manager.register_feature(value_reader_feature);
   home_manager.register_feature(dropdown_feature);
 
-  home_manager.on_feature_update_request(led_feature, [](ih::feature& feature, JsonObject& update) {
+  home_manager.on_feature_update_request(led_feature, [](ih::feature&, JsonObject& update) {
     led_feature_state->enabled = update["enabled"];
     digitalWrite(LED_BUILTIN, led_feature_state->enabled);
     home_manager.update_feature(led_feature);
@@ -55,16 +56,21 @@ void setup() {
     }
   });
 
+  stomper.on_connect([](const ih::stomp_message& message) {
+    home_manager.connect_callback(message);
+
+    if (sample_task == nullptr) {
+      xTaskCreate(sample, "Sampler", 4096, nullptr, 2, &sample_task);
+    }
+  });
+
   stomper.on_unknown([](const ih::stomp_message& message) {
     Serial.print("Unknown command: ");
     Serial.println(message.command.c_str());
   });
 
+  web_interface.begin();
   stomper.begin(config::hostname, config::port, config::ws_path);
-
-  if (sample_task == nullptr) {
-    xTaskCreate(sample, "Sampler", 4096, nullptr, 2, &sample_task);
-  }
 }
 
 void sample(void*) {
@@ -91,6 +97,7 @@ void buzzer(void*) {
 
 void loop() {
   ws_client.loop();
+  web_interface.loop();
 }
 
 void setup_wifi(const char* ssid, const char* password) {
