@@ -1,81 +1,104 @@
 #include "web_interface.hpp"
-#include <ArduinoJson.h>
+#include <SPIFFS.h>
 
+void ok_json(AsyncWebServerRequest* request, JsonDocument& doc, std::size_t buffer_size = 1460U);
 std::string enryption_type_to_string(wifi_auth_mode_t type);
 
-ih::web_interface::web_interface(int port): web_server_(port) {
+ih::web_interface::web_interface(ih::wifi_async& wifi_async, std::uint16_t port): web_server_(port), wifi_async_(wifi_async) {
 }
 
 void ih::web_interface::begin() {
-  this->web_server_.on("/wifi", [this]() {
-    this->handle_get_wifi_();
+  this->web_server_.on("/api/wifi", WebRequestMethod::HTTP_GET, [this](AsyncWebServerRequest* request) {
+    this->handle_get_wifi_(request);
   });
 
-  this->web_server_.on("/connect", [this]() {
-    this->handle_get_connect_();
+  this->web_server_.on("/api/connect", WebRequestMethod::HTTP_GET, [this](AsyncWebServerRequest* request) {
+    this->handle_get_connect_(request);
   });
 
-  this->web_server_.on("/connect", http_method::HTTP_POST, [this]() {
-    this->handle_post_connect_();
+  this->web_server_on_post_("/api/connect", [this](AsyncWebServerRequest* request, JsonVariant& body) {
+    JsonObject body_obj = body.as<JsonObject>();
+    this->handle_post_connect_(request, body_obj);
   });
 
-  this->web_server_.on("/connect", http_method::HTTP_DELETE, [this]() {
-    this->handle_delete_connect_();
+  this->web_server_.on("/api/connect", WebRequestMethod::HTTP_DELETE, [this](AsyncWebServerRequest* request) {
+    this->handle_delete_connect_(request);
+  });
+
+  this->web_server_.onNotFound([this](AsyncWebServerRequest* request) {
+    request->redirect("/");
   });
 
   this->web_server_.begin();
 }
 
-void ih::web_interface::loop() {
-  this->web_server_.handleClient();
+void ih::web_interface::web_server_on_post_(std::string uri, ArJsonRequestHandlerFunction handler) {
+  const auto request_handler = new AsyncCallbackJsonWebHandler{ uri.c_str(), handler };
+  request_handler->setMethod(WebRequestMethod::HTTP_POST);
+  this->web_server_.addHandler(request_handler);
 }
 
-void ih::web_interface::handle_get_wifi_() {
-  // TODO: refactor me to wifi_scanner class with caching
-  DynamicJsonDocument doc{ 2048 };
-  JsonArray networks = doc.to<JsonArray>();
+void ih::web_interface::handle_get_wifi_(AsyncWebServerRequest* request) {
+  this->wifi_async_.get_available_networks([request](std::vector<ih::wifi_info>& networks) {
+    DynamicJsonDocument doc{ 2048 };
+    JsonArray json = doc.to<JsonArray>();
 
-  short n = WiFi.scanNetworks();
+    for (const auto& network : networks) {
+      JsonObject json_network = json.createNestedObject();
+      json_network["ssid"] = network.ssid;
+      json_network["rssi"] = network.rssi;
+      json_network["channel"] = network.channel;
+      json_network["type"] = enryption_type_to_string(network.type);
+    }
 
-  for (short i = 0; i < n; i++) {
-    JsonObject network = networks.createNestedObject();
-    network["ssid"] = WiFi.SSID(i);
-    network["rssi"] = WiFi.RSSI(i);
-    network["type"] = enryption_type_to_string(WiFi.encryptionType(i));
+    ok_json(request, doc, 2048);
+  });
+}
+
+void ih::web_interface::handle_get_connect_(AsyncWebServerRequest* request) {
+  if (WiFi.isConnected()) {
+    DynamicJsonDocument doc{ 1024 };
+    doc["connected"] = true;
+    doc["ssid"] = WiFi.SSID();
+    doc["bssid"] = WiFi.BSSIDstr();
+    doc["rssi"] = WiFi.RSSI();
+    doc["ip"] = WiFi.localIP();
+
+    ok_json(request, doc);
+  } else {
+    StaticJsonDocument<64> doc;
+    doc["connected"] = false;
+    ok_json(request, doc);
+  }
+}
+
+void ih::web_interface::handle_post_connect_(AsyncWebServerRequest* request, JsonObject& body) {
+  if (!body.containsKey("ssid") || !body.containsKey("pswd")) {
+    request->send(400);
+    return;
   }
 
-  std::string json;
-  serializeJson(doc, json);
+  const std::string ssid = body["ssid"];
+  const std::string pswd = body["pswd"];
 
-  this->web_server_.send(200, "application/json", json.c_str());
+  this->wifi_async_.connect(ssid, pswd, [request](bool success) {
+    request->send(success ? 204 : 403);
+  });
 }
 
-void ih::web_interface::handle_get_connect_() {
-  DynamicJsonDocument doc{ 1024 };
-
-  doc["ssid"] = WiFi.SSID();
-  doc["bssid"] = WiFi.BSSIDstr();
-  doc["rssi"] = WiFi.RSSI();
-  doc["ip"] = WiFi.localIP();
-
-  std::string json;
-  serializeJson(doc, json);
-
-  this->web_server_.send(200, "application/json", json.c_str());
-}
-
-void ih::web_interface::handle_post_connect_() {
-  // TODO: replace web server library
-}
-
-void ih::web_interface::handle_delete_connect_() {
+void ih::web_interface::handle_delete_connect_(AsyncWebServerRequest* request) {
   if (WiFi.isConnected()) {
     WiFi.disconnect();
-    this->web_server_.send(204);
+    request->send(204);
   } else {
-    // TODO: check response code
-    this->web_server_.send(400);
+    request->send(404);
   }
+}
+
+void ok_json(AsyncWebServerRequest* request, JsonDocument& doc, std::size_t buffer_size) {
+  const auto response = request->beginResponseStream("application/json", buffer_size);
+  serializeJson(doc, *response);
+  request->send(response);
 }
 
 std::string enryption_type_to_string(wifi_auth_mode_t type) {

@@ -2,13 +2,15 @@
 
 #include <WiFi.h>
 #include <string>
+#include <SPIFFS.h>
 
 #include "intelligent_home.hpp"
 #include "config.hpp"
 
 ih::stomp_client stomper;
 ih::home_manager home_manager{ stomper };
-ih::web_interface web_interface{ 80 };
+ih::wifi_async wifi_async;
+ih::web_interface web_interface{ wifi_async, 80 };
 
 ih::device device{ "d081dc06-284b-4378-8ce5-24e71911c60d", "ESP32" };
 ih::feature buzzer_feature{ "a081dc0a-284b-4378-8ce5-24e71911c60d", device.id, "Buzzer", ih::feature_type::button, nullptr };
@@ -25,6 +27,7 @@ auto dropdown_feature_state = std::make_shared<ih::dropdown_feature_state>(std::
 ih::feature dropdown_feature{ "b081dc0a-284b-4378-8ce5-24e71911c60a", device.id, "Test Dropdown", ih::feature_type::dropdown, dropdown_feature_state };
 
 void setup_wifi(const char* ssid, const char* password);
+void begin_wifi_scan(void*);
 void sample(void*);
 void buzzer(void*);
 
@@ -32,11 +35,18 @@ void setup() {
   esp_log_level_set("*", ESP_LOG_DEBUG);
 
   Serial.begin(115200);
+
+  if(!SPIFFS.begin()){
+    Serial.println("An Error has occurred while mounting SPIFFS!");
+    return;
+  }
+
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH);
   ledcAttachPin(15, 0);
 
-  setup_wifi(config::wifi_ssid, config::wifi_pswd);
+  WiFi.mode(WIFI_MODE_APSTA);
+  WiFi.softAP(config::ap_ssid, config::ap_pswd);
 
   home_manager.register_device(device);
   home_manager.register_feature(led_feature);
@@ -96,21 +106,4 @@ void buzzer(void*) {
 }
 
 void loop() {
-  web_interface.loop();
-}
-
-void setup_wifi(const char* ssid, const char* password) {
-  WiFi.mode(WIFI_MODE_STA);
-  WiFi.begin(ssid, password);
-
-  Serial.print("Connecting to WiFi...");
-
-  while (WiFi.status() != WL_CONNECTED) {
-    Serial.print('.');
-    delay(100);
-  }
-
-  Serial.println();
-  Serial.print("IP Address: ");
-  Serial.println(WiFi.localIP());
 }

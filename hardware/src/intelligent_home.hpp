@@ -3,3 +3,4 @@
 #include "ih/home.hpp"
 #include "ih/stomp.hpp"
 #include "ih/web_interface.hpp"
+#include "ih/wifi_async.hpp"
