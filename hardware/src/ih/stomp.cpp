@@ -1,30 +1,25 @@
 #include "stomp.hpp"
-#include <Arduino.h>
+
+// only during development
+extern WebSocketsClient* cursed_temp_variable;
 
 ih::stomp_client::stomp_client() : state_(ih::stomp_state::waiting) {
+  cursed_temp_variable = &this->ws_client_;
 }
 
 ih::stomp_client::~stomp_client() {
   if (this->state_ != ih::stomp_state::waiting) {
-    this->close_connection_();
+    this->close_connection();
   }
 }
 
 void ih::stomp_client::begin(const std::string hostname, const int port, const std::string path) {
-  esp_websocket_client_config_t config{};
-  config.host = hostname.c_str();
-  config.port = port;
-  config.path = path.c_str();
+  this->ws_client_.onEvent([this](WStype_t type, uint8_t* payload, size_t length) {
+    this->handle_websocket_event_(type, payload, length);
+  });
 
-  const auto event_handler = [](void* stomper_ptr, esp_event_base_t event_base, int32_t event_id, void* event_data) {
-    const auto client = reinterpret_cast<ih::stomp_client*>(stomper_ptr);
-    const auto ws_event_data = reinterpret_cast<esp_websocket_event_data_t*>(event_data);
-    client->handle_websocket_event_(event_base, static_cast<esp_websocket_event_id_t>(event_id), ws_event_data);
-  };
-
-  this->client_handle_ = esp_websocket_client_init(&config);
-  esp_websocket_register_events(this->client_handle_, WEBSOCKET_EVENT_ANY, event_handler, this);
-  esp_websocket_client_start(this->client_handle_);
+  this->ws_client_.begin(hostname.c_str(), port, path.c_str());
+  this->ws_client_.setExtraHeaders();
 
   this->state_ = ih::stomp_state::connecting;
 }
@@ -37,11 +32,16 @@ void ih::stomp_client::end() {
 
     case ih::stomp_state::connecting:
     case ih::stomp_state::disconnected:
-      this->close_connection_();
+      this->close_connection();
     
     case ih::stomp_state::waiting:
       break;
   }
+}
+
+void ih::stomp_client::close_connection() {
+  this->ws_client_.disconnect();
+  this->state_ = ih::stomp_state::waiting;
 }
 
 void ih::stomp_client::send(const std::string destination, const std::string body) {
@@ -90,6 +90,10 @@ void ih::stomp_client::on_connect(ih::stomp_handler handler) {
   this->connect_handler_ = handler;
 }
 
+void ih::stomp_client::on_disconnect(ih::stomp_disconnect_handler handler) {
+  this->disconnect_handler_ = handler;
+}
+
 void ih::stomp_client::on_error(ih::stomp_handler handler) {
   this->error_handler_ = handler;
 }
@@ -102,22 +106,19 @@ ih::stomp_state ih::stomp_client::get_state() const {
   return this->state_;
 }
 
-void ih::stomp_client::handle_websocket_event_(esp_event_base_t base, esp_websocket_event_id_t id, esp_websocket_event_data_t* data) {
-  switch (id) {
-    case esp_websocket_event_id_t::WEBSOCKET_EVENT_DISCONNECTED:
-      this->state_ = ih::stomp_state::disconnected;
-      Serial.println("WS Disconnect!");
+void ih::stomp_client::handle_websocket_event_(WStype_t type, uint8_t* payload, size_t length) {
+  switch (type) {
+    case WStype_t::WStype_DISCONNECTED:
+      this->handle_disconnect_();
       break;
 
-    case esp_websocket_event_id_t::WEBSOCKET_EVENT_CONNECTED:
+    case WStype_t::WStype_CONNECTED:
       this->send_connect_frame_();
-      Serial.println("WS Connect!");
       break;
 
-    case esp_websocket_event_id_t::WEBSOCKET_EVENT_DATA:
-      // TODO: currently ignoring other options!
+    case WStype_TEXT:
       ih::stomp_message message;
-      this->parse_message_(data->data_ptr, message);
+      this->parse_message_(std::string{ reinterpret_cast<char*>(payload) }, message);
       
       if (message.command == "CONNECTED") {
         this->handle_connect_(message);
@@ -141,6 +142,14 @@ void ih::stomp_client::handle_connect_(const ih::stomp_message& message) {
   
   if (this->connect_handler_) {
     this->connect_handler_(message);
+  }
+}
+
+void ih::stomp_client::handle_disconnect_() {
+  this->state_ = ih::stomp_state::disconnected;
+
+  if (this->disconnect_handler_) {
+    this->disconnect_handler_();
   }
 }
 
@@ -184,7 +193,7 @@ void ih::stomp_client::handle_error_(const ih::stomp_message& message) {
 void ih::stomp_client::handle_recepit_(const ih::stomp_message& message) {
   for (auto& header : message.headers) {
     if (header.first == "receipt-id" && header.second == "disconnect") {
-      this->close_connection_();
+      this->close_connection();
       return;
     }
   }
@@ -199,7 +208,6 @@ void ih::stomp_client::handle_unknown_(const ih::stomp_message& message) {
 }
 
 void ih::stomp_client::send_connect_frame_() {
-  Serial.println("sending connect frame!");
   std::ostringstream ss;
 
   ss << "CONNECT\n";
@@ -210,32 +218,12 @@ void ih::stomp_client::send_connect_frame_() {
 }
 
 void ih::stomp_client::send_end_frame_() {
-  Serial.println("Sending DISCONNECT frame!");
   std::ostringstream ss;
 
   ss << "DISCONNECT\n";
   ss << "receipt:disconnect\n\n";
 
   this->send_sstream_(ss);
-}
-
-void ih::stomp_client::close_connection_() {
-  Serial.println("Closing connection!");
-
-  const auto close_connection = [](void* param) {
-    const auto handle = reinterpret_cast<esp_websocket_client_handle_t>(param);
-    // TODO: esp_websocket_client_close(handle);
-    esp_websocket_client_stop(handle);
-    esp_websocket_client_destroy(handle);
-    vTaskDelete(nullptr);
-  };
-
-  const auto handle = this->client_handle_;
-  this->client_handle_ = nullptr;
-  this->state_ = ih::stomp_state::waiting;
-
-  // we need to create a new task for this as shutting down websocket is not allowed inside websocket event handler
-  xTaskCreate(close_connection, "Stomp Client Shutdown", 1024, handle, 2, nullptr);
 }
 
 void ih::stomp_client::parse_message_(const std::string& data, ih::stomp_message& out_message) {
@@ -277,6 +265,5 @@ void ih::stomp_client::parse_message_(const std::string& data, ih::stomp_message
 
 void ih::stomp_client::send_sstream_(std::ostringstream& ss) {
   const std::string txt = ss.str();
-  Serial.println(txt.c_str());
-  esp_websocket_client_send_text(this->client_handle_, txt.c_str(), txt.length() + 1, 5000 / portTICK_RATE_MS); // TODO: adjust timeout value properly
+  this->ws_client_.sendTXT(txt.c_str(), txt.length() + 1);
 }

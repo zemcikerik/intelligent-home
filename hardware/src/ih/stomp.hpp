@@ -4,8 +4,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
-
-#include <esp_websocket_client.h>
+#include <WebSocketsClient.h>
 
 namespace ih {
 
@@ -20,6 +19,7 @@ struct stomp_message {
 };
 
 using stomp_handler = std::function<void (const stomp_message& message)>;
+using stomp_disconnect_handler = std::function<void ()>;
 
 struct stomp_subscription {
   stomp_subscription_token token;
@@ -40,20 +40,23 @@ public:
 
   void begin(const std::string hostname, const int port, const std::string path);
   void end();
+  void close_connection();
 
   void send(const std::string destination, const std::string body);
   void subscribe(const std::string destination, stomp_handler handler);
   void unsubscribe(const stomp_subscription_token subscription_token);
 
   void on_connect(stomp_handler handler);
+  void on_disconnect(stomp_disconnect_handler handler);
   void on_error(stomp_handler handler);
   void on_unknown(stomp_handler handler);
 
   stomp_state get_state() const;
 
 private:
-  void handle_websocket_event_(esp_event_base_t base, esp_websocket_event_id_t id, esp_websocket_event_data_t* data);
+  void handle_websocket_event_(WStype_t type, uint8_t* payload, size_t length);
   void handle_connect_(const stomp_message& message);
+  void handle_disconnect_();
   void handle_message_(const stomp_message& message);
   void handle_error_(const stomp_message& message);
   void handle_recepit_(const stomp_message& message);
@@ -61,18 +64,18 @@ private:
 
   void send_connect_frame_();
   void send_end_frame_();
-  void close_connection_();
 
   void send_sstream_(std::ostringstream& ss);
   static void parse_message_(const std::string& data, stomp_message& out_message);
 
-  esp_websocket_client_handle_t client_handle_;
+  WebSocketsClient ws_client_;
 
   stomp_state state_;
   std::vector<stomp_subscription> subscriptions_;
   stomp_subscription_token next_subscription_token_;
 
   stomp_handler connect_handler_;
+  stomp_disconnect_handler disconnect_handler_;
   stomp_handler error_handler_;
   stomp_handler unknown_handler_;
 };

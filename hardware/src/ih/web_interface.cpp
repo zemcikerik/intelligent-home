@@ -1,35 +1,65 @@
 #include "web_interface.hpp"
 #include <SPIFFS.h>
 
-void ok_json(AsyncWebServerRequest* request, JsonDocument& doc, std::size_t buffer_size = 1460U);
+void ok_json(ih::web_request* request, JsonDocument& doc, std::size_t buffer_size = 1460U);
 std::string enryption_type_to_string(wifi_auth_mode_t type);
 
-ih::web_interface::web_interface(ih::wifi_async& wifi_async, std::uint16_t port): web_server_(port), wifi_async_(wifi_async) {
+void handle_get_wifi_status(ih::web_request* request);
+void handle_post_wifi_status(ih::web_request* request, JsonObject& body);
+void handle_delete_wifi_status(ih::web_request* request);
+
+ih::web_interface::web_interface(std::uint16_t port): web_server_(port) {
+}
+
+ih::web_interface::~web_interface() {
+  this->web_server_.end();
 }
 
 void ih::web_interface::begin() {
-  this->web_server_.on("/api/wifi", WebRequestMethod::HTTP_GET, [this](AsyncWebServerRequest* request) {
-    this->handle_get_wifi_(request);
-  });
+  if (this->wifi_scanner_ != nullptr) {
+    this->web_server_.on("/api/wifi/networks", WebRequestMethod::HTTP_GET, [this](AsyncWebServerRequest* request) {
+      this->handle_get_wifi_networks_(request);
+    });
+  }
 
-  this->web_server_.on("/api/connect", WebRequestMethod::HTTP_GET, [this](AsyncWebServerRequest* request) {
-    this->handle_get_connect_(request);
-  });
+  if (this->wifi_status_endpoints_) {
+    this->web_server_.on("/api/wifi", WebRequestMethod::HTTP_GET, handle_get_wifi_status);
 
-  this->web_server_on_post_("/api/connect", [this](AsyncWebServerRequest* request, JsonVariant& body) {
-    JsonObject body_obj = body.as<JsonObject>();
-    this->handle_post_connect_(request, body_obj);
-  });
+    this->web_server_on_post_("/api/wifi", [this](AsyncWebServerRequest* request, JsonVariant& body) {
+      JsonObject body_obj = body.as<JsonObject>();
+      handle_post_wifi_status(request, body_obj);
+    });
 
-  this->web_server_.on("/api/connect", WebRequestMethod::HTTP_DELETE, [this](AsyncWebServerRequest* request) {
-    this->handle_delete_connect_(request);
-  });
+    this->web_server_.on("/api/wifi", WebRequestMethod::HTTP_DELETE, handle_delete_wifi_status);
+  }
 
-  this->web_server_.onNotFound([this](AsyncWebServerRequest* request) {
-    request->redirect("/");
-  });
+  if (this->add_default_not_found_handler_) {
+    this->web_server_.onNotFound([](AsyncWebServerRequest* request) {
+      request->send(404);
+    });
+  }
 
   this->web_server_.begin();
+}
+
+void ih::web_interface::enable_wifi_status_endpoints() {
+  this->wifi_status_endpoints_ = true;
+}
+
+void ih::web_interface::enable_wifi_network_endpoints(std::shared_ptr<ih::wifi_scanner> wifi_scanner) {
+  this->wifi_scanner_ = wifi_scanner;
+}
+
+void ih::web_interface::serve_static(fs::FS& fs, std::string fs_path, bool redirect_not_found_to_root) {
+  this->web_server_.serveStatic("/", fs, fs_path.c_str());
+
+  if (redirect_not_found_to_root) {
+    this->add_default_not_found_handler_ = false;
+
+    this->web_server_.onNotFound([](AsyncWebServerRequest* request) {
+      request->redirect("/");
+    });
+  }
 }
 
 void ih::web_interface::web_server_on_post_(std::string uri, ArJsonRequestHandlerFunction handler) {
@@ -38,24 +68,24 @@ void ih::web_interface::web_server_on_post_(std::string uri, ArJsonRequestHandle
   this->web_server_.addHandler(request_handler);
 }
 
-void ih::web_interface::handle_get_wifi_(AsyncWebServerRequest* request) {
-  this->wifi_async_.get_available_networks([request](std::vector<ih::wifi_info>& networks) {
-    DynamicJsonDocument doc{ 2048 };
-    JsonArray json = doc.to<JsonArray>();
+void ih::web_interface::handle_get_wifi_networks_(ih::web_request* request) {
+  const auto networks = this->wifi_scanner_->get_networks();
 
-    for (const auto& network : networks) {
-      JsonObject json_network = json.createNestedObject();
-      json_network["ssid"] = network.ssid;
-      json_network["rssi"] = network.rssi;
-      json_network["channel"] = network.channel;
-      json_network["type"] = enryption_type_to_string(network.type);
-    }
+  DynamicJsonDocument doc{ 2048 };
+  JsonArray json = doc.to<JsonArray>();
 
-    ok_json(request, doc, 2048);
-  });
+  for (const auto& network : *networks) {
+    JsonObject json_network = json.createNestedObject();
+    json_network["ssid"] = network.ssid;
+    json_network["rssi"] = network.rssi;
+    json_network["channel"] = network.channel;
+    json_network["type"] = enryption_type_to_string(network.type);
+  }
+
+  ok_json(request, doc, 2048);
 }
 
-void ih::web_interface::handle_get_connect_(AsyncWebServerRequest* request) {
+void handle_get_wifi_status(ih::web_request* request) {
   if (WiFi.isConnected()) {
     DynamicJsonDocument doc{ 1024 };
     doc["connected"] = true;
@@ -66,27 +96,24 @@ void ih::web_interface::handle_get_connect_(AsyncWebServerRequest* request) {
 
     ok_json(request, doc);
   } else {
-    StaticJsonDocument<64> doc;
-    doc["connected"] = false;
-    ok_json(request, doc);
+    request->send(200, "application/json", "{\"connected\":false}");
   }
 }
 
-void ih::web_interface::handle_post_connect_(AsyncWebServerRequest* request, JsonObject& body) {
+void handle_post_wifi_status(ih::web_request* request, JsonObject& body) {
   if (!body.containsKey("ssid") || !body.containsKey("pswd")) {
     request->send(400);
     return;
   }
 
-  const std::string ssid = body["ssid"];
-  const std::string pswd = body["pswd"];
+  const char* ssid = body["ssid"];
+  const char* pswd = body["pswd"];
 
-  this->wifi_async_.connect(ssid, pswd, [request](bool success) {
-    request->send(success ? 204 : 403);
-  });
+  WiFi.begin(ssid, pswd);
+  request->send(204);
 }
 
-void ih::web_interface::handle_delete_connect_(AsyncWebServerRequest* request) {
+void handle_delete_wifi_status(ih::web_request* request) {
   if (WiFi.isConnected()) {
     WiFi.disconnect();
     request->send(204);
@@ -95,7 +122,7 @@ void ih::web_interface::handle_delete_connect_(AsyncWebServerRequest* request) {
   }
 }
 
-void ok_json(AsyncWebServerRequest* request, JsonDocument& doc, std::size_t buffer_size) {
+void ok_json(ih::web_request* request, JsonDocument& doc, std::size_t buffer_size) {
   const auto response = request->beginResponseStream("application/json", buffer_size);
   serializeJson(doc, *response);
   request->send(response);

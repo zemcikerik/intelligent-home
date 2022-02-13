@@ -7,22 +7,20 @@
 #include "intelligent_home.hpp"
 #include "config.hpp"
 
-ih::stomp_client stomper;
-ih::home_manager home_manager{ stomper };
-ih::wifi_async wifi_async;
-ih::web_interface web_interface{ wifi_async, 80 };
+// only during development
+WebSocketsClient* cursed_temp_variable = nullptr;
 
+ih::home_manager home_manager;
 ih::device device{ "d081dc06-284b-4378-8ce5-24e71911c60d", "ESP32" };
+
 ih::feature buzzer_feature{ "a081dc0a-284b-4378-8ce5-24e71911c60d", device.id, "Buzzer", ih::feature_type::button, nullptr };
 
 auto led_feature_state = std::make_shared<ih::boolean_feature_state>(true);
 ih::feature led_feature{ "d081dc0a-284b-4378-8ce5-24e71911c60d", device.id, "Built-in LED", ih::feature_type::boolean, led_feature_state };
 
-TaskHandle_t sample_task = nullptr;
 auto value_reader_feature_state = std::make_shared<ih::text_feature_state>("Waiting for sample!");
 ih::feature value_reader_feature{ "b081dc0a-284b-4378-8ce5-24e71911c60d", device.id, "Value Reader", ih::feature_type::text, value_reader_feature_state };
 
-TaskHandle_t buzzer_task = nullptr;
 auto dropdown_feature_state = std::make_shared<ih::dropdown_feature_state>(std::vector<std::string>{ "First", "Second", "Third" }, "Second");
 ih::feature dropdown_feature{ "b081dc0a-284b-4378-8ce5-24e71911c60a", device.id, "Test Dropdown", ih::feature_type::dropdown, dropdown_feature_state };
 
@@ -43,14 +41,13 @@ void setup() {
 
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH);
-  ledcAttachPin(15, 0);
 
   WiFi.mode(WIFI_MODE_APSTA);
   WiFi.softAP(config::ap_ssid, config::ap_pswd);
 
-  home_manager.register_device(device);
-  home_manager.register_feature(led_feature);
+  home_manager.set_device_info(device);
   home_manager.register_feature(buzzer_feature);
+  home_manager.register_feature(led_feature);
   home_manager.register_feature(value_reader_feature);
   home_manager.register_feature(dropdown_feature);
 
@@ -60,50 +57,12 @@ void setup() {
     home_manager.update_feature(led_feature);
   });
 
-  home_manager.on_feature_update_request(buzzer_feature, [](ih::feature&, JsonObject&) {
-    if (buzzer_task == nullptr) {
-      xTaskCreate(buzzer, "Buzzer", 2048, nullptr, 3, &buzzer_task);
-    }
-  });
-
-  stomper.on_connect([](const ih::stomp_message& message) {
-    home_manager.connect_callback(message);
-
-    if (sample_task == nullptr) {
-      xTaskCreate(sample, "Sampler", 4096, nullptr, 2, &sample_task);
-    }
-  });
-
-  stomper.on_unknown([](const ih::stomp_message& message) {
-    Serial.print("Unknown command: ");
-    Serial.println(message.command.c_str());
-  });
-
-  web_interface.begin();
-  stomper.begin(config::hostname, config::port, config::ws_path);
-}
-
-void sample(void*) {
-  while (true) {
-    vTaskDelay(200 / portTICK_PERIOD_MS);
-
-    // because of c++ compiler bug on win
-    std::ostringstream ss;
-    ss << analogRead(34);
-
-    value_reader_feature_state->text = ss.str();
-    home_manager.update_feature(value_reader_feature);
-  }
-}
-
-void buzzer(void*) {
-  ledcWriteNote(0, NOTE_C, 4);
-  vTaskDelay(500 / portTICK_PERIOD_MS);
-  ledcWriteTone(0, 0);
-
-  buzzer_task = nullptr;
-  vTaskDelete(nullptr);
+  home_manager.enable_web_server();
+  home_manager.begin();
 }
 
 void loop() {
+  if (cursed_temp_variable) {
+    cursed_temp_variable->loop();
+  }
 }
