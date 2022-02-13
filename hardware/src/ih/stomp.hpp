@@ -36,8 +36,11 @@ enum class stomp_state {
 class stomp_client {
 public:
   stomp_client();
+  ~stomp_client();
 
   void begin(const std::string hostname, const int port, const std::string path);
+  void end();
+
   void send(const std::string destination, const std::string body);
   void subscribe(const std::string destination, stomp_handler handler);
   void unsubscribe(const stomp_subscription_token subscription_token);
@@ -48,14 +51,18 @@ public:
 
   stomp_state get_state() const;
 
-  // for internal use only
-  // TODO: try to find a way to make this private
-  void handle_websocket_event_(esp_event_base_t base, esp_websocket_event_id_t id, esp_websocket_event_data_t* data);
-
 private:
+  void handle_websocket_event_(esp_event_base_t base, esp_websocket_event_id_t id, esp_websocket_event_data_t* data);
   void handle_connect_(const stomp_message& message);
   void handle_message_(const stomp_message& message);
-  void connect_();
+  void handle_error_(const stomp_message& message);
+  void handle_recepit_(const stomp_message& message);
+  void handle_unknown_(const stomp_message& message);
+
+  void send_connect_frame_();
+  void send_end_frame_();
+  void close_connection_();
+
   void send_sstream_(std::ostringstream& ss);
   static void parse_message_(const std::string& data, stomp_message& out_message);
 
