@@ -38,6 +38,7 @@ import { HttpClientModule } from '@angular/common/http';
     StoreRouterConnectingModule.forRoot()
   ],
   providers: [
+    Service.HomeService,
     Service.WifiService,
   ],
   bootstrap: [AppComponent]
