@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { WifiService } from "../../services";
 import { Observable } from "rxjs";
-import { WifiNetwork } from "../../models";
+import { WifiStatus } from "../../models";
 
 @Component({
   selector: 'app-wifi',
@@ -10,13 +10,13 @@ import { WifiNetwork } from "../../models";
 })
 export class WifiComponent implements OnInit {
 
-  wifi$!: Observable<WifiNetwork[]>;
+  connectionStatus$!: Observable<WifiStatus>;
 
   constructor(private readonly wifiService: WifiService) {
   }
 
   ngOnInit(): void {
-    this.wifi$ = this.wifiService.getAvailableNetworks();
+    this.connectionStatus$ = this.wifiService.getConnectionStatus();
   }
 
 }

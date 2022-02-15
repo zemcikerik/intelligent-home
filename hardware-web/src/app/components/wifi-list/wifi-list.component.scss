@@ -1,0 +1,23 @@
+.list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.list-header p {
+  font-weight: bold;
+  text-align: center;
+  margin: 0;
+  min-width: 100px;
+}
+
+#SSID {
+  min-width: 150px;
+}
+
+.add-button {
+  color: white;
+  background-color: #ff9060;
+  min-width: 85px;
+}

@@ -1,0 +1,12 @@
+<div class="list-header">
+  <p id="SSID">SSID</p>
+  <p>RSSI</p>
+  <p>Channel</p>
+  <p>Type</p>
+  <button mat-flat-button class="add-button">Add</button>
+</div>
+<div *ngFor="let wifi of wifi$ | async">
+  <app-wifi-entry [wifi]="wifi"></app-wifi-entry>
+</div>
+
+
