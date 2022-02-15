@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { delay, Observable, of } from 'rxjs';
-import { WifiEncryptionType, WifiNetwork, WifiStatus } from '../models';
+import { WifiConnect, WifiEncryptionType, WifiNetwork, WifiStatus } from '../models';
 
 @Injectable()
 export class WifiService {
@@ -27,7 +27,7 @@ export class WifiService {
     });
   }
 
-  connect(): Observable<any> {
+  connect(wifiConnect: WifiConnect): Observable<any> {
     return this.ofWithDelay(null);
   }
 
