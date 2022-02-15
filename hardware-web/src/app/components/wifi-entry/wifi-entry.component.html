@@ -1,1 +1,10 @@
-<p>wifi-entry works!</p>
+<div *ngIf="wifi" class="entry">
+  <div class="name-badge">
+    <mat-icon>wifi</mat-icon>
+    <p>{{ wifi.ssid }}</p>
+  </div>
+  <p>{{ wifi.rssi }}</p>
+  <p>{{ wifi.channel }}</p>
+  <p>{{ wifi.type }}</p>
+  <button mat-flat-button>Connect</button>
+</div>

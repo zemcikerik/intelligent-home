@@ -17,6 +17,7 @@ import { HttpClientModule } from '@angular/common/http';
   declarations: [
     AppComponent,
     Components.WifiEntryComponent,
+    Components.WifiComponent,
   ],
   imports: [
     BrowserModule,

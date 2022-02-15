@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { WifiNetwork } from "../../models";
 
 @Component({
   selector: 'app-wifi-entry',
@@ -6,6 +7,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./wifi-entry.component.scss']
 })
 export class WifiEntryComponent implements OnInit {
+
+  @Input() wifi?: WifiNetwork;
 
   constructor() { }
 
