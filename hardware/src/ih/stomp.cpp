@@ -1,10 +1,6 @@
 #include "stomp.hpp"
 
-// only during development
-extern WebSocketsClient* cursed_temp_variable;
-
 ih::stomp_client::stomp_client() : state_(ih::stomp_state::waiting) {
-  cursed_temp_variable = &this->ws_client_;
 }
 
 ih::stomp_client::~stomp_client() {
@@ -24,6 +20,10 @@ void ih::stomp_client::begin(const std::string hostname, const int port, const s
   this->state_ = ih::stomp_state::connecting;
 }
 
+void ih::stomp_client::loop() {
+  this->ws_client_.loop();
+}
+
 void ih::stomp_client::end() {
   switch (this->state_) {
     case ih::stomp_state::connected:
@@ -40,8 +40,10 @@ void ih::stomp_client::end() {
 }
 
 void ih::stomp_client::close_connection() {
-  this->ws_client_.disconnect();
   this->state_ = ih::stomp_state::waiting;
+  this->should_trigger_disconnect_handler_ = true;
+  this->ws_client_.disconnect();
+  this->ws_client_ = {};
 }
 
 void ih::stomp_client::send(const std::string destination, const std::string body) {
@@ -113,6 +115,7 @@ void ih::stomp_client::handle_websocket_event_(WStype_t type, uint8_t* payload, 
       break;
 
     case WStype_t::WStype_CONNECTED:
+      this->should_trigger_disconnect_handler_ = true;
       this->send_connect_frame_();
       break;
 
@@ -146,9 +149,12 @@ void ih::stomp_client::handle_connect_(const ih::stomp_message& message) {
 }
 
 void ih::stomp_client::handle_disconnect_() {
-  this->state_ = ih::stomp_state::disconnected;
+  if (this->state_ != ih::stomp_state::waiting) {
+    this->state_ = ih::stomp_state::disconnected;
+  }
 
-  if (this->disconnect_handler_) {
+  if (this->should_trigger_disconnect_handler_ && this->disconnect_handler_) {
+    this->should_trigger_disconnect_handler_ = false;
     this->disconnect_handler_();
   }
 }

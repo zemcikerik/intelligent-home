@@ -1,12 +1,15 @@
 #include "web_interface.hpp"
-#include <SPIFFS.h>
 
 void ok_json(ih::web_request* request, JsonDocument& doc, std::size_t buffer_size = 1460U);
-std::string enryption_type_to_string(wifi_auth_mode_t type);
+const char* enryption_type_to_string(wifi_auth_mode_t type);
+const char* home_state_to_string(ih::home_state state);
 
 void handle_get_wifi_status(ih::web_request* request);
 void handle_post_wifi_status(ih::web_request* request, JsonObject& body);
 void handle_delete_wifi_status(ih::web_request* request);
+
+void handle_get_home_status(ih::web_request* request, ih::web_home_status& home_status);
+void handle_set_home_server_info(ih::web_request* request, JsonObject& body, ih::web_home_server_info_consumer& server_info_consumer);
 
 ih::web_interface::web_interface(std::uint16_t port): web_server_(port) {
 }
@@ -33,6 +36,26 @@ void ih::web_interface::begin() {
     this->web_server_.on("/api/wifi", WebRequestMethod::HTTP_DELETE, handle_delete_wifi_status);
   }
 
+  if (this->home_status_handlers_.get_home_status) {
+    this->web_server_.on("/api/home", WebRequestMethod::HTTP_GET, [this](AsyncWebServerRequest* request) {
+      ih::web_home_status home_status = this->home_status_handlers_.get_home_status();
+      handle_get_home_status(request, home_status);
+    });
+  }
+
+  if (this->home_status_handlers_.set_home_server_info) {
+    this->web_server_on_post_("/api/home", [this](AsyncWebServerRequest* request, JsonVariant& body) {
+      JsonObject body_obj = body.as<JsonObject>();
+      handle_set_home_server_info(request, body_obj, this->home_status_handlers_.set_home_server_info);
+    });
+  }
+
+  if (this->home_status_handlers_.disconnect_home_server) {
+    this->web_server_.on("/api/home", WebRequestMethod::HTTP_DELETE, [this](AsyncWebServerRequest* request) {
+      request->send(this->home_status_handlers_.disconnect_home_server() ? 204 : 404);
+    });
+  }
+
   if (this->add_default_not_found_handler_) {
     this->web_server_.onNotFound([](AsyncWebServerRequest* request) {
       request->send(404);
@@ -50,8 +73,12 @@ void ih::web_interface::enable_wifi_network_endpoints(std::shared_ptr<ih::wifi_s
   this->wifi_scanner_ = wifi_scanner;
 }
 
+void ih::web_interface::enable_home_status_endpoints(const ih::web_home_status_handlers& handlers) {
+  this->home_status_handlers_ = handlers;
+}
+
 void ih::web_interface::serve_static(fs::FS& fs, std::string fs_path, bool redirect_not_found_to_root) {
-  this->web_server_.serveStatic("/", fs, fs_path.c_str());
+  this->web_server_.serveStatic("/", fs, fs_path.c_str()).setDefaultFile("index.html");
 
   if (redirect_not_found_to_root) {
     this->add_default_not_found_handler_ = false;
@@ -122,13 +149,46 @@ void handle_delete_wifi_status(ih::web_request* request) {
   }
 }
 
+void handle_get_home_status(ih::web_request* request, ih::web_home_status& home_status) {
+  DynamicJsonDocument doc{ 1024 };
+  doc["state"] = home_state_to_string(home_status.state);
+  
+  if (home_status.server_info.hostname != "") {
+    doc["hasServerInfo"] = true;
+
+    JsonObject server_info = doc.createNestedObject("serverInfo");
+    server_info["hostname"] = home_status.server_info.hostname;
+    server_info["port"] = home_status.server_info.port;
+    server_info["path"] = home_status.server_info.ws_path;
+  } else {
+    doc["hasServerInfo"] = false;
+  }
+
+  ok_json(request, doc);
+}
+
+void handle_set_home_server_info(ih::web_request* request, JsonObject& body, ih::web_home_server_info_consumer& server_info_consumer) {
+  if (!body.containsKey("hostname") || !body.containsKey("port") || !body.containsKey("path")) {
+    request->send(400);
+    return;
+  }
+
+  ih::home_server_info server_info{
+    .hostname = body["hostname"],
+    .port = body["port"],
+    .ws_path = body["path"]
+  };
+
+  request->send(server_info_consumer(server_info) ? 204 : 404);
+}
+
 void ok_json(ih::web_request* request, JsonDocument& doc, std::size_t buffer_size) {
   const auto response = request->beginResponseStream("application/json", buffer_size);
   serializeJson(doc, *response);
   request->send(response);
 }
 
-std::string enryption_type_to_string(wifi_auth_mode_t type) {
+const char* enryption_type_to_string(wifi_auth_mode_t type) {
   switch (type) {
     case wifi_auth_mode_t::WIFI_AUTH_OPEN:            return "OPEN";
     case wifi_auth_mode_t::WIFI_AUTH_WEP:             return "WEP";
@@ -137,5 +197,16 @@ std::string enryption_type_to_string(wifi_auth_mode_t type) {
     case wifi_auth_mode_t::WIFI_AUTH_WPA_WPA2_PSK:    return "WPA_WPA2_PSK";
     case wifi_auth_mode_t::WIFI_AUTH_WPA2_ENTERPRISE: return "WPA2_ENTERPRISE";
     default:                                          return "UNKNOWN";
+  }
+}
+
+const char* home_state_to_string(ih::home_state state) {
+  switch (state) {
+    case ih::home_state::waiting_for_network:     return "WAITING_FOR_NETWORK";
+    case ih::home_state::waiting_for_server_info: return "WAITING_FOR_SERVER_INFO";
+    case ih::home_state::connecting:              return "CONNECTING";
+    case ih::home_state::auth:                    return "AUTH";
+    case ih::home_state::ready:                   return "READY";
+    default:                                      return "UNKNOWN";
   }
 }

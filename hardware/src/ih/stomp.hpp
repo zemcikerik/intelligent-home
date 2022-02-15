@@ -39,6 +39,7 @@ public:
   ~stomp_client();
 
   void begin(const std::string hostname, const int port, const std::string path);
+  void loop();
   void end();
   void close_connection();
 
@@ -69,6 +70,7 @@ private:
   static void parse_message_(const std::string& data, stomp_message& out_message);
 
   WebSocketsClient ws_client_;
+  bool should_trigger_disconnect_handler_ = false;
 
   stomp_state state_;
   std::vector<stomp_subscription> subscriptions_;

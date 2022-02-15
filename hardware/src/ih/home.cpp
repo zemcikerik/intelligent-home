@@ -1,4 +1,5 @@
 #include "home.hpp"
+#include <SPIFFS.h>
 
 std::string get_path_with_id(std::string base, std::string& id);
 
@@ -11,7 +12,6 @@ void ih::home_manager::begin() {
     this->server_disconnect_callback_();
   });
 
-  // TODO: proper handling
   this->stomper_.on_unknown([](const ih::stomp_message& message) {
     Serial.print("Unknown command: ");
     Serial.println(message.command.c_str());
@@ -30,7 +30,7 @@ void ih::home_manager::begin() {
   }
 
   if (WiFi.isConnected()) {
-    if (this->server_info_) {
+    if (this->server_info_.hostname != "") {
       this->initialize_connection_to_server_();
     } else {
       this->state_ = ih::home_state::waiting_for_server_info;
@@ -38,17 +38,41 @@ void ih::home_manager::begin() {
   }
 }
 
+void ih::home_manager::loop() {
+  this->stomper_.loop();
+}
+
 void ih::home_manager::set_device_info(ih::device device) {
   this->device_info_ = device;
 }
 
-void ih::home_manager::set_server_info(std::shared_ptr<ih::home_server_info> server_info) {
-  this->server_info_ = std::move(server_info);
+bool ih::home_manager::set_server_info(const ih::home_server_info& server_info) {
+  if (this->state_ == ih::home_state::waiting_for_network || this->state_ == ih::home_state::waiting_for_server_info) {
+    this->server_info_ = server_info;
 
-  // TODO: should we handle change if already connected to server?
-  if (this->state_ == ih::home_state::waiting_for_server_info) {
-    this->initialize_connection_to_server_();
+    if (this->state_ == ih::home_state::waiting_for_server_info) {
+      this->initialize_connection_to_server_();
+    }
+
+    return true;
   }
+
+  return false;
+}
+
+bool ih::home_manager::disconnect_from_server() {
+  if (this->state_ == ih::home_state::waiting_for_network && this->server_info_.hostname != "") {
+    this->state_ = {};
+    return true;
+  }
+
+  if (this->state_ == ih::home_state::waiting_for_server_info) {
+    return false;
+  }
+
+  this->server_info_ = {};
+  this->stomper_.end();
+  return true;
 }
 
 ih::home_state ih::home_manager::get_state() const {
@@ -61,7 +85,7 @@ void ih::home_manager::register_feature(ih::feature& feature) {
 }
 
 void ih::home_manager::update_feature(ih::feature& feature) {
-  if (feature.state != nullptr && this->stomper_.get_state() == ih::stomp_state::connected) {
+  if (feature.state != nullptr && this->state_ == ih::home_state::ready) {
     std::string path = get_path_with_id("/app/device/feature/update/", feature.id);
     this->stomper_.send(path, feature.state->to_json());
   }
@@ -83,13 +107,32 @@ void ih::home_manager::enable_web_server(ih::web_server_configuration config) {
     this->web_interface_->enable_wifi_status_endpoints();
   }
 
+  if (config.enable_home_server_api) {
+    this->web_interface_->enable_home_status_endpoints({
+      .get_home_status = [this]() {
+        return this->get_status_for_web_();
+      },
+      .set_home_server_info = [this](ih::home_server_info& server_info) {
+        return this->set_server_info(server_info);
+      },
+      .disconnect_home_server = [this]() {
+        return this->disconnect_from_server();
+      }
+    });
+  }
+
   if (config.enable_control_interface) {
-    // TODO: serve static content
+    if (!SPIFFS.begin()) {
+      Serial.println("SPIFFS begin() failed!");
+      return;
+    }
+
+    this->web_interface_->serve_static(SPIFFS, "/");
   }
 }
 
 void ih::home_manager::wifi_connect_callback_() {
-  if (this->server_info_) {
+  if (this->server_info_.hostname != "") {
     this->initialize_connection_to_server_();
   } else {
     this->state_ = ih::home_state::waiting_for_server_info;
@@ -115,29 +158,19 @@ void ih::home_manager::server_connect_callback_() {
 }
 
 void ih::home_manager::server_disconnect_callback_() {
-  const auto stomper_state = this->stomper_.get_state();
-
-  if (this->server_info_) {
-    if (stomper_state == ih::stomp_state::disconnected) {
-      this->stomper_.close_connection();
-    }
-
-    this->initialize_connection_to_server_();
-    return;
-  }
-
-  this->state_ = stomper_state == ih::stomp_state::disconnected ? ih::home_state::connecting : ih::home_state::waiting_for_server_info;
+  this->state_ = this->stomper_.get_state() == ih::stomp_state::disconnected
+    ? ih::home_state::connecting
+    : ih::home_state::waiting_for_server_info;
 }
 
 void ih::home_manager::initialize_connection_to_server_() {
-  const auto& server = *this->server_info_;
+  const auto& server = this->server_info_;
   this->stomper_.begin(server.hostname, server.port, server.ws_path);
   this->state_ = ih::home_state::connecting;
-  this->server_info_ = nullptr;
 }
 
 void ih::home_manager::send_add_feature_message_if_connected_(const ih::feature& feature) {
-  if (this->stomper_.get_state() == ih::stomp_state::connected) {
+  if (this->state_ == ih::home_state::ready) {
     this->stomper_.send("/app/device/feature/register", feature.to_json());
   }
 }
@@ -154,6 +187,13 @@ void ih::home_manager::handle_feature_update_request_message_(const ih::stomp_me
       entry.handler(entry.target_feature, update_body);
     }
   }
+}
+
+ih::web_home_status ih::home_manager::get_status_for_web_() const {
+  return {
+    .state = this->state_,
+    .server_info = this->server_info_
+  };
 }
 
 std::string get_path_with_id(std::string base, std::string& id) {

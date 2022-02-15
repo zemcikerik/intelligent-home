@@ -1,6 +1,8 @@
 #pragma once
 #include "device.hpp"
 #include "feature.hpp"
+#include "home_server_info.hpp"
+#include "home_state.hpp"
 #include "stomp.hpp"
 #include "web_interface.hpp"
 #include "wifi_scanner.hpp"
@@ -14,24 +16,11 @@ struct feature_update_request_handler_entry {
   feature_update_request_handler handler;
 };
 
-struct home_server_info {
-  std::string hostname;
-  std::uint16_t port;
-  std::string ws_path;
-};
-
-enum class home_state {
-  waiting_for_network,
-  waiting_for_server_info,
-  connecting,
-  auth,
-  ready
-};
-
 struct web_server_configuration {
   std::uint16_t port = 80;
   bool enable_wifi_api = true;
   bool enable_connect_api = true;
+  bool enable_home_server_api = true;
   bool enable_control_interface = true;
   std::shared_ptr<wifi_scanner> wifi_scanner_ptr;
 };
@@ -39,8 +28,11 @@ struct web_server_configuration {
 class home_manager {
 public:
   void begin();
+  void loop();
+
   void set_device_info(device device);
-  void set_server_info(std::shared_ptr<home_server_info> server_info);
+  bool set_server_info(const home_server_info& server_info);
+  bool disconnect_from_server();
   home_state get_state() const;
 
   void register_feature(feature& feature);
@@ -59,7 +51,7 @@ private:
   std::vector<std::reference_wrapper<feature>> features_;
   std::vector<feature_update_request_handler_entry> update_handler_entries_;
 
-  std::shared_ptr<home_server_info> server_info_;
+  home_server_info server_info_{};
 
   void wifi_connect_callback_();
   void wifi_disconnect_callback_();
@@ -69,7 +61,10 @@ private:
   void initialize_connection_to_server_();
 
   void send_add_feature_message_if_connected_(const feature& feature);
-  void handle_feature_update_request_message_(const ih::stomp_message& message);
+  void handle_feature_update_request_message_(const stomp_message& message);
+
+  web_home_status get_status_for_web_() const;
+
 };
 
 }
