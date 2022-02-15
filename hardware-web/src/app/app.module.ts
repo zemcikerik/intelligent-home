@@ -10,11 +10,13 @@ import { EffectsModule } from '@ngrx/effects';
 import { routerReducer, StoreRouterConnectingModule } from '@ngrx/router-store';
 import { MaterialModule } from './material.module';
 import * as Service from './services';
+import * as Components from './components';
 import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    Components.WifiEntryComponent,
   ],
   imports: [
     BrowserModule,
