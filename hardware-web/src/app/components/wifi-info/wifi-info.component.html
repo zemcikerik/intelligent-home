@@ -1,13 +1,13 @@
-<div class="container">
+<div class="container" *ngIf="status$ | async as status">
   <div class="header">
     <p>Connected Wifi</p>
     <button mat-flat-button>Disconnect</button>
   </div>
 
-  <div *ngIf="wifiStatus">
-    <p>SSID <label>{{ wifiStatus.ssid }}</label></p>
-    <p>BSSID <label>{{ wifiStatus.bssid }}</label></p>
-    <p>RSSI <label>{{ wifiStatus.rssi }}</label></p>
-    <p>IP <label>{{ wifiStatus.ip }}</label></p>
+  <div>
+    <p>SSID: <label>{{ status.ssid }}</label></p>
+    <p>BSSID: <label>{{ status.bssid }}</label></p>
+    <p>RSSI: <label>{{ status.rssi }}</label></p>
+    <p>IP: <label>{{ status.ip }}</label></p>
   </div>
 </div>

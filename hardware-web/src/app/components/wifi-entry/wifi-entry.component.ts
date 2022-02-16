@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { WifiNetwork } from "../../models";
 
 @Component({
@@ -6,13 +6,6 @@ import { WifiNetwork } from "../../models";
   templateUrl: './wifi-entry.component.html',
   styleUrls: ['./wifi-entry.component.scss']
 })
-export class WifiEntryComponent implements OnInit {
-
+export class WifiEntryComponent {
   @Input() wifi?: WifiNetwork;
-
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
 }

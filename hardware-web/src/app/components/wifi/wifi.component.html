@@ -1,1 +1,11 @@
+<div class="container">
+  <div *ngIf="loading$ | async; else loaded">Loading</div>
 
+  <ng-template #loaded>
+    <app-wifi-info *ngIf="connected$ | async; else list"></app-wifi-info>
+
+    <ng-template #list>
+      <app-wifi-list></app-wifi-list>
+    </ng-template>
+  </ng-template>
+</div>

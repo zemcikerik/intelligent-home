@@ -5,8 +5,6 @@
   <p>Type</p>
   <button mat-flat-button class="add-button">Add</button>
 </div>
-<div *ngFor="let wifi of wifi$ | async">
-  <app-wifi-entry [wifi]="wifi"></app-wifi-entry>
+<div *ngFor="let network of networks$ | async">
+  <app-wifi-entry [wifi]="network"></app-wifi-entry>
 </div>
-
-

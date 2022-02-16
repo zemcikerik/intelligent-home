@@ -9,9 +9,11 @@ import { environment } from '../environments/environment';
 import { EffectsModule } from '@ngrx/effects';
 import { routerReducer, StoreRouterConnectingModule } from '@ngrx/router-store';
 import { MaterialModule } from './material.module';
+import * as Facade from './state/facade';
 import * as Service from './services';
 import * as Components from './components';
 import { HttpClientModule } from '@angular/common/http';
+import { AppEffects, WIFI_FEATURE_KEY, WifiEffects, wifiReducer } from './state';
 
 @NgModule({
   declarations: [
@@ -29,6 +31,7 @@ import { HttpClientModule } from '@angular/common/http';
     HttpClientModule,
     BrowserAnimationsModule,
     StoreModule.forRoot({
+      [WIFI_FEATURE_KEY]: wifiReducer,
       router: routerReducer,
     }, {
       runtimeChecks: {
@@ -37,10 +40,11 @@ import { HttpClientModule } from '@angular/common/http';
       }
     }),
     !environment.production ? StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }) : [],
-    EffectsModule.forRoot([]),
+    EffectsModule.forRoot([AppEffects, WifiEffects]),
     StoreRouterConnectingModule.forRoot()
   ],
   providers: [
+    Facade.WifiFacade,
     Service.HomeService,
     Service.WifiService,
   ],

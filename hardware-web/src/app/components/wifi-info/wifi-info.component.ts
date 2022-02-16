@@ -1,18 +1,19 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ConnectedWifiStatus } from "../../models";
+import { Observable } from 'rxjs';
+import { WifiFacade } from '../../state';
 
 @Component({
   selector: 'app-wifi-info',
   templateUrl: './wifi-info.component.html',
   styleUrls: ['./wifi-info.component.scss']
 })
-export class WifiInfoComponent implements OnInit {
+export class WifiInfoComponent {
 
-  @Input() wifiStatus?: ConnectedWifiStatus;
+  status$: Observable<ConnectedWifiStatus>;
 
-  constructor() { }
-
-  ngOnInit(): void {
+  constructor(wifiFacade: WifiFacade) {
+    this.status$ = wifiFacade.getNetworkStatus() as Observable<ConnectedWifiStatus>;
   }
 
 }
