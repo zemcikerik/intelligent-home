@@ -13,7 +13,15 @@ import * as Facade from './state/facade';
 import * as Service from './services';
 import * as Components from './components';
 import { HttpClientModule } from '@angular/common/http';
-import { AppEffects, WIFI_FEATURE_KEY, WifiEffects, wifiReducer } from './state';
+import {
+  AppEffects,
+  HOME_FEATURE_KEY,
+  HomeEffects,
+  homeReducer,
+  WIFI_FEATURE_KEY,
+  WifiEffects,
+  wifiReducer
+} from './state';
 import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
@@ -34,6 +42,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     BrowserAnimationsModule,
     ReactiveFormsModule,
     StoreModule.forRoot({
+      [HOME_FEATURE_KEY]: homeReducer,
       [WIFI_FEATURE_KEY]: wifiReducer,
       router: routerReducer,
     }, {
@@ -43,10 +52,11 @@ import { ReactiveFormsModule } from '@angular/forms';
       }
     }),
     !environment.production ? StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }) : [],
-    EffectsModule.forRoot([AppEffects, WifiEffects]),
+    EffectsModule.forRoot([AppEffects, HomeEffects, WifiEffects]),
     StoreRouterConnectingModule.forRoot()
   ],
   providers: [
+    Facade.HomeFacade,
     Facade.WifiFacade,
     Service.HomeService,
     Service.WifiService,

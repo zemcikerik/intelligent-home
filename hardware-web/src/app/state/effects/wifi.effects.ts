@@ -33,7 +33,7 @@ export class WifiEffects {
     )
   );
 
-  connect$ = createEffect(() =>
+  connectWifi$ = createEffect(() =>
     this.action$.pipe(
       ofType(Action.connectWifi),
       mergeMap(({ connectInfo }) =>
@@ -45,7 +45,7 @@ export class WifiEffects {
     )
   );
 
-  disconnect$ = createEffect(() =>
+  disconnectWifi$ = createEffect(() =>
     this.action$.pipe(
       ofType(Action.disconnectWifi),
       mergeMap(() =>
