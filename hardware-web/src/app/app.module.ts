@@ -33,6 +33,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     Components.WifiListComponent,
     Components.WifiInfoComponent,
     Components.HomeComponent,
+    Components.HomeStatusInfoComponent,
   ],
   imports: [
     BrowserModule,

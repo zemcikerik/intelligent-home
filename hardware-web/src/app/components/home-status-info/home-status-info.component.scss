@@ -1,0 +1,43 @@
+.server-info {
+  display: flex;
+  justify-content: center;
+}
+
+.icon {
+  font-size: 130px;
+  line-height: 130px;
+  width: 130px;
+  height: 130px;
+}
+
+p {
+  font-weight: bold;
+}
+
+label {
+  font-weight: normal;
+}
+
+button {
+  color: white;
+  background-color: #ff9060;
+  margin: auto 0 0 0;
+}
+
+.state-text {
+  text-align: center;
+  margin: 0;
+}
+
+.info {
+  margin-left: 50px;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+}
+
+.no-info-badge p {
+  text-align: center;
+}

@@ -1,4 +1,3 @@
 <div class="container">
-  <p>Home Status</p>
+  <app-home-status-info *ngIf="homeStatus$ | async as status" [homeStatus]="status"></app-home-status-info>
 </div>
-
