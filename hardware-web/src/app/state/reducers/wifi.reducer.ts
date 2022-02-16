@@ -32,4 +32,12 @@ export const wifiReducer = createReducer(
   on(Action.getAvailableNetworks, state => ({ ...state, loading: true })),
   on(Action.getAvailableNetworksSuccess, (state, { networks }) => ({ ...state, loading: false, availableNetworks: networks })),
   on(Action.getAvailableNetworksError, (state, { error }) => ({ ...state, loading: false, error })),
+
+  on(Action.connectWifi, state => ({ ...state, loading: true })),
+  on(Action.connectWifiSuccess, state => ({ ...state, loading: false })),
+  on(Action.connectWifiFailure, (state, { error }) => ({ ...state, loading: false, error })),
+
+  on(Action.disconnectWifi, state => ({ ...state, loading: true })),
+  on(Action.disconnectWifiSuccess, state => ({ ...state, loading: false })),
+  on(Action.disconnectWifiFailure, (state, { error }) => ({ ...state, loading: false, error })),
 );

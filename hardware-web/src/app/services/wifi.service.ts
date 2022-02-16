@@ -14,12 +14,16 @@ export class WifiService {
       { ssid: 'Network 1', rssi: -70, channel: 3, type: WifiEncryptionType.OPEN },
       { ssid: 'Network 2', rssi: -70, channel: 3, type: WifiEncryptionType.OPEN },
       { ssid: 'Network 3', rssi: -70, channel: 3, type: WifiEncryptionType.WPA2_PSK },
+      { ssid: 'Network 3', rssi: -70, channel: 3, type: WifiEncryptionType.WPA2_PSK },
+      { ssid: 'Network 3', rssi: -70, channel: 3, type: WifiEncryptionType.WPA2_PSK },
+      { ssid: 'Network 3', rssi: -70, channel: 3, type: WifiEncryptionType.WPA2_PSK },
+      { ssid: 'Network 3', rssi: -70, channel: 3, type: WifiEncryptionType.WPA2_PSK },
     ]);
   }
 
   getConnectionStatus(): Observable<WifiStatus> {
     return this.ofWithDelay({
-      connected: true,
+      connected: false,
       ssid: 'Hello, World!',
       bssid: '07-C5-D5-8A-98-BB',
       rssi: -70,

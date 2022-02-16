@@ -1,10 +1,10 @@
 <div class="list-header">
   <p id="SSID">SSID</p>
-  <p>RSSI</p>
+  <p>Strength</p>
   <p>Channel</p>
   <p>Type</p>
-  <button mat-flat-button class="add-button">Add</button>
+  <button mat-flat-button class="add-button" (click)="connect(null)">Manual</button>
 </div>
 <div *ngFor="let network of networks$ | async">
-  <app-wifi-entry [wifi]="network"></app-wifi-entry>
+  <app-wifi-entry [wifi]="network" (connect)="connect(network)"></app-wifi-entry>
 </div>

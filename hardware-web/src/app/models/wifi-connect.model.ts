@@ -1,4 +1,4 @@
 export interface WifiConnect {
   ssid: string;
-  pswd: string;
+  pswd: string | null;
 }

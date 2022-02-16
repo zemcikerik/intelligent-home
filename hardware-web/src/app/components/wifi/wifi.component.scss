@@ -1,9 +1,20 @@
 .container {
-  max-height: 300px;
+  height: 300px;
   overflow: auto;
   background: #FFFFFF;
   border: 1px solid rgba(0, 0, 0, 0.2);
   box-sizing: border-box;
   border-radius: 35px;
   padding: 32px 46px;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.refresh-button {
+  width: 100%;
 }

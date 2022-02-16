@@ -14,12 +14,14 @@ import * as Service from './services';
 import * as Components from './components';
 import { HttpClientModule } from '@angular/common/http';
 import { AppEffects, WIFI_FEATURE_KEY, WifiEffects, wifiReducer } from './state';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
     AppComponent,
     Components.WifiEntryComponent,
     Components.WifiComponent,
+    Components.WifiConnectComponent,
     Components.WifiListComponent,
     Components.WifiInfoComponent,
     Components.HomeComponent,
@@ -30,6 +32,7 @@ import { AppEffects, WIFI_FEATURE_KEY, WifiEffects, wifiReducer } from './state'
     MaterialModule,
     HttpClientModule,
     BrowserAnimationsModule,
+    ReactiveFormsModule,
     StoreModule.forRoot({
       [WIFI_FEATURE_KEY]: wifiReducer,
       router: routerReducer,

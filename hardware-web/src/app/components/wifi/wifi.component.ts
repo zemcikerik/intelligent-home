@@ -12,9 +12,13 @@ export class WifiComponent {
   connected$: Observable<boolean>;
   loading$: Observable<boolean>;
 
-  constructor(wifiFacade: WifiFacade) {
+  constructor(private wifiFacade: WifiFacade) {
     this.connected$ = wifiFacade.isConnected();
     this.loading$ = wifiFacade.isLoading();
+  }
+
+  refresh(): void {
+    this.wifiFacade.refresh();
   }
 
 }

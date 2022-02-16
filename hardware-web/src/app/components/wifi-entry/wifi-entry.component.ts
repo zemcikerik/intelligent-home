@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { WifiNetwork } from "../../models";
 
 @Component({
@@ -8,4 +8,5 @@ import { WifiNetwork } from "../../models";
 })
 export class WifiEntryComponent {
   @Input() wifi?: WifiNetwork;
+  @Output() connect = new EventEmitter();
 }

@@ -1,12 +1,21 @@
 import { Injectable } from '@angular/core';
 import { filter, Observable } from 'rxjs';
-import { WifiNetwork, WifiStatus } from '../../models';
+import { WifiConnect, WifiNetwork, WifiStatus } from '../../models';
 import { Store } from '@ngrx/store';
 import { WifiPartialState } from '../reducers';
 import { selectAvailableNetworks, selectWifiConnected, selectWifiLoading, selectWifiStatus } from '../selectors';
+import { connectWifi, disconnectWifi, getNetworkStatus } from '../actions';
 
 @Injectable()
 export class WifiFacade {
+
+  connect(connectInfo: WifiConnect): void {
+    this.store$.dispatch(connectWifi({ connectInfo }));
+  }
+
+  disconnect(): void {
+    this.store$.dispatch(disconnectWifi());
+  }
 
   getNetworkStatus(): Observable<WifiStatus> {
     return this.selectIfNotNull(selectWifiStatus);
@@ -24,7 +33,11 @@ export class WifiFacade {
     return this.store$.select(selectWifiLoading);
   }
 
-  selectIfNotNull<T>(mapFn: (state: WifiPartialState) => T): Observable<NonNullable<T>> {
+  refresh(): void {
+    this.store$.dispatch(getNetworkStatus());
+  }
+
+  private selectIfNotNull<T>(mapFn: (state: WifiPartialState) => T): Observable<NonNullable<T>> {
     return this.store$.select(mapFn).pipe(
       filter(value => !!value),
     ) as Observable<NonNullable<T>>;

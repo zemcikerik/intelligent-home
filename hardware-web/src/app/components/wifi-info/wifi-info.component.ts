@@ -12,8 +12,12 @@ export class WifiInfoComponent {
 
   status$: Observable<ConnectedWifiStatus>;
 
-  constructor(wifiFacade: WifiFacade) {
+  constructor(private wifiFacade: WifiFacade) {
     this.status$ = wifiFacade.getNetworkStatus() as Observable<ConnectedWifiStatus>;
+  }
+
+  disconnect(): void {
+    this.wifiFacade.disconnect();
   }
 
 }
