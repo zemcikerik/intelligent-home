@@ -1,8 +1,9 @@
 <div *ngIf="user" class="container">
-  <mat-icon class="icon">person</mat-icon>
-  <p>{{ user.username }}</p>
+  <div class="user-badge">
+    <mat-icon class="icon">account_circle</mat-icon>
+    <p>{{ user.username }}</p>
+  </div>
 
-  <mat-icon class="group-icon">group</mat-icon>
   <p>{{ user.role | role }}</p>
 
   <ng-container *ngIf="(currentUser$ | async) === false; else currentUser">
