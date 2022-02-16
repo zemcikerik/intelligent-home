@@ -1,13 +1,17 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { HomePartialState } from '../reducers';
-import { getHomeStatus } from '../actions';
+import { disconnectHome, getHomeStatus, setHomeServer } from '../actions';
 import { filter, Observable } from 'rxjs';
 import { selectHomeError, selectHomeStatus, selectIsHomeLoading } from '../selectors/home.selectors';
-import { HomeStatus } from '../../models';
+import { HomeStatus, ServerInfo } from '../../models';
 
 @Injectable()
 export class HomeFacade {
+
+  disconnect(): void {
+    this.store$.dispatch(disconnectHome());
+  }
 
   getError(): Observable<string | null> {
     return this.store$.select(selectHomeError);
@@ -25,6 +29,10 @@ export class HomeFacade {
 
   refresh(): void {
     this.store$.dispatch(getHomeStatus());
+  }
+
+  setHomeServer(serverInfo: ServerInfo): void {
+    this.store$.dispatch(setHomeServer({ server: serverInfo }));
   }
 
   constructor(private store$: Store<HomePartialState>) {

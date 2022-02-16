@@ -3,7 +3,7 @@ import { filter, Observable, Subject, takeUntil, tap } from 'rxjs';
 import { WifiEncryptionType, WifiNetwork } from '../../models';
 import { WifiFacade } from '../../state';
 import { MatDialog } from '@angular/material/dialog';
-import { WifiConnectComponent } from '../wifi-connect/wifi-connect.component';
+import { WifiConnectDialogComponent } from '../wifi-connect-dialog/wifi-connect-dialog.component';
 
 @Component({
   selector: 'app-wifi-list',
@@ -28,7 +28,7 @@ export class WifiListComponent implements OnDestroy {
       return;
     }
 
-    this.matDialog.open(WifiConnectComponent, { data: network }).afterClosed().pipe(
+    this.matDialog.open(WifiConnectDialogComponent, { data: network }).afterClosed().pipe(
       filter(connectInfo => !!connectInfo),
       tap(connectInfo => this.wifiFacade.connect(connectInfo)),
       takeUntil(this.unsubscribe$),

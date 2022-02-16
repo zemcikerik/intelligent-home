@@ -10,6 +10,7 @@ export class WifiService {
   }
 
   getAvailableNetworks(): Observable<WifiNetwork[]> {
+    return this.httpClient.get<WifiNetwork[]>('/api/wifi/networks');
     return this.ofWithDelay([
       { ssid: 'Network 1', rssi: -70, channel: 3, type: WifiEncryptionType.OPEN },
       { ssid: 'Network 2', rssi: -70, channel: 3, type: WifiEncryptionType.OPEN },
@@ -22,6 +23,7 @@ export class WifiService {
   }
 
   getConnectionStatus(): Observable<WifiStatus> {
+    return this.httpClient.get<WifiStatus>('/api/wifi');
     return this.ofWithDelay({
       connected: false,
       ssid: 'Hello, World!',
@@ -32,10 +34,12 @@ export class WifiService {
   }
 
   connect(wifiConnect: WifiConnect): Observable<any> {
+    return this.httpClient.post('/api/wifi', wifiConnect);
     return this.ofWithDelay(null);
   }
 
   disconnect(): Observable<any> {
+    return this.httpClient.delete('/api/wifi');
     return this.ofWithDelay(null);
   }
 

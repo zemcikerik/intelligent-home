@@ -1,6 +1,10 @@
 .container {
-  max-width: 600px;
-  margin: 100px auto;
+  display: flex;
+  justify-content: center;
+}
+
+.wrapper {
+  width: min(600px, 95vw);
 }
 
 h2 {

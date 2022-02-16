@@ -1,0 +1,23 @@
+<form [formGroup]="connectForm">
+  <h4>Connect to home server</h4>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Hostname</mat-label>
+    <input matInput formControlName="hostname">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Port</mat-label>
+    <input matInput formControlName="port" type="number">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Path</mat-label>
+    <input matInput formControlName="path">
+  </mat-form-field>
+
+  <div mat-dialog-actions>
+    <button mat-stroked-button [mat-dialog-close]="null">Cancel</button>
+    <button mat-raised-button (click)="submit()" [disabled]="!connectForm.valid">Connect</button>
+  </div>
+</form>

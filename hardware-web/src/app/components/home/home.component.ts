@@ -1,22 +1,22 @@
-import { Component, OnInit } from '@angular/core';
-import { HomeService } from '../../services';
+import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HomeStatus } from '../../models';
+import { HomeFacade } from '../../state';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent {
 
-  homeStatus$?: Observable<HomeStatus>;
+  loading$: Observable<boolean>;
 
-  constructor(private readonly homeService: HomeService) {
+  constructor(private homeFacade: HomeFacade) {
+    this.loading$ = homeFacade.isLoading();
   }
 
-  ngOnInit(): void {
-    this.homeStatus$ = this.homeService.getHomeStatus();
+  refresh(): void {
+    this.homeFacade.refresh();
   }
 
 }

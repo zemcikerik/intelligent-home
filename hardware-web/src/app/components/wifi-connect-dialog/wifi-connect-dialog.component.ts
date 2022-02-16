@@ -5,10 +5,10 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-wifi-connect',
-  templateUrl: './wifi-connect.component.html',
-  styleUrls: ['./wifi-connect.component.scss']
+  templateUrl: './wifi-connect-dialog.component.html',
+  styleUrls: ['./wifi-connect-dialog.component.scss']
 })
-export class WifiConnectComponent {
+export class WifiConnectDialogComponent {
 
   disableSSIDField = false;
 
@@ -18,7 +18,7 @@ export class WifiConnectComponent {
   });
 
   constructor(
-    private matDialogRef: MatDialogRef<WifiConnectComponent>,
+    private matDialogRef: MatDialogRef<WifiConnectDialogComponent>,
     @Inject(MAT_DIALOG_DATA) networkInfo?: WifiNetwork,
   ) {
     if (networkInfo) {

@@ -10,9 +10,10 @@ export class HomeService {
   }
 
   getHomeStatus(): Observable<HomeStatus> {
+    return this.httpClient.get<HomeStatus>('/api/home');
     return this.ofWithDelay({
       state: HomeState.CONNECTING,
-      hasServerInfo: true,
+      hasServerInfo: false,
       serverInfo: {
         hostname: '192.168.0.1',
         port: 8080,
@@ -21,11 +22,13 @@ export class HomeService {
     });
   }
 
-  setServerInfo(serverInfo: ServerInfo) {
+  setServerInfo(serverInfo: ServerInfo): Observable<any> {
+    return this.httpClient.post('/api/home', serverInfo);
     return this.ofWithDelay(null);
   }
 
   disconnect(): Observable<any> {
+    return this.httpClient.delete('/api/home');
     return this.ofWithDelay(null);
   }
 
