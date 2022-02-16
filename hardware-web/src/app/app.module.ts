@@ -1,13 +1,11 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
 import { EffectsModule } from '@ngrx/effects';
-import { routerReducer, StoreRouterConnectingModule } from '@ngrx/router-store';
 import { MaterialModule } from './material.module';
 import * as Facade from './state/facade';
 import * as Service from './services';
@@ -39,7 +37,6 @@ import { ReactiveFormsModule } from '@angular/forms';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule,
     MaterialModule,
     HttpClientModule,
     BrowserAnimationsModule,
@@ -47,7 +44,6 @@ import { ReactiveFormsModule } from '@angular/forms';
     StoreModule.forRoot({
       [HOME_FEATURE_KEY]: homeReducer,
       [WIFI_FEATURE_KEY]: wifiReducer,
-      router: routerReducer,
     }, {
       runtimeChecks: {
         strictActionImmutability: true,
@@ -56,7 +52,6 @@ import { ReactiveFormsModule } from '@angular/forms';
     }),
     !environment.production ? StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }) : [],
     EffectsModule.forRoot([AppEffects, HomeEffects, WifiEffects]),
-    StoreRouterConnectingModule.forRoot()
   ],
   providers: [
     Facade.HomeFacade,
