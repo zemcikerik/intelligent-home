@@ -8,5 +8,6 @@ export interface Jwt {
   expiresOn: number;
   issuedBy: string;
   authorities: Authority[];
+  refreshToken: string;
   rawToken: string;
 }

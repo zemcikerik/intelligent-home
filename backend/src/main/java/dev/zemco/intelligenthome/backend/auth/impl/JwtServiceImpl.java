@@ -2,6 +2,7 @@ package dev.zemco.intelligenthome.backend.auth.impl;
 
 import dev.zemco.intelligenthome.backend.auth.JwtKeyService;
 import dev.zemco.intelligenthome.backend.auth.JwtService;
+import dev.zemco.intelligenthome.backend.auth.RefreshTokenService;
 import dev.zemco.intelligenthome.backend.auth.User;
 import dev.zemco.intelligenthome.backend.auth.config.JwtProperties;
 import io.jsonwebtoken.Claims;
@@ -29,15 +30,19 @@ public class JwtServiceImpl implements JwtService {
     private final JwtProperties jwtProperties;
     private final JwtKeyService jwtKeyService;
     private final UserDetailsService userDetailsService;
+    private final RefreshTokenService refreshTokenService;
 
     @Override
     public String createJwtForUser(User user) {
+        JwtProperties.ClaimNames claimNames = this.jwtProperties.getClaimNames();
+
         return Jwts.builder()
                 .signWith(this.jwtKeyService.getSigningKey())
                 .setIssuer(this.jwtProperties.getIssuer())
                 .setSubject(user.getUsername())
                 .setExpiration(this.createExpirationDate())
-                .claim(this.jwtProperties.getClaimNames().getAuthorities(), this.getClaimAuthorities(user))
+                .claim(claimNames.getAuthorities(), this.getClaimAuthorities(user))
+                .claim(claimNames.getRefreshToken(), this.refreshTokenService.createRefreshToken(user))
                 .compact();
     }
 

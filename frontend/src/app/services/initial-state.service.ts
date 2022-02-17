@@ -13,8 +13,7 @@ export class InitialStateService {
   ) { }
 
   getInitialState(): Observable<InitialClientState> {
-    const url = `${this.serverUrl}/client/current-state`;
-    return this.httpClient.get<InitialClientState>(url);
+    return this.httpClient.get<InitialClientState>(`${this.serverUrl}/client/current-state`);
   }
 
 }

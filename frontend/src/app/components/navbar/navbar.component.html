@@ -6,6 +6,7 @@
       matTooltipPosition="right"
       [routerLink]="entry.link"
       routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: entry.exact }"
     >{{ entry.icon }}</mat-icon>
   </ng-container>
 

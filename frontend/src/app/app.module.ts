@@ -25,7 +25,7 @@ import {
   featureReducer,
   LOGIN_STATE_KEY, LoginEffects,
   LoginFacade,
-  loginReducer
+  loginReducer, USER_STATE_KEY, UserEffects, UserFacade, userReducer
 } from './store';
 
 import { environment } from '../environments/environment';
@@ -35,6 +35,7 @@ import { PRODUCTION_TOKEN } from './production.token';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { routerReducer, StoreRouterConnectingModule } from '@ngrx/router-store';
 
 @NgModule({
   declarations: [
@@ -55,8 +56,12 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     Components.IntegerFeatureComponent,
     Components.TextFeatureComponent,
     Components.StringFeatureComponent,
+    Components.UserCreateDialogComponent,
+    Components.UserEditDialogComponent,
+    Components.UserEntryComponent,
     Components.UserManagementComponent,
     Pipes.KeysPipe,
+    Pipes.RolePipe,
   ],
   imports: [
     AppRoutingModule,
@@ -66,6 +71,8 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
       [DEVICE_STATE_KEY]: deviceReducer,
       [FEATURE_STATE_KEY]: featureReducer,
       [LOGIN_STATE_KEY]: loginReducer,
+      [USER_STATE_KEY]: userReducer,
+      router: routerReducer,
     }, {
       runtimeChecks: {
         strictActionImmutability: true,
@@ -73,24 +80,27 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
       }
     }),
     !environment.production ? StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }) : [],
-    EffectsModule.forRoot([AppEffects, AuthEffects, DeviceEffects, FeatureEffects, LoginEffects]),
+    EffectsModule.forRoot([AppEffects, AuthEffects, DeviceEffects, FeatureEffects, LoginEffects, UserEffects]),
     BrowserAnimationsModule,
     MaterialModule,
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
+    StoreRouterConnectingModule.forRoot(),
   ],
   providers: [
     AppFacade,
     DeviceFacade,
     FeatureFacade,
     LoginFacade,
+    UserFacade,
     Services.AuthService,
     Services.DeviceService,
     Services.FeatureService,
     Services.InitialStateService,
     Services.ServerConnectionService,
     Services.TokenStorageService,
+    Services.UserService,
     { provide: Services.SERVER_URL_TOKEN, useValue: environment.serverUrl },
     { provide: Services.WS_SERVER_URL_TOKEN, useValue: environment.wsServerUrl },
     { provide: PRODUCTION_TOKEN, useValue: environment.production },

@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType, ROOT_EFFECTS_INIT } from '@ngrx/effects';
 import { AuthService, ServerConnectionService, TokenStorageService } from '../../services';
-import { map, mergeMap, tap } from 'rxjs/operators';
-import { appAuthFailure, appAuthSuccess, appLogout } from '../actions';
+import { catchError, map, mergeMap, tap } from 'rxjs/operators';
+import { appAuthFailure, appAuthSuccess, appLogout, loginSuccess } from '../actions';
+import { of, throwError } from 'rxjs';
 
 @Injectable()
 export class AuthEffects {
@@ -11,16 +12,23 @@ export class AuthEffects {
     this.action$.pipe(
       ofType(ROOT_EFFECTS_INIT),
       map(() => this.tokenStorageService.getToken()),
-      map(token => {
-        if (token) {
-          const jwt = this.authService.parseToken(token);
-          if (this.authService.isTokenValid(jwt)) {
-            return appAuthSuccess({ jwt });
-          }
+      mergeMap(token => {
+        if (!token) {
+          return throwError('');
         }
-        return appAuthFailure();
-      })
-    )
+
+        const refreshToken = (refreshToken: string) => this.authService.refresh(refreshToken).pipe(
+          map(token => loginSuccess({ token }))
+        );
+
+        const jwt = this.authService.parseToken(token);
+
+        return !this.authService.isTokenValid(jwt)
+          ? refreshToken(jwt.refreshToken)
+          : of(appAuthSuccess({ jwt }));
+      }),
+      catchError(() => of(appAuthFailure())),
+    ),
   );
 
   authFailure$ = createEffect(() =>

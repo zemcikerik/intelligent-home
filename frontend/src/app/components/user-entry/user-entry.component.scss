@@ -1,0 +1,30 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.icon {
+  font-size: 32px;
+  line-height: 32px;
+  width: 32px;
+  height: 32px;
+  color: #39cbe8;
+  margin-right: 5px;
+}
+
+.group-icon {
+  margin-right: 4px;
+}
+
+p {
+  margin: 0;
+  font-size: 18px;
+  width: 110px;
+}
+
+.user-badge {
+  display: flex;
+  align-items: center;
+  width: 110px;
+}

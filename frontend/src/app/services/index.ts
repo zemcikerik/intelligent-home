@@ -5,3 +5,4 @@ export * from './initial-state.service';
 export * from './server-connection.service';
 export * from './server-url.token';
 export * from './token-storage.service';
+export * from './user.service';
