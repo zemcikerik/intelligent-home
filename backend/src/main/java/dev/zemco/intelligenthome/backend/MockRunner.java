@@ -11,7 +11,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.w3c.dom.Text;
 
 import javax.transaction.Transactional;
 import java.util.*;
@@ -33,7 +32,7 @@ public class MockRunner implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) {
-        Device thermometer = this.createDevice("Thermometer");
+        Device thermometer = this.createDevice("Thermometer", "Measures temperature");
         this.temperatureFeature = this.createFeature(thermometer, "Living Room", FeatureType.TEXT);
         String temperature = String.format("%.2f°C", rng.nextFloat(20, 30));
         Consumer<TextFeatureState> initialThermometerState = state -> state.setText(temperature);
@@ -41,24 +40,24 @@ public class MockRunner implements CommandLineRunner {
         this.createFeature(thermometer, "Bedroom", FeatureType.TEXT, initialThermometerState);
         this.createFeature(thermometer, "Bathroom", FeatureType.TEXT, initialThermometerState);
 
-        Device garageDoor = this.createDevice("Garage door");
+        Device garageDoor = this.createDevice("Garage door", "Automatic garage door");
         Consumer<TextFeatureState> initialGarageDoorState = state -> state.setText("Closed");
         this.createFeature(garageDoor, "State", FeatureType.TEXT, initialGarageDoorState);
         this.createFeature(garageDoor, "Open/Close", FeatureType.BUTTON);
 
 
-        Device rgb = this.createDevice("RGB Lights");
+        Device rgb = this.createDevice("RGB Lights", "Lights under the bed");
         this.createFeature(rgb, "On/Off", FeatureType.BOOLEAN);
         List<String> rgbChoices = List.of("Flow", "Sway", "Blink");
         Consumer<DropdownFeatureState> rgbState = state -> state.setChoices(rgbChoices);
         this.createFeature(rgb, "Mode", FeatureType.DROPDOWN, rgbState);
 
-        Device ac = this.createDevice("AC");
+        Device ac = this.createDevice("AC", "Proivdes cooling and heating");
         this.createFeature(ac, "On/Off", FeatureType.BOOLEAN);
         Consumer<IntegerFeatureState> acState = state -> state.setValue(18);
         this.createFeature(ac, "Temperature", FeatureType.INTEGER, acState);
 
-        Device shopSign = this.createDevice("Shop Sign");
+        Device shopSign = this.createDevice("Shop Sign", "Small neon sign");
         Consumer<StringFeatureState> initialShopSignState = state -> state.setText("Sale! 50%");
         this.createFeature(shopSign, "Text", FeatureType.STRING, initialShopSignState);
 
@@ -73,8 +72,8 @@ public class MockRunner implements CommandLineRunner {
         this.featureService.updateFeature(this.temperatureFeature);
     }
 
-    private Device createDevice(String name) {
-        Device device = new MockDevice(UUID.randomUUID(), name);
+    private Device createDevice(String name, String shortDescription) {
+        Device device = new MockDevice(UUID.randomUUID(), name, shortDescription);
         this.deviceService.registerDevice(device);
         return device;
     }
