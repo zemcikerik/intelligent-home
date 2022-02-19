@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { DeviceFacade } from '../../store';
+import { AppFacade, DeviceFacade } from '../../store';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -10,9 +10,14 @@ import { Observable } from 'rxjs';
 export class DeviceListComponent {
 
   deviceIds$: Observable<string[]>;
+  username$: Observable<string>;
 
-  constructor(deviceFacade: DeviceFacade) {
+  constructor(
+    deviceFacade: DeviceFacade,
+    appFacade: AppFacade,
+  ) {
     this.deviceIds$ = deviceFacade.getAllDeviceIds();
+    this.username$ = appFacade.getUsername();
   }
 
 }

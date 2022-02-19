@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import {
   selectAppError,
   selectAppLoading,
-  selectAppPhase,
+  selectAppPhase, selectAppUsername,
   selectHasAuthority,
   selectIsCurrentUser
 } from '../selectors';
@@ -23,6 +23,10 @@ export class AppFacade {
 
   getAppError(): Observable<string | null> {
     return this.store$.select(selectAppError);
+  }
+
+  getUsername(): Observable<string> {
+    return this.store$.select(selectAppUsername);
   }
 
   isAppLoading(): Observable<boolean> {
