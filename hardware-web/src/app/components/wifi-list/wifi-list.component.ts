@@ -15,6 +15,8 @@ export class WifiListComponent implements OnDestroy {
   networks$: Observable<WifiNetwork[]>;
   private unsubscribe$ = new Subject();
 
+  displayedColumns = ['ssid', 'rssi', 'channel', 'type', 'connect'];
+
   constructor(
     private wifiFacade: WifiFacade,
     private matDialog: MatDialog,

@@ -1,10 +1,37 @@
-<div class="list-header">
-  <p id="SSID">SSID</p>
-  <p>Strength</p>
-  <p>Channel</p>
-  <p>Type</p>
-  <button mat-flat-button class="add-button" (click)="connect(null)">Manual</button>
-</div>
-<div *ngFor="let network of networks$ | async">
-  <app-wifi-entry [wifi]="network" (connect)="connect(network)"></app-wifi-entry>
+<div class="table-container">
+  <table mat-table *ngIf="networks$ | async as networks" [dataSource]="networks">
+    <ng-container matColumnDef="ssid">
+      <th mat-header-cell *matHeaderCellDef>SSID</th>
+      <td mat-cell *matCellDef="let element">{{ element.ssid }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="rssi">
+      <th mat-header-cell *matHeaderCellDef>Strength</th>
+      <td mat-cell *matCellDef="let element">{{ element.rssi }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="channel">
+      <th mat-header-cell *matHeaderCellDef>Channel</th>
+      <td mat-cell *matCellDef="let element">{{ element.channel }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="type">
+      <th mat-header-cell *matHeaderCellDef>Open</th>
+      <td mat-cell *matCellDef="let element">
+        <mat-icon>{{ element.type === 'OPEN' ? 'check' : 'lock' }}</mat-icon>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="connect">
+      <th mat-header-cell *matHeaderCellDef>
+        <button mat-flat-button class="add-button" (click)="connect(null)">Manual</button>
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <button mat-flat-button class="connect-button" (click)="connect(element)">Connect</button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
 </div>

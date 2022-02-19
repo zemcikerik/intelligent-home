@@ -7,7 +7,7 @@
     <app-wifi-info *ngIf="connected$ | async; else list"></app-wifi-info>
 
     <ng-template #list>
-      <app-wifi-list class="scroll"></app-wifi-list>
+      <app-wifi-list></app-wifi-list>
     </ng-template>
 
     <button mat-stroked-button class="refresh-button" (click)="refresh()">Refresh</button>

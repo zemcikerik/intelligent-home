@@ -25,7 +25,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 @NgModule({
   declarations: [
     AppComponent,
-    Components.WifiEntryComponent,
     Components.WifiComponent,
     Components.WifiConnectDialogComponent,
     Components.WifiListComponent,

@@ -1,4 +1,3 @@
-export * from './wifi-entry/wifi-entry.component';
 export * from './wifi/wifi.component';
 export * from './wifi-connect-dialog/wifi-connect-dialog.component';
 export * from './wifi-list/wifi-list.component';
