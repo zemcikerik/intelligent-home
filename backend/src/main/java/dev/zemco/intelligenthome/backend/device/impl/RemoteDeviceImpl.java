@@ -11,5 +11,6 @@ import java.util.UUID;
 public class RemoteDeviceImpl implements RemoteDevice {
     private final UUID id;
     private final String name;
+    private final String shortDescription;
     private final String sessionId;
 }
