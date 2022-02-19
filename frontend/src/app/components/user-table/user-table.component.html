@@ -1,0 +1,42 @@
+<table mat-table *ngIf="users" [dataSource]="users">
+  <ng-container matColumnDef="icon">
+    <th mat-header-cell *matHeaderCellDef></th>
+    <td mat-cell *matCellDef="let element">
+      <mat-icon>account_circle</mat-icon>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="username">
+    <th mat-header-cell *matHeaderCellDef>Username</th>
+    <td mat-cell *matCellDef="let element">{{ element.username }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="role">
+    <th mat-header-cell *matHeaderCellDef>Role</th>
+    <td mat-cell *matCellDef="let element">{{ element.role | role }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="options" stickyEnd>
+    <th mat-header-cell *matHeaderCellDef></th>
+    <td mat-cell *matCellDef="let element">
+      <ng-container *ngIf="(isCurrentUser(element) | async) === false; else currentUser">
+        <button mat-icon-button [matMenuTriggerFor]="userMenu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #userMenu="matMenu">
+          <button mat-menu-item (click)="edit.emit(element)">Edit</button>
+          <button mat-menu-item (click)="delete.emit(element)">Delete</button>
+        </mat-menu>
+      </ng-container>
+
+      <ng-template #currentUser>
+        <button mat-icon-button disabled>
+          <mat-icon matTooltip="You cannot edit yourself!">more_vert</mat-icon>
+        </button>
+      </ng-template>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
