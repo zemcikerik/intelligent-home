@@ -1,9 +1,7 @@
 import { Component } from '@angular/core';
 import { HomeFacade } from '../../state';
-import { filter, Observable, Subject, takeUntil, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 import { HomeStatus } from '../../models';
-import { MatDialog } from '@angular/material/dialog';
-import { HomeConnectDialogComponent } from '../home-connect-dialog/home-connect-dialog.component';
 
 @Component({
   selector: 'app-home-status',
@@ -13,21 +11,9 @@ import { HomeConnectDialogComponent } from '../home-connect-dialog/home-connect-
 export class HomeStatusComponent {
 
   status$: Observable<HomeStatus>;
-  private unsubscribe$ = new Subject();
 
-  constructor(
-    private homeFacade: HomeFacade,
-    private matDialog: MatDialog,
-  ) {
+  constructor(private homeFacade: HomeFacade,) {
     this.status$ = homeFacade.getStatus();
-  }
-
-  connect(): void {
-    this.matDialog.open(HomeConnectDialogComponent).afterClosed().pipe(
-      filter(serverInfo => !!serverInfo),
-      tap(serverInfo => this.homeFacade.setHomeServer(serverInfo)),
-      takeUntil(this.unsubscribe$),
-    ).subscribe();
   }
 
   disconnect(): void {

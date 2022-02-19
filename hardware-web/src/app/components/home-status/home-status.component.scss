@@ -8,26 +8,15 @@
 }
 
 .icon {
-  font-size: 130px;
-  line-height: 130px;
-  width: 130px;
-  height: 130px;
+  font-size: 120px;
+  line-height: 120px;
+  width: 100%;
+  height: 120px;
+  text-align: center;
 }
 
 .state-text {
   font-weight: bold;
   text-align: center;
   margin: 0;
-}
-
-.connect-container {
-  display: flex;
-  align-items: center;
-  margin-left: 20px;
-  height: 100%;
-
-  & > button {
-    color: white;
-    background-color: #ff9060;
-  }
 }

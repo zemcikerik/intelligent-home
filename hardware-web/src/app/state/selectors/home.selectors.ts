@@ -5,3 +5,4 @@ export const selectHomeState = (state: HomePartialState) => state[HOME_FEATURE_K
 export const selectHomeStatus = createSelector(selectHomeState, state => state.status);
 export const selectIsHomeLoading = createSelector(selectHomeState, state => state.loading);
 export const selectHomeError = createSelector(selectHomeState, state => state.error);
+export const selectHomeHasServerInfo = createSelector(selectHomeStatus, status => status?.hasServerInfo ?? false);

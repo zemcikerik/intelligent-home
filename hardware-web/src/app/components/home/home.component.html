@@ -5,6 +5,9 @@
 
   <ng-template #loaded>
     <app-home-status></app-home-status>
-    <button mat-stroked-button class="refresh-button" (click)="refresh()">Refresh</button>
+    <div class="button-bar">
+      <button mat-stroked-button (click)="refresh()">Refresh</button>
+      <button mat-flat-button class="connect-button" *ngIf="(hasServerInfo$ | async) === false" (click)="connect()">Connect</button>
+    </div>
   </ng-template>
 </div>

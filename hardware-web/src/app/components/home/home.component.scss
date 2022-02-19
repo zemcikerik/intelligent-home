@@ -15,7 +15,17 @@
   height: 100%;
 }
 
-.refresh-button {
+.button-bar {
+  display: flex;
   margin-top: 16px;
-  width: 100%;
+  gap: 16px;
+
+  & > * {
+    flex-grow: 1;
+  }
+}
+
+.connect-button {
+  color: white;
+  background-color: #ff9060;
 }

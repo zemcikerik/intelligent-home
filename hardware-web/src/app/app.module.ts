@@ -21,6 +21,7 @@ import {
   wifiReducer
 } from './state';
 import { ReactiveFormsModule } from '@angular/forms';
+import { HomeStatePipe } from './pipes';
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     Components.HomeStatusComponent,
     Components.HomeServerInfoComponent,
     Components.HomeConnectDialogComponent,
+    HomeStatePipe,
   ],
   imports: [
     BrowserModule,

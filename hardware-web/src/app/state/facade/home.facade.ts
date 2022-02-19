@@ -3,7 +3,12 @@ import { Store } from '@ngrx/store';
 import { HomePartialState } from '../reducers';
 import { disconnectHome, getHomeStatus, setHomeServer } from '../actions';
 import { filter, Observable } from 'rxjs';
-import { selectHomeError, selectHomeStatus, selectIsHomeLoading } from '../selectors/home.selectors';
+import {
+  selectHomeError,
+  selectHomeHasServerInfo,
+  selectHomeStatus,
+  selectIsHomeLoading
+} from '../selectors/home.selectors';
 import { HomeStatus, ServerInfo } from '../../models';
 
 @Injectable()
@@ -21,6 +26,10 @@ export class HomeFacade {
     return this.store$.select(selectHomeStatus).pipe(
       filter(status => !!status),
     ) as Observable<HomeStatus>;
+  }
+
+  hasServerInfo(): Observable<boolean> {
+    return this.store$.select(selectHomeHasServerInfo);
   }
 
   isLoading(): Observable<boolean> {
