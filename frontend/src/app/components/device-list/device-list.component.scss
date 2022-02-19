@@ -1,11 +1,17 @@
+h1 {
+  font-size: 64px;
+  line-height: 72px;
+  color: rgba(0, 0, 0, 0.8);
+  margin-top: 50px;
+  font-weight: 500;
+}
+
 h2 {
   font-size: 48px;
   line-height: 56px;
   color: rgba(0, 0, 0, 0.8);
+  margin-top: 32px;
   margin-bottom: 64px;
-
-  // simulating header (search + user)
-  margin-top: 164px;
 }
 
 .devices {

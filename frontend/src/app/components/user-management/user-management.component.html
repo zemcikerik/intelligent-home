@@ -10,18 +10,11 @@
 
 <ng-template #users>
   <div class="users">
-    <div class="list-header">
-      <p>Username</p>
-      <p>Role</p>
-      <button mat-icon-button (click)="createUser()">
-        <mat-icon class="add-icon">person_add</mat-icon>
-      </button>
-    </div>
-    <app-user-entry
-      *ngFor="let user of users$ | async"
-      [user]="user"
-      (edit)="editUser(user)"
-      (delete)="deleteUser(user)"
-    ></app-user-entry>
+    <app-user-table
+      [users]="users$ | async"
+      (create)="createUser()"
+      (edit)="editUser($event)"
+      (delete)="deleteUser($event)"
+    ></app-user-table>
   </div>
 </ng-template>
