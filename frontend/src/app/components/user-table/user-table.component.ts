@@ -11,6 +11,7 @@ import { Observable } from 'rxjs';
 export class UserTableComponent {
 
   @Input() users: UserDto[] | null = null;
+  @Output() create = new EventEmitter();
   @Output() edit = new EventEmitter<UserDto>();
   @Output() delete = new EventEmitter<UserDto>();
 

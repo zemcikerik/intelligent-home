@@ -12,6 +12,7 @@
   <mat-card class="users">
     <app-user-table
       [users]="users$ | async"
+      (create)="createUser()"
       (edit)="editUser($event)"
       (delete)="deleteUser($event)"
     ></app-user-table>
