@@ -8,6 +8,7 @@ export const selectAppPhase = createSelector(selectAppState, state => state.phas
 export const selectAppLoading = createSelector(selectAppState, state => state.loading);
 export const selectAppError = createSelector(selectAppState, state => state.error);
 export const selectAppJwt = createSelector(selectAppState, state => state.jwt);
+export const selectAppUsername = createSelector(selectAppJwt, jwt => jwt?.username ?? '');
 
 export const selectHasAuthority = (authority: Authority) => createSelector(
   selectAppJwt,

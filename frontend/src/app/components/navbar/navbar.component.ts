@@ -20,7 +20,6 @@ export class NavbarComponent {
 
   readonly entries: NavbarEntry[] = [
     { name: 'Home', icon: 'home', link: '/', exact: true, authority: Authority.USER },
-    { name: 'Device Management', icon: 'dashboard', link: '/devices', exact: false, authority: Authority.ADMIN },
     { name: 'User Management', icon: 'people', link: '/users', exact: false, authority: Authority.ADMIN },
   ];
 

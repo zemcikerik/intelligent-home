@@ -1,8 +1,4 @@
-<div class="header">
-  <h2>User Management</h2>
-  <div class="spacer"></div>
-  <button mat-stroked-button (click)="createUser()">Add</button>
-</div>
+<h2>User Management</h2>
 
 <div *ngIf="loading$ | async; else error" class="loading-container">
   <mat-progress-spinner diameter="64" mode="indeterminate"></mat-progress-spinner>
@@ -14,11 +10,11 @@
 
 <ng-template #users>
   <div class="users">
-    <app-user-entry
-      *ngFor="let user of users$ | async"
-      [user]="user"
-      (edit)="editUser(user)"
-      (delete)="deleteUser(user)"
-    ></app-user-entry>
+    <app-user-table
+      [users]="users$ | async"
+      (create)="createUser()"
+      (edit)="editUser($event)"
+      (delete)="deleteUser($event)"
+    ></app-user-table>
   </div>
 </ng-template>
