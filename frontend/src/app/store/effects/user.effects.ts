@@ -8,6 +8,11 @@ import * as Action from '../actions';
 import { routerNavigatedAction } from '@ngrx/router-store';
 import { UserFacade } from '../facades';
 
+const LOAD_ERROR = 'There was an error trying to load users! Please try to refresh the page!';
+
+const createErrorMessage = (action: string, err: HttpErrorResponse) =>
+  `There was an error trying to ${action} user! Please try to refresh the page! (${err.status})`;
+
 @Injectable()
 export class UserEffects {
 
@@ -34,7 +39,9 @@ export class UserEffects {
       mergeMap(() =>
         this.userService.getUsers().pipe(
           map(users => Action.loadUsersSuccess({ users })),
-          catchError((err: HttpErrorResponse) => of(Action.loadUsersFailure({ error: err.message }))),
+          catchError((err: HttpErrorResponse) => of(Action.loadUsersFailure({
+            error: `${LOAD_ERROR} (${err.status})`
+          }))),
         )
       ),
     )
@@ -46,7 +53,9 @@ export class UserEffects {
       mergeMap(({ userCreationDto }) =>
         this.userService.createUser(userCreationDto).pipe(
           map(user => Action.createUserSuccess({ user })),
-          catchError((err: HttpErrorResponse) => of(Action.createUserFailure({ error: err.message }))),
+          catchError((err: HttpErrorResponse) => of(Action.createUserFailure({
+            error: createErrorMessage('create', err)
+          }))),
         )
       ),
     )
@@ -58,7 +67,9 @@ export class UserEffects {
       mergeMap(({ userId, userUpdateDto }) =>
         this.userService.updateUser(userId, userUpdateDto).pipe(
           map(user => Action.updateUserSuccess({ user })),
-          catchError((err: HttpErrorResponse) => of(Action.updateUserFailure({ error: err.message }))),
+          catchError((err: HttpErrorResponse) => of(Action.updateUserFailure({
+            error: createErrorMessage('update', err)
+          }))),
         )
       ),
     )
@@ -70,7 +81,9 @@ export class UserEffects {
       mergeMap(({ userId }) =>
         this.userService.deleteUser(userId).pipe(
           map(() => Action.deleteUserSuccess({ userId })),
-          catchError((err: HttpErrorResponse) => of(Action.deleteUserFailure({ error: err.message }))),
+          catchError((err: HttpErrorResponse) => of(Action.deleteUserFailure({
+            error: createErrorMessage('delete', err)
+          }))),
         )
       ),
     )

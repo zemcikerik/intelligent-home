@@ -14,8 +14,8 @@ export class LoginComponent {
   error$: Observable<string | null> = EMPTY;
 
   loginForm = new FormGroup({
-    username: new FormControl(null, [Validators.required]),
-    password: new FormControl(null, [Validators.required]),
+    username: new FormControl(null, [Validators.required, Validators.minLength(4)]),
+    password: new FormControl(null, [Validators.required, Validators.minLength(8)]),
   });
 
   constructor(private loginFacade: LoginFacade) {
