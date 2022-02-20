@@ -10,9 +10,8 @@
     <mat-label>Password</mat-label>
     <input matInput formControlName="pswd" type="password">
   </mat-form-field>
-
-  <div mat-dialog-actions>
-    <button mat-stroked-button [mat-dialog-close]="null">Cancel</button>
-    <button mat-raised-button (click)="submit()" [disabled]="!infoForm.valid">Connect</button>
-  </div>
 </form>
+<div mat-dialog-actions>
+  <button mat-stroked-button [mat-dialog-close]="null">Cancel</button>
+  <button mat-raised-button color="primary" (click)="submit()" [disabled]="!infoForm.valid">Connect</button>
+</div>
