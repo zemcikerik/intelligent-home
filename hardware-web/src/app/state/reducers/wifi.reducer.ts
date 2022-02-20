@@ -30,7 +30,11 @@ export const wifiReducer = createReducer(
   on(Action.getNetworkStatusFailure, (state, { error }) => ({ ...state, loading: false, error })),
 
   on(Action.getAvailableNetworks, state => ({ ...state, loading: true })),
-  on(Action.getAvailableNetworksSuccess, (state, { networks }) => ({ ...state, loading: false, availableNetworks: networks })),
+  on(Action.getAvailableNetworksSuccess, (state, { networks }) => ({
+    ...state,
+    loading: false,
+    availableNetworks: networks.filter(network => network.ssid !== '') // filter out hidden networks
+  })),
   on(Action.getAvailableNetworksError, (state, { error }) => ({ ...state, loading: false, error })),
 
   on(Action.connectWifi, state => ({ ...state, loading: true })),
