@@ -1,6 +1,6 @@
 <div *ngIf="status$ | async as status" class="container">
   <div>
-    <mat-icon class="icon">home</mat-icon>
+    <app-home-icon></app-home-icon>
     <p class="state-text">{{ status.state | homeState }}</p>
   </div>
   <app-home-server-info

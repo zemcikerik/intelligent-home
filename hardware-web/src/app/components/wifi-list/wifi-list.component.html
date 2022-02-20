@@ -17,8 +17,11 @@
 
     <ng-container matColumnDef="type">
       <th mat-header-cell *matHeaderCellDef>Open</th>
-      <td mat-cell *matCellDef="let element">
-        <mat-icon>{{ element.type === 'OPEN' ? 'check' : 'lock' }}</mat-icon>
+      <td mat-cell *matCellDef="let element" class="type-icon">
+        <app-check-icon *ngIf="element.type === 'OPEN'; else lock"></app-check-icon>
+        <ng-template #lock>
+          <app-lock-icon></app-lock-icon>
+        </ng-template>
       </td>
     </ng-container>
 

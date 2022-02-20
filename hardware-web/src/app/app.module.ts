@@ -34,6 +34,9 @@ import { HomeStatePipe } from './pipes';
     Components.HomeStatusComponent,
     Components.HomeServerInfoComponent,
     Components.HomeConnectDialogComponent,
+    Components.LockIconComponent,
+    Components.CheckIconComponent,
+    Components.HomeIconComponent,
     HomeStatePipe,
   ],
   imports: [
