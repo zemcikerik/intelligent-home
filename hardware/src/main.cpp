@@ -2,7 +2,6 @@
 
 #include <WiFi.h>
 #include <string>
-#include <ESP32Servo.h>
 
 #include "ih/home.hpp"
 #include "config.hpp"
@@ -11,17 +10,16 @@ constexpr uint16_t network_led = 18;
 constexpr uint16_t ready_led = 19;
 constexpr uint16_t status_led = 21;
 constexpr uint16_t status_button = 22;
-constexpr uint16_t servo_pin = 32;
+constexpr uint16_t relay_pin = 32;
 
 ih::home_manager home_manager;
-ih::device device{ "d081dc06-284b-4378-8ce5-24e71911c60d", "ESP32" };
+ih::device device{ "d081dc06-284b-4378-8ce5-24e71911c60d", "Power Outlet" };
 
-auto servo_feature_state = std::make_shared<ih::boolean_feature_state>(true);
-ih::feature servo_feature{ "d081dc0a-284b-4378-8ce5-24e71911c60d", device.id, "Built-in LED", ih::feature_type::boolean, servo_feature_state };
+auto relay_feature_state = std::make_shared<ih::boolean_feature_state>(false);
+ih::feature relay_feature{ "d081dc0a-284b-4378-8ce5-24e71911c60d", device.id, "Enabled", ih::feature_type::boolean, relay_feature_state };
 
-Servo servo;
 bool button_handled = false;
-void set_servo(bool status);
+void set_relay(bool enabled);
 
 void setup() {
   Serial.begin(115200);
@@ -31,24 +29,16 @@ void setup() {
   pinMode(ready_led, OUTPUT);
   pinMode(status_led, OUTPUT);
   pinMode(status_button, INPUT_PULLUP);
-
-  ESP32PWM::allocateTimer(0);
-	ESP32PWM::allocateTimer(1);
-	ESP32PWM::allocateTimer(2);
-	ESP32PWM::allocateTimer(3);
-
-  servo.setPeriodHertz(50);
-  servo.attach(servo_pin, 500, 2400);
+  pinMode(relay_pin, OUTPUT);
 
   WiFi.mode(WIFI_MODE_APSTA);
   WiFi.softAP(config::ap_ssid, config::ap_pswd);
 
   home_manager.set_device_info(device);
-  home_manager.register_feature(servo_feature);
+  home_manager.register_feature(relay_feature);
 
-  home_manager.on_feature_update_request(servo_feature, [](ih::feature&, JsonObject& update) {
-    set_servo(update["enabled"]);
-    home_manager.update_feature(servo_feature);
+  home_manager.on_feature_update_request(relay_feature, [](ih::feature&, JsonObject& update) {
+    set_relay(update["enabled"]);
   });
 
   home_manager.enable_web_server();
@@ -59,8 +49,8 @@ void loop() {
   home_manager.loop();
 
   if (!button_handled && digitalRead(status_button) == LOW) {
-    button_handled = true;
-    set_servo(!servo_feature_state->enabled);
+    set_relay(!relay_feature_state->enabled);
+    delay(200);
   } else if (digitalRead(status_button) == HIGH) {
     button_handled = false;
   }
@@ -76,10 +66,9 @@ void loop() {
   }
 }
 
-void set_servo(bool status) {
-  auto& enabled = servo_feature_state->enabled;
-  enabled = status;
-
-  servo.write(enabled ? 90 : 0);
+void set_relay(bool enabled) {
+  digitalWrite(relay_pin, enabled ? HIGH : LOW);
   digitalWrite(status_led, enabled ? HIGH : LOW);
+  relay_feature_state->enabled = enabled;
+  home_manager.update_feature(relay_feature);
 }
