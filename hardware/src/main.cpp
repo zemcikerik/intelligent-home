@@ -13,7 +13,7 @@ constexpr uint16_t status_button = 22;
 constexpr uint16_t relay_pin = 32;
 
 ih::home_manager home_manager;
-ih::device device{ "d081dc06-284b-4378-8ce5-24e71911c60d", "Power Outlet" };
+ih::device device{ "d081dc06-284b-4378-8ce5-24e71911c60d", "Power Outlet", "Controls flow of electricity" };
 
 auto relay_feature_state = std::make_shared<ih::boolean_feature_state>(false);
 ih::feature relay_feature{ "d081dc0a-284b-4378-8ce5-24e71911c60d", device.id, "Enabled", ih::feature_type::boolean, relay_feature_state };
