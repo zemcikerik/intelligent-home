@@ -11,4 +11,5 @@ import java.util.UUID;
 public class MockDevice implements Device {
     private final UUID id;
     private final String name;
+    private final String shortDescription;
 }

@@ -10,7 +10,7 @@ public class RemoteDeviceFactoryImpl implements RemoteDeviceFactory {
 
     @Override
     public RemoteDevice createRemoteDevice(DeviceDto deviceDto, String sessionId) {
-        return new RemoteDeviceImpl(deviceDto.getId(), deviceDto.getName(), sessionId);
+        return new RemoteDeviceImpl(deviceDto.getId(), deviceDto.getName(), deviceDto.getShortDescription(), sessionId);
     }
 
 }

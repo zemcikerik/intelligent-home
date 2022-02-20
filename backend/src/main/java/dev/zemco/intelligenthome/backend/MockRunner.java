@@ -5,19 +5,16 @@ import dev.zemco.intelligenthome.backend.device.DeviceService;
 import dev.zemco.intelligenthome.backend.device.impl.MockDevice;
 import dev.zemco.intelligenthome.backend.feature.*;
 import dev.zemco.intelligenthome.backend.feature.impl.MockFeature;
-import dev.zemco.intelligenthome.backend.feature.state.DropdownFeatureState;
-import dev.zemco.intelligenthome.backend.feature.state.FeatureState;
-import dev.zemco.intelligenthome.backend.feature.state.FeatureStateFactory;
-import dev.zemco.intelligenthome.backend.feature.state.TextFeatureState;
+import dev.zemco.intelligenthome.backend.feature.state.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import javax.transaction.Transactional;
+import java.util.*;
+import java.util.function.Consumer;
 
 @Component
 @RequiredArgsConstructor
@@ -30,67 +27,78 @@ public class MockRunner implements CommandLineRunner {
     private final FeatureUpdateHandlerClassProvider featureUpdateHandlerClassProvider;
     private final Random rng = new Random();
 
+    private Feature temperatureFeature;
+
     @Override
+    @Transactional
     public void run(String... args) {
-        this.createAndRegisterMockDevice();
+        Device thermometer = this.createDevice("Thermometer", "Measures temperature");
+        this.temperatureFeature = this.createFeature(thermometer, "Living Room", FeatureType.TEXT);
+        String temperature = String.format("%.2f°C", rng.nextFloat(20, 30));
+        Consumer<TextFeatureState> initialThermometerState = state -> state.setText(temperature);
+        this.createFeature(thermometer, "Kitchen", FeatureType.TEXT, initialThermometerState);
+        this.createFeature(thermometer, "Bedroom", FeatureType.TEXT, initialThermometerState);
+        this.createFeature(thermometer, "Bathroom", FeatureType.TEXT, initialThermometerState);
+
+        Device garageDoor = this.createDevice("Garage door", "Automatic garage door");
+        Consumer<TextFeatureState> initialGarageDoorState = state -> state.setText("Closed");
+        this.createFeature(garageDoor, "State", FeatureType.TEXT, initialGarageDoorState);
+        this.createFeature(garageDoor, "Open/Close", FeatureType.BUTTON);
+
+
+        Device rgb = this.createDevice("RGB Lights", "Lights under the bed");
+        this.createFeature(rgb, "On/Off", FeatureType.BOOLEAN);
+        List<String> rgbChoices = List.of("Flow", "Sway", "Blink");
+        Consumer<DropdownFeatureState> rgbState = state -> state.setChoices(rgbChoices);
+        this.createFeature(rgb, "Mode", FeatureType.DROPDOWN, rgbState);
+
+        Device ac = this.createDevice("AC", "Proivdes cooling and heating");
+        this.createFeature(ac, "On/Off", FeatureType.BOOLEAN);
+        Consumer<IntegerFeatureState> acState = state -> state.setValue(18);
+        this.createFeature(ac, "Temperature", FeatureType.INTEGER, acState);
+
+        Device shopSign = this.createDevice("Shop Sign", "Small neon sign");
+        Consumer<StringFeatureState> initialShopSignState = state -> state.setText("Sale! 50%");
+        this.createFeature(shopSign, "Text", FeatureType.STRING, initialShopSignState);
+
+        this.updateTemperature();
     }
 
-    @Scheduled(fixedRate = 3000L, initialDelay = 3000L)
-    public void scheduledAdd() {
-        if (rng.nextBoolean()) {
-            List<Device> devices = this.deviceService.getActiveDevices();
-            Device device = this.pickRandom(devices);
-            this.createAndRegisterMockFeature(device.getId());
-        } else {
-            this.createAndRegisterMockDevice();
-        }
+    @Scheduled(initialDelay = 1000L, fixedRate = 1000L)
+    public void updateTemperature() {
+        TextFeatureState state = (TextFeatureState) this.temperatureFeature.getState();
+        float temperature = rng.nextFloat(20, 30);
+        state.setText(String.format("%.2f°C", temperature));
+        this.featureService.updateFeature(this.temperatureFeature);
     }
 
-    @Scheduled(fixedRate = 6000L, initialDelay = 6000L)
-    public void scheduledRemove() {
-        List<Device> devices = this.deviceService.getActiveDevices();
-        Device device = this.pickRandom(devices);
-
-        List<Feature> features = this.featureService.getFeaturesForDevice(device.getId());
-        Feature feature = this.pickRandom(features);
-        this.featureService.unregisterFeature(feature);
-
-        if (features.size() == 1) {
-            this.deviceService.unregisterDevice(device);
-        }
+    private Device createDevice(String name, String shortDescription) {
+        Device device = new MockDevice(UUID.randomUUID(), name, shortDescription);
+        this.deviceService.registerDevice(device);
+        return device;
     }
 
-    private void createAndRegisterMockDevice() {
-        UUID deviceId = UUID.randomUUID();
-        this.deviceService.registerDevice(new MockDevice(deviceId, "Test Device"));
-        this.createAndRegisterMockFeature(deviceId);
+    private Feature createFeature(Device device, String name, FeatureType type) {
+        return this.createFeature(device, name, type, null);
     }
 
-    private void createAndRegisterMockFeature(UUID deviceId) {
-        UUID id = UUID.randomUUID();
-        FeatureType type = this.pickRandom(FeatureType.values());
+    private <T extends FeatureState> Feature createFeature(
+            Device device,
+            String name,
+            FeatureType type,
+            Consumer<T> stateConsumer
+    ) {
+        Class<? extends FeatureUpdateHandler> handlerClass = this.featureUpdateHandlerClassProvider.getFeatureUpdateHandlerClass(type);
         FeatureState state = this.featureStateFactory.createFeatureState(type);
-        Class<? extends FeatureUpdateHandler> updateHandler = this.featureUpdateHandlerClassProvider.getFeatureUpdateHandlerClass(type);
 
-        if (type == FeatureType.DROPDOWN) {
-            DropdownFeatureState dropdownState = (DropdownFeatureState) state;
-            dropdownState.setChoices(List.of("First", "Second", "Third"));
-            dropdownState.setSelected("First");
-        } else if (type == FeatureType.TEXT) {
-            TextFeatureState textState = (TextFeatureState) state;
-            textState.setText("Hello, World!");
+        if (stateConsumer != null) {
+            //noinspection unchecked
+            stateConsumer.accept((T) state);
         }
 
-        Feature feature = new MockFeature(id, deviceId, "Test Feature", type, state, updateHandler);
+        Feature feature = new MockFeature(UUID.randomUUID(), device.getId(), name, type, state, handlerClass);
         this.featureService.registerFeature(feature);
-    }
-
-    private <T> T pickRandom(List<T> choices) {
-        return choices.get(rng.nextInt(choices.size()));
-    }
-
-    private <T> T pickRandom(T[] choices) {
-        return choices[rng.nextInt(choices.length)];
+        return feature;
     }
 
 }

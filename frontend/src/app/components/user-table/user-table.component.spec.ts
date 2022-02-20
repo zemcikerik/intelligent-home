@@ -1,15 +1,15 @@
 import { MockBuilder, MockedComponentFixture, MockRender } from 'ng-mocks';
-import { UserEntryComponent } from './user-entry.component';
+import { UserTableComponent } from './user-table.component';
 import { AppModule } from '../../app.module';
 
-describe('UserEntryComponent', () => {
-  let fixture: MockedComponentFixture<UserEntryComponent>;
-  let component: UserEntryComponent;
+describe('UserTableComponent', () => {
+  let fixture: MockedComponentFixture<UserTableComponent>;
+  let component: UserTableComponent;
 
-  beforeEach(() => MockBuilder(UserEntryComponent, AppModule));
+  beforeEach(() => MockBuilder(UserTableComponent, AppModule));
 
   beforeEach(() => {
-    fixture = MockRender(UserEntryComponent);
+    fixture = MockRender(UserTableComponent);
     component = fixture.point.componentInstance;
     fixture.detectChanges();
   });
