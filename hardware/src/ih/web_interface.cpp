@@ -78,7 +78,9 @@ void ih::web_interface::enable_home_status_endpoints(const ih::web_home_status_h
 }
 
 void ih::web_interface::serve_static(fs::FS& fs, std::string fs_path, bool redirect_not_found_to_root) {
-  this->web_server_.serveStatic("/", fs, fs_path.c_str()).setDefaultFile("index.html");
+  this->web_server_.serveStatic("/", fs, fs_path.c_str())
+    .setCacheControl("max-age=86400")
+    .setDefaultFile("index.html");
 
   if (redirect_not_found_to_root) {
     this->add_default_not_found_handler_ = false;
