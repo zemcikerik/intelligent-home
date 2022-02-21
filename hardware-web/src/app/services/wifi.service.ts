@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { delay, Observable, of } from 'rxjs';
-import { WifiConnect, WifiEncryptionType, WifiNetwork, WifiStatus } from '../models';
+import { Observable } from 'rxjs';
+import { WifiConnect, WifiNetwork, WifiStatus } from '../models';
 
 @Injectable()
 export class WifiService {
@@ -10,43 +10,19 @@ export class WifiService {
   }
 
   getAvailableNetworks(): Observable<WifiNetwork[]> {
-    //return this.httpClient.get<WifiNetwork[]>('/api/wifi/networks');
-    return this.ofWithDelay([
-      { ssid: 'Network 1', rssi: -70, channel: 3, type: WifiEncryptionType.OPEN },
-      { ssid: 'Network 2', rssi: -70, channel: 3, type: WifiEncryptionType.OPEN },
-      { ssid: 'Network 3', rssi: -70, channel: 3, type: WifiEncryptionType.WPA2_PSK },
-      { ssid: 'Network 3', rssi: -70, channel: 3, type: WifiEncryptionType.WPA2_PSK },
-      { ssid: 'Network 3', rssi: -70, channel: 3, type: WifiEncryptionType.WPA2_PSK },
-      { ssid: 'Network 3', rssi: -70, channel: 3, type: WifiEncryptionType.WPA2_PSK },
-      { ssid: 'Network 3', rssi: -70, channel: 3, type: WifiEncryptionType.WPA2_PSK },
-    ]);
+    return this.httpClient.get<WifiNetwork[]>('/api/wifi/networks');
   }
 
   getConnectionStatus(): Observable<WifiStatus> {
-    //return this.httpClient.get<WifiStatus>('/api/wifi');
-    return this.ofWithDelay({
-      connected: false,
-      ssid: 'Hello, World!',
-      bssid: '07-C5-D5-8A-98-BB',
-      rssi: -70,
-      ip: '192.168.0.100',
-    });
+    return this.httpClient.get<WifiStatus>('/api/wifi');
   }
 
   connect(wifiConnect: WifiConnect): Observable<any> {
-    //return this.httpClient.post('/api/wifi', wifiConnect);
-    return this.ofWithDelay(null);
+    return this.httpClient.post('/api/wifi', wifiConnect);
   }
 
   disconnect(): Observable<any> {
-    //return this.httpClient.delete('/api/wifi');
-    return this.ofWithDelay(null);
-  }
-
-  ofWithDelay<T>(value: T, delayMs: number = 3000): Observable<T> {
-    return of(value).pipe(
-      delay(delayMs)
-    );
+    return this.httpClient.delete('/api/wifi');
   }
 
 }

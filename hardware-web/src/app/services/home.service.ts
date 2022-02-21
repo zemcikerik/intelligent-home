@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { delay, Observable, of } from 'rxjs';
-import { HomeState, HomeStatus, ServerInfo } from '../models';
+import { Observable } from 'rxjs';
+import { HomeStatus, ServerInfo } from '../models';
 
 @Injectable()
 export class HomeService {
@@ -10,32 +10,15 @@ export class HomeService {
   }
 
   getHomeStatus(): Observable<HomeStatus> {
-    // return this.httpClient.get<HomeStatus>('/api/home');
-    return this.ofWithDelay({
-      state: HomeState.WAITING_FOR_SERVER_INFO,
-      hasServerInfo: false,
-      serverInfo: {
-        hostname: '192.168.0.1',
-        port: 8080,
-        path: '/ws',
-      },
-    });
+    return this.httpClient.get<HomeStatus>('/api/home');
   }
 
   setServerInfo(serverInfo: ServerInfo): Observable<any> {
-    // return this.httpClient.post('/api/home', serverInfo);
-    return this.ofWithDelay(null);
+    return this.httpClient.post('/api/home', serverInfo);
   }
 
   disconnect(): Observable<any> {
-    // return this.httpClient.delete('/api/home');
-    return this.ofWithDelay(null);
-  }
-
-  ofWithDelay<T>(value: T, delayMs: number = 3000): Observable<T> {
-    return of(value).pipe(
-      delay(delayMs)
-    );
+    return this.httpClient.delete('/api/home');
   }
 
 }
