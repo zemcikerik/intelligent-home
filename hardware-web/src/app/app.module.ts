@@ -37,6 +37,7 @@ import { HomeStatePipe } from './pipes';
     Components.LockIconComponent,
     Components.CheckIconComponent,
     Components.HomeIconComponent,
+    Components.ErrorMessageComponent,
     HomeStatePipe,
   ],
   imports: [
@@ -58,6 +59,7 @@ import { HomeStatePipe } from './pipes';
     EffectsModule.forRoot([AppEffects, HomeEffects, WifiEffects]),
   ],
   providers: [
+    Facade.AppFacade,
     Facade.HomeFacade,
     Facade.WifiFacade,
     Service.HomeService,

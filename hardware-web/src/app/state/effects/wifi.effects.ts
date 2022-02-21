@@ -3,8 +3,11 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { WifiService } from '../../services';
 import * as Action from '../actions/wifi.actions';
 import { catchError, filter, map, mergeMap, of } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 
-// TODO: error messages
+const getErrorMessage = (err: HttpErrorResponse): string => {
+  return `${err.status} - ${err.message}`;
+}
 
 @Injectable()
 export class WifiEffects {
@@ -15,7 +18,9 @@ export class WifiEffects {
       mergeMap(() =>
         this.wifiService.getConnectionStatus().pipe(
           map(status => Action.getNetworkStatusSuccess({ status })),
-          catchError(() => of(Action.getNetworkStatusFailure({ error: '' }))),
+          catchError((err: HttpErrorResponse) => of(Action.getNetworkStatusFailure({
+            error: getErrorMessage(err)
+          }))),
         )
       ),
     )
@@ -27,7 +32,9 @@ export class WifiEffects {
       mergeMap(() =>
         this.wifiService.getAvailableNetworks().pipe(
           map(networks => Action.getAvailableNetworksSuccess({ networks })),
-          catchError(() => of(Action.getAvailableNetworksError({ error: '' }))),
+          catchError((err: HttpErrorResponse) => of(Action.getAvailableNetworksError({
+            error: getErrorMessage(err)
+          }))),
         )
       ),
     )
@@ -39,7 +46,9 @@ export class WifiEffects {
       mergeMap(({ connectInfo }) =>
         this.wifiService.connect(connectInfo).pipe(
           map(() => Action.connectWifiSuccess()),
-          catchError(() => of(Action.connectWifiFailure({ error: '' }))),
+          catchError((err: HttpErrorResponse) => of(Action.connectWifiFailure({
+            error: getErrorMessage(err)
+          }))),
         )
       ),
     )
@@ -51,7 +60,9 @@ export class WifiEffects {
       mergeMap(() =>
         this.wifiService.disconnect().pipe(
           map(() => Action.disconnectWifiSuccess()),
-          catchError(() => of(Action.disconnectWifiFailure({ error: '' }))),
+          catchError((err: HttpErrorResponse) => of(Action.disconnectWifiFailure({
+            error: getErrorMessage(err)
+          }))),
         )
       ),
     )

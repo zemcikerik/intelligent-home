@@ -3,8 +3,11 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { HomeService } from '../../services';
 import * as Action from '../actions';
 import { catchError, map, mergeMap, of } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 
-// TODO: error handling
+const getErrorMessage = (err: HttpErrorResponse): string => {
+  return `${err.status} - ${err.message}`;
+}
 
 @Injectable()
 export class HomeEffects {
@@ -15,7 +18,9 @@ export class HomeEffects {
       mergeMap(() =>
         this.homeService.getHomeStatus().pipe(
           map(status => Action.getHomeStatusSuccess({ status })),
-          catchError(() => of(Action.getHomeStatusFailure({ error: '' }))),
+          catchError((err: HttpErrorResponse) => of(Action.getHomeStatusFailure({
+            error: getErrorMessage(err)
+          }))),
         )
       ),
     )
@@ -27,7 +32,9 @@ export class HomeEffects {
       mergeMap(({ server }) =>
         this.homeService.setServerInfo(server).pipe(
           map(() => Action.setHomeServerSuccess()),
-          catchError(() => of(Action.setHomeServerFailure({ error: '' }))),
+          catchError((err: HttpErrorResponse) => of(Action.setHomeServerFailure({
+            error: getErrorMessage(err)
+          }))),
         )
       ),
     )
@@ -39,7 +46,9 @@ export class HomeEffects {
       mergeMap(() =>
         this.homeService.disconnect().pipe(
           map(() => Action.disconnectHomeSuccess()),
-          catchError(() => of(Action.setHomeServerFailure({ error: '' }))),
+          catchError((err: HttpErrorResponse) => of(Action.disconnectHomeFailure({
+            error: getErrorMessage(err)
+          }))),
         )
       ),
     )

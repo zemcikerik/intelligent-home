@@ -1,8 +1,11 @@
-<div class="container">
-  <div class="wrapper">
-    <h2>Device</h2>
-    <app-wifi></app-wifi>
-    <app-home></app-home>
-  </div>
-</div>
+<app-error-message *ngIf="error$ | async as error; else noError" [error]="error"></app-error-message>
 
+<ng-template #noError>
+  <div class="container">
+    <div class="wrapper">
+      <h2>Device</h2>
+      <app-wifi></app-wifi>
+      <app-home></app-home>
+    </div>
+  </div>
+</ng-template>
