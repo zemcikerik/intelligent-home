@@ -1,2 +1,15 @@
-<h2>Error</h2>
-<p>{{ message }}</p>
+<div class="container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Critical error!</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <p>
+        There was a critical error while initializing the app!
+        Please reload the page.
+        If the problem persists, please contact the system administrator.
+      </p>
+      <p>{{ message }}</p>
+    </mat-card-content>
+  </mat-card>
+</div>

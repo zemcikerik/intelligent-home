@@ -36,6 +36,7 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { routerReducer, StoreRouterConnectingModule } from '@ngrx/router-store';
+import * as Guards from './guards';
 
 @NgModule({
   declarations: [
@@ -94,6 +95,7 @@ import { routerReducer, StoreRouterConnectingModule } from '@ngrx/router-store';
     FeatureFacade,
     LoginFacade,
     UserFacade,
+    Guards.AdminGuard,
     Services.AuthService,
     Services.DeviceService,
     Services.FeatureService,
