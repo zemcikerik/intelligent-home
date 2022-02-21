@@ -1,11 +1,12 @@
 import { RouterModule, Routes } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { DeviceListComponent, DeviceManagementComponent, UserManagementComponent } from './components';
+import { AdminGuard } from './guards';
 
 const routes: Routes = [
   { path: '', component: DeviceListComponent },
-  { path: 'devices', component: DeviceManagementComponent },
-  { path: 'users', component: UserManagementComponent },
+  { path: 'devices', component: DeviceManagementComponent, canActivate: [AdminGuard] },
+  { path: 'users', component: UserManagementComponent, canActivate: [AdminGuard] },
   { path: '**', redirectTo: '' },
 ];
 

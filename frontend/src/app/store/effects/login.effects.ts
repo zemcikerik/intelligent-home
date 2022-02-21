@@ -7,6 +7,13 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { of } from 'rxjs';
 import { Router } from '@angular/router';
 
+const STATUS_CODE_TO_LOGIN_ERROR_MESSAGE: { [statusCode: number]: string } = {
+  403: 'The entered password is incorrect!',
+  404: "The entered username doesn't match any account!",
+};
+
+const LOGIN_UNKNOWN_ERROR = 'There was an unknown error trying to process your request!';
+
 @Injectable()
 export class LoginEffects {
 
@@ -16,7 +23,9 @@ export class LoginEffects {
       mergeMap(({ username, password }) =>
         this.authService.login(username, password).pipe(
           map(token => loginSuccess({ token })),
-          catchError((err: HttpErrorResponse) => of(loginFailure({ error: err.message })))
+          catchError((err: HttpErrorResponse) => of(loginFailure({
+            error: STATUS_CODE_TO_LOGIN_ERROR_MESSAGE[err.status] ?? `${LOGIN_UNKNOWN_ERROR} (${err.status})`
+          })))
         )
       )
     )
