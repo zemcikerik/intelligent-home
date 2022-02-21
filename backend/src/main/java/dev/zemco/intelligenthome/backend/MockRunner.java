@@ -40,12 +40,6 @@ public class MockRunner implements CommandLineRunner {
         this.createFeature(thermometer, "Bedroom", FeatureType.TEXT, initialThermometerState);
         this.createFeature(thermometer, "Bathroom", FeatureType.TEXT, initialThermometerState);
 
-        Device garageDoor = this.createDevice("Garage door", "Automatic garage door");
-        Consumer<TextFeatureState> initialGarageDoorState = state -> state.setText("Closed");
-        this.createFeature(garageDoor, "State", FeatureType.TEXT, initialGarageDoorState);
-        this.createFeature(garageDoor, "Open/Close", FeatureType.BUTTON);
-
-
         Device rgb = this.createDevice("RGB Lights", "Lights under the bed");
         this.createFeature(rgb, "On/Off", FeatureType.BOOLEAN);
         List<String> rgbChoices = List.of("Flow", "Sway", "Blink");
