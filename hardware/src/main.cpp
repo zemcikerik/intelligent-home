@@ -8,7 +8,7 @@
 #include "config.hpp"
 
 constexpr uint16_t network_led = 19;
-constexpr uint16_t ready_led = 21;
+constexpr uint16_t ready_led = 22;
 
 DHT dht{5, DHT22};
 
