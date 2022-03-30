@@ -98,6 +98,11 @@ void ih::web_interface::web_server_on_post_(std::string uri, ArJsonRequestHandle
 }
 
 void ih::web_interface::handle_get_wifi_networks_(ih::web_request* request) {
+  if (WiFi.isConnected()) {
+    request->send(404);
+    return;
+  }
+
   const auto networks = this->wifi_scanner_->get_networks();
 
   DynamicJsonDocument doc{ 2048 };
