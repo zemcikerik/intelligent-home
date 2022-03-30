@@ -8,8 +8,10 @@ ih::wifi_scanner::wifi_scanner() {
   }, system_event_id_t::SYSTEM_EVENT_SCAN_DONE);
 
   const auto timer_callback = [](TimerHandle_t handle) {
-    const auto scanner = reinterpret_cast<wifi_scanner*>(pvTimerGetTimerID(handle));
-    scanner->trigger_scan_(false);
+    if (!WiFi.isConnected()) {
+      const auto scanner = reinterpret_cast<wifi_scanner*>(pvTimerGetTimerID(handle));
+      scanner->trigger_scan_(false);
+    }
   };
 
   this->timer_handle_ = xTimerCreate("Wifi Scanner", pdMS_TO_TICKS(15000), pdTRUE, this, timer_callback);
