@@ -33,6 +33,27 @@ enum class stomp_state {
   disconnected
 };
 
+using stomp_heartbeat_sender = std::function<void ()>;
+
+class stomp_heartbeat_helper {
+public:
+  stomp_heartbeat_helper(const stomp_message& connect_message);
+  ~stomp_heartbeat_helper();
+
+  void on_client_message();
+  void on_server_heartbeat();
+  void set_heartbeat_sender(stomp_heartbeat_sender sender);
+
+private:
+  std::uint32_t client_heartbeat_interval_;
+  std::uint32_t server_heartbeat_interval_;
+
+  TimerHandle_t client_timer_handle_ = nullptr;
+  TimerHandle_t server_timer_handle_ = nullptr;
+
+  stomp_heartbeat_sender heartbeat_sender_;
+};
+
 class stomp_client {
 public:
   stomp_client();
@@ -56,6 +77,7 @@ public:
 
 private:
   void handle_websocket_event_(WStype_t type, uint8_t* payload, size_t length);
+  void handle_text_websocket_event_(const char* payload, size_t length);
   void handle_connect_(const stomp_message& message);
   void handle_disconnect_();
   void handle_message_(const stomp_message& message);
@@ -66,10 +88,11 @@ private:
   void send_connect_frame_();
   void send_end_frame_();
 
-  void send_sstream_(std::ostringstream& ss);
+  void send_sstream_(std::ostringstream& ss, bool reset_heartbeat = true);
   static void parse_message_(const std::string& data, stomp_message& out_message);
 
   WebSocketsClient ws_client_;
+  std::unique_ptr<stomp_heartbeat_helper> heartbeat_helper_;
   bool should_trigger_disconnect_handler_ = false;
 
   stomp_state state_;
