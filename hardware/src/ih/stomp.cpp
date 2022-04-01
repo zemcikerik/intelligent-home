@@ -1,5 +1,67 @@
 #include "stomp.hpp"
 
+// TODO: for now we are accepting server settings as absolute, implement in a way that doesn't conflict with STOMP
+ih::stomp_heartbeat_helper::stomp_heartbeat_helper(const ih::stomp_message& connect_message) {
+  bool header_found = false;
+
+  for (const auto& header : connect_message.headers) {
+    if (header.first == "heart-beat") {
+      const auto separator_index = header.second.find_first_of(',');
+
+      const auto raw_server_heartbeat_interval = header.second.substr(0, separator_index);
+      this->server_heartbeat_interval_ = std::atoi(raw_server_heartbeat_interval.c_str());
+
+      const auto raw_client_heartbeat_interval = header.second.substr(separator_index + 1);
+      this->client_heartbeat_interval_ = std::atoi(raw_client_heartbeat_interval.c_str());
+
+      header_found = true;
+      break;
+    }
+  }
+
+  if (!header_found) {
+    this->client_heartbeat_interval_ = 0;
+    this->server_heartbeat_interval_ = 0;
+  }
+
+  if (this->client_heartbeat_interval_ != 0) {
+    this->client_timer_handle_ = xTimerCreate("STOMP Client Heartbeat", pdMS_TO_TICKS(this->client_heartbeat_interval_ * 0.8), pdTRUE, this, [](TimerHandle_t timer_handle) {
+      const auto heartbeat_helper = reinterpret_cast<ih::stomp_heartbeat_helper*>(pvTimerGetTimerID(timer_handle));
+
+      if (heartbeat_helper->heartbeat_sender_) {
+        heartbeat_helper->heartbeat_sender_();
+      }
+    });
+    xTimerStart(this->client_timer_handle_, pdMS_TO_TICKS(100));
+  }
+
+  // TODO: server heartbeat interval
+}
+
+ih::stomp_heartbeat_helper::~stomp_heartbeat_helper() {
+  if (this->client_timer_handle_) {
+    xTimerStop(this->client_timer_handle_, portMAX_DELAY);
+    xTimerDelete(this->client_timer_handle_, portMAX_DELAY);
+    this->client_timer_handle_ = nullptr;
+  }
+}
+
+void ih::stomp_heartbeat_helper::on_client_message() {
+  if (this->client_timer_handle_) {
+    xTimerReset(this->client_timer_handle_, pdMS_TO_TICKS(100));
+  }
+}
+
+void ih::stomp_heartbeat_helper::on_server_heartbeat() {
+  if (this->server_timer_handle_) {
+    xTimerReset(this->server_timer_handle_, pdMS_TO_TICKS(100));
+  }
+}
+
+void ih::stomp_heartbeat_helper::set_heartbeat_sender(stomp_heartbeat_sender sender) {
+  this->heartbeat_sender_ = sender;
+}
+
 ih::stomp_client::stomp_client() : state_(ih::stomp_state::waiting) {
 }
 
@@ -120,28 +182,41 @@ void ih::stomp_client::handle_websocket_event_(WStype_t type, uint8_t* payload, 
       break;
 
     case WStype_TEXT:
-      ih::stomp_message message;
-      this->parse_message_(std::string{ reinterpret_cast<char*>(payload) }, message);
-      
-      if (message.command == "CONNECTED") {
-        this->handle_connect_(message);
-      } else if (message.command == "MESSAGE") {
-        this->handle_message_(message);
-      } else if (message.command == "ERROR") {
-        this->handle_error_(message);
-      } else if (message.command == "RECEIPT") {
-        this->handle_recepit_(message);
-      } else {
-        this->handle_unknown_(message);
-      }
-
+      this->handle_text_websocket_event_(reinterpret_cast<char*>(payload), length);
       break;
+  }
+}
+
+void ih::stomp_client::handle_text_websocket_event_(const char* payload, size_t length) {
+  if ((length == 1 && payload[0] == '\n') || (length == 2 && payload[0] == '\r' && payload[1] == '\n')) {
+    this->heartbeat_helper_->on_server_heartbeat();
+    return;
+  }
+
+  ih::stomp_message message;
+  this->parse_message_(payload, message);
+  
+  if (message.command == "CONNECTED") {
+    this->handle_connect_(message);
+  } else if (message.command == "MESSAGE") {
+    this->handle_message_(message);
+  } else if (message.command == "ERROR") {
+    this->handle_error_(message);
+  } else if (message.command == "RECEIPT") {
+    this->handle_recepit_(message);
+  } else {
+    this->handle_unknown_(message);
   }
 }
 
 void ih::stomp_client::handle_connect_(const ih::stomp_message& message) {
   this->subscriptions_.clear();
   this->state_ = ih::stomp_state::connected;
+
+  this->heartbeat_helper_ = std::unique_ptr<ih::stomp_heartbeat_helper>{ new ih::stomp_heartbeat_helper{ message } };
+  this->heartbeat_helper_->set_heartbeat_sender([this]() {
+    this->ws_client_.sendTXT("\n", 1);
+  });
   
   if (this->connect_handler_) {
     this->connect_handler_(message);
@@ -152,6 +227,8 @@ void ih::stomp_client::handle_disconnect_() {
   if (this->state_ != ih::stomp_state::waiting) {
     this->state_ = ih::stomp_state::disconnected;
   }
+
+  this->heartbeat_helper_ = nullptr;
 
   if (this->should_trigger_disconnect_handler_ && this->disconnect_handler_) {
     this->should_trigger_disconnect_handler_ = false;
@@ -218,9 +295,9 @@ void ih::stomp_client::send_connect_frame_() {
 
   ss << "CONNECT\n";
   ss << "accept-version:1.1,1.0\n";
-  ss << "heart-beat:0,10000\n\n";
+  ss << "heart-beat:10000,10000\n\n";
 
-  this->send_sstream_(ss);
+  this->send_sstream_(ss, false);
 }
 
 void ih::stomp_client::send_end_frame_() {
@@ -269,7 +346,11 @@ void ih::stomp_client::parse_message_(const std::string& data, ih::stomp_message
   }
 }
 
-void ih::stomp_client::send_sstream_(std::ostringstream& ss) {
+void ih::stomp_client::send_sstream_(std::ostringstream& ss, bool reset_heartbeat) {
   const std::string txt = ss.str();
   this->ws_client_.sendTXT(txt.c_str(), txt.length() + 1);
+  
+  if (reset_heartbeat) {
+    this->heartbeat_helper_->on_client_message();
+  }
 }
