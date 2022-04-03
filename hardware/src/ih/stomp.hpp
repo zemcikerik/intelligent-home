@@ -34,6 +34,7 @@ enum class stomp_state {
 };
 
 using stomp_heartbeat_sender = std::function<void ()>;
+using stomp_timeout_callback = std::function<void ()>;
 
 class stomp_heartbeat_helper {
 public:
@@ -43,6 +44,7 @@ public:
   void on_client_message();
   void on_server_heartbeat();
   void set_heartbeat_sender(stomp_heartbeat_sender sender);
+  void set_timeout_callback(stomp_timeout_callback callback);
 
 private:
   std::uint32_t client_heartbeat_interval_;
@@ -52,6 +54,7 @@ private:
   TimerHandle_t server_timer_handle_ = nullptr;
 
   stomp_heartbeat_sender heartbeat_sender_;
+  stomp_timeout_callback timeout_callback_;
 };
 
 class stomp_client {
