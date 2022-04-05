@@ -35,7 +35,16 @@ ih::stomp_heartbeat_helper::stomp_heartbeat_helper(const ih::stomp_message& conn
     xTimerStart(this->client_timer_handle_, pdMS_TO_TICKS(100));
   }
 
-  // TODO: server heartbeat interval
+  if (this->server_heartbeat_interval_ != 0) {
+    this->server_timer_handle_ = xTimerCreate("STOMP Server Heartbeat", pdMS_TO_TICKS(this->server_heartbeat_interval_ * 2.0), pdFALSE, this, [](TimerHandle_t timer_handle) {
+      const auto heartbeat_helper = reinterpret_cast<ih::stomp_heartbeat_helper*>(pvTimerGetTimerID(timer_handle));
+
+      if (heartbeat_helper->timeout_callback_) {
+        heartbeat_helper->timeout_callback_();
+      }
+    });
+    xTimerStart(this->server_timer_handle_, pdMS_TO_TICKS(100));
+  }
 }
 
 ih::stomp_heartbeat_helper::~stomp_heartbeat_helper() {
@@ -43,6 +52,12 @@ ih::stomp_heartbeat_helper::~stomp_heartbeat_helper() {
     xTimerStop(this->client_timer_handle_, portMAX_DELAY);
     xTimerDelete(this->client_timer_handle_, portMAX_DELAY);
     this->client_timer_handle_ = nullptr;
+  }
+
+  if (this->server_timer_handle_) {
+    xTimerStop(this->server_timer_handle_, portMAX_DELAY);
+    xTimerDelete(this->server_timer_handle_, portMAX_DELAY);
+    this->server_timer_handle_ = nullptr;
   }
 }
 
@@ -60,6 +75,10 @@ void ih::stomp_heartbeat_helper::on_server_heartbeat() {
 
 void ih::stomp_heartbeat_helper::set_heartbeat_sender(stomp_heartbeat_sender sender) {
   this->heartbeat_sender_ = sender;
+}
+
+void ih::stomp_heartbeat_helper::set_timeout_callback(stomp_timeout_callback callback) {
+  this->timeout_callback_ = callback;
 }
 
 ih::stomp_client::stomp_client() : state_(ih::stomp_state::waiting) {
@@ -187,9 +206,13 @@ void ih::stomp_client::handle_websocket_event_(WStype_t type, uint8_t* payload, 
   }
 }
 
+// TODO: refactor
 void ih::stomp_client::handle_text_websocket_event_(const char* payload, size_t length) {
-  if ((length == 1 && payload[0] == '\n') || (length == 2 && payload[0] == '\r' && payload[1] == '\n')) {
+  if (this->heartbeat_helper_) {
     this->heartbeat_helper_->on_server_heartbeat();
+  }
+
+  if ((length == 1 && payload[0] == '\n') || (length == 2 && payload[0] == '\r' && payload[1] == '\n')) {
     return;
   }
 
@@ -214,8 +237,13 @@ void ih::stomp_client::handle_connect_(const ih::stomp_message& message) {
   this->state_ = ih::stomp_state::connected;
 
   this->heartbeat_helper_ = std::unique_ptr<ih::stomp_heartbeat_helper>{ new ih::stomp_heartbeat_helper{ message } };
+
   this->heartbeat_helper_->set_heartbeat_sender([this]() {
     this->ws_client_.sendTXT("\n", 1);
+  });
+
+  this->heartbeat_helper_->set_timeout_callback([this]() {
+    this->handle_disconnect_();
   });
   
   if (this->connect_handler_) {
