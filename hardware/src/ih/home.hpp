@@ -60,6 +60,11 @@ private:
 
   void initialize_connection_to_server_();
 
+  void persist_server_info_();
+  void persist_wifi_info_();
+  void load_server_info_();
+  void load_wifi_info_();
+
   void send_add_feature_message_if_connected_(const feature& feature);
   void handle_feature_update_request_message_(const stomp_message& message);
 

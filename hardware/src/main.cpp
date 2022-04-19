@@ -2,6 +2,7 @@
 
 #include <WiFi.h>
 #include <string>
+#include <SPIFFS.h>
 
 #include "ih/home.hpp"
 #include "config.hpp"
@@ -24,6 +25,11 @@ void set_relay(bool enabled);
 void setup() {
   Serial.begin(115200);
   esp_log_level_set("*", ESP_LOG_DEBUG);
+
+  if (!SPIFFS.begin()) {
+    Serial.println("SPIFFS begin() failed - formatting");
+    SPIFFS.format();
+  }
 
   pinMode(network_led, OUTPUT);
   pinMode(ready_led, OUTPUT);
