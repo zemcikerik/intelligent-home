@@ -32,6 +32,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilterAt(this.jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
                     .antMatchers("/login", "/refresh", "/ws").permitAll()
+                    .antMatchers("/", "/*.html", "/*.css", "/*.js").permitAll()
+                    .antMatchers("/*.woff", "/*.woff2", "/*.ttf").permitAll()
+                    .antMatchers("/*.txt", "/*.ico", "/assets/*.jpg", "/assets/*.png").permitAll()
                     .anyRequest().authenticated()
                     .and()
                 .httpBasic().disable();
