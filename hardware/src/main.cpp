@@ -68,11 +68,15 @@ void setup() {
       const auto temperature = dht.readTemperature();
       const auto humidity = dht.readHumidity();
 
-      temp_feature_state->text = format_value(temperature, " °C");
-      home_manager.update_feature(temp_feature);
+      if (!isnan(temperature)) {
+        temp_feature_state->text = format_value(temperature, " °C");
+        home_manager.update_feature(temp_feature);
+      }
 
-      hum_feature_state->text = format_value(humidity, " %");
-      home_manager.update_feature(hum_feature);
+      if (!isnan(humidity)) {
+        hum_feature_state->text = format_value(humidity, " %");
+        home_manager.update_feature(hum_feature);
+      }
 
       vTaskDelay(pdMS_TO_TICKS(2000));
     }
