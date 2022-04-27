@@ -69,7 +69,6 @@ private:
   void handle_feature_update_request_message_(const stomp_message& message);
 
   web_home_status get_status_for_web_() const;
-
 };
 
 }

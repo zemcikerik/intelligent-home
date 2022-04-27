@@ -127,7 +127,7 @@ void ih::home_manager::enable_web_server(ih::web_server_configuration config) {
   }
 
   if (config.enable_control_interface) {
-    this->web_interface_->serve_static(SPIFFS, "/");
+    this->web_interface_->serve_static(SPIFFS, "/web/");
   }
 }
 

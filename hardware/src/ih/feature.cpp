@@ -95,8 +95,6 @@ std::string feature_type_to_string(const ih::feature_type type) {
     case ih::feature_type::integer:   return "INTEGER";
     case ih::feature_type::string:    return "STRING";
     case ih::feature_type::text:      return "TEXT";
-
-    // TODO: check what to do here
-    default: return "";
+    default:                          return "UNKNOWN";
   }
 }
