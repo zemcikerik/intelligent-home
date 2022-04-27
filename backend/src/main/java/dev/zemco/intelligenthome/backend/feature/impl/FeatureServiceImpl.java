@@ -38,7 +38,8 @@ public class FeatureServiceImpl implements FeatureService {
     @Override
     public void registerFeature(Feature feature) {
         if (this.isFeatureAlreadyRegistered(feature)) {
-            throw new FeatureAlreadyRegisteredException();
+            this.features.removeIf(f -> f.getId().equals(feature.getId()));
+            this.featureBroadcastService.broadcastFeatureRemoval(feature);
         }
 
         this.features.add(feature);

@@ -33,7 +33,8 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     public void registerDevice(Device device) {
         if (this.isDeviceAlreadyRegistered(device)) {
-            throw new DeviceAlreadyRegisteredException();
+            this.devices.removeIf(d -> d.getId().equals(device.getId()));
+            this.deviceBroadcastService.broadcastDeviceRemoval(device);
         }
 
         this.devices.add(device);
