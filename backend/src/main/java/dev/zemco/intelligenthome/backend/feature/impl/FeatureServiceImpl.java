@@ -3,6 +3,7 @@ package dev.zemco.intelligenthome.backend.feature.impl;
 import dev.zemco.intelligenthome.backend.feature.Feature;
 import dev.zemco.intelligenthome.backend.feature.FeatureBroadcastService;
 import dev.zemco.intelligenthome.backend.feature.FeatureService;
+import dev.zemco.intelligenthome.backend.feature.exception.FeatureAlreadyRegisteredException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +37,10 @@ public class FeatureServiceImpl implements FeatureService {
 
     @Override
     public void registerFeature(Feature feature) {
+        if (this.isFeatureAlreadyRegistered(feature)) {
+            throw new FeatureAlreadyRegisteredException();
+        }
+
         this.features.add(feature);
         this.featureBroadcastService.broadcastFeatureAddition(feature);
     }
@@ -49,6 +54,10 @@ public class FeatureServiceImpl implements FeatureService {
     public void unregisterFeature(Feature feature) {
         this.features.remove(feature);
         this.featureBroadcastService.broadcastFeatureRemoval(feature);
+    }
+
+    private boolean isFeatureAlreadyRegistered(Feature feature) {
+        return this.features.stream().anyMatch(f -> f.getId().equals(feature.getId()));
     }
 
 }

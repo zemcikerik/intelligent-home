@@ -206,7 +206,6 @@ void ih::stomp_client::handle_websocket_event_(WStype_t type, uint8_t* payload, 
   }
 }
 
-// TODO: refactor
 void ih::stomp_client::handle_text_websocket_event_(const char* payload, size_t length) {
   if (this->heartbeat_helper_) {
     this->heartbeat_helper_->on_server_heartbeat();

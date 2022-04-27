@@ -1,0 +1,11 @@
+<div *ngIf="status$ | async as status" class="container">
+  <div>
+    <app-home-icon></app-home-icon>
+    <p class="state-text">{{ status.state | homeState }}</p>
+  </div>
+  <app-home-server-info
+    *ngIf="status.hasServerInfo"
+    [serverInfo]="status.serverInfo"
+    (disconnect)="disconnect()"
+  ></app-home-server-info>
+</div>
