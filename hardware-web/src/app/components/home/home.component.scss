@@ -1,0 +1,31 @@
+.container {
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  border-radius: 35px;
+  padding: 32px 46px;
+  margin-top: 30px;
+  height: 272px;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.button-bar {
+  display: flex;
+  margin-top: 16px;
+  gap: 16px;
+
+  & > * {
+    flex-grow: 1;
+  }
+}
+
+.connect-button {
+  color: white;
+  background-color: #ff9060;
+}

@@ -1,0 +1,6 @@
+<ng-container *ngIf="serverInfo">
+  <p>Hostname: <label>{{ serverInfo.hostname }}</label></p>
+  <p>Port: <label>{{ serverInfo.port}}</label></p>
+  <p>Path: <label>{{ serverInfo.path}}</label></p>
+  <button mat-flat-button (click)="disconnect.emit()">Disconnect</button>
+</ng-container>

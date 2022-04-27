@@ -1,0 +1,13 @@
+.container {
+  display: flex;
+  justify-content: center;
+
+  & > * + * {
+    margin-left: 50px;
+  }
+}
+
+.state-text {
+  text-align: center;
+  margin: 0;
+}
