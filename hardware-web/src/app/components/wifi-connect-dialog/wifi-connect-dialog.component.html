@@ -1,0 +1,17 @@
+<form [formGroup]="infoForm">
+  <h4>Connect to Wi-Fi</h4>
+
+  <mat-form-field appearance="outline">
+    <mat-label>SSID</mat-label>
+    <input matInput formControlName="ssid" [readonly]="disableSSIDField">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Password</mat-label>
+    <input matInput formControlName="pswd" type="password">
+  </mat-form-field>
+</form>
+<div mat-dialog-actions>
+  <button mat-stroked-button [mat-dialog-close]="null">Cancel</button>
+  <button mat-raised-button color="primary" (click)="submit()" [disabled]="!infoForm.valid">Connect</button>
+</div>

@@ -1,5 +1,6 @@
 #include "home.hpp"
 #include <SPIFFS.h>
+#include "wifi_json_helper.hpp"
 
 std::string get_path_with_id(std::string base, std::string& id);
 
@@ -29,12 +30,16 @@ void ih::home_manager::begin() {
     this->web_interface_->begin();
   }
 
+  if (SPIFFS.exists("/server.json")) {
+    this->load_server_info_();
+  }
+
   if (WiFi.isConnected()) {
-    if (this->server_info_.hostname != "") {
-      this->initialize_connection_to_server_();
-    } else {
-      this->state_ = ih::home_state::waiting_for_server_info;
-    }
+    this->wifi_connect_callback_();
+
+    // if there was no attempt to connect yet, default status should be WL_NO_SHIELD
+  } else if (WiFi.status() == wl_status_t::WL_NO_SHIELD && SPIFFS.exists("/wifi.json")) {
+    this->load_wifi_info_();
   }
 }
 
@@ -122,12 +127,7 @@ void ih::home_manager::enable_web_server(ih::web_server_configuration config) {
   }
 
   if (config.enable_control_interface) {
-    if (!SPIFFS.begin()) {
-      Serial.println("SPIFFS begin() failed!");
-      return;
-    }
-
-    this->web_interface_->serve_static(SPIFFS, "/");
+    this->web_interface_->serve_static(SPIFFS, "/web/");
   }
 }
 
@@ -137,6 +137,8 @@ void ih::home_manager::wifi_connect_callback_() {
   } else {
     this->state_ = ih::home_state::waiting_for_server_info;
   }
+
+  this->persist_wifi_info_();
 }
 
 void ih::home_manager::wifi_disconnect_callback_() {
@@ -155,6 +157,8 @@ void ih::home_manager::server_connect_callback_() {
   this->stomper_.subscribe("/user/queue/device/feature/request-update", [this](const ih::stomp_message& message) {
     this->handle_feature_update_request_message_(message);
   });
+
+  this->persist_server_info_();
 }
 
 void ih::home_manager::server_disconnect_callback_() {
@@ -167,6 +171,30 @@ void ih::home_manager::initialize_connection_to_server_() {
   const auto& server = this->server_info_;
   this->stomper_.begin(server.hostname, server.port, server.ws_path);
   this->state_ = ih::home_state::connecting;
+}
+
+void ih::home_manager::persist_server_info_() {
+  File file = SPIFFS.open("/server.json", "w");
+  this->server_info_.to_json(file);
+  file.close();
+}
+
+void ih::home_manager::persist_wifi_info_() {
+  File file = SPIFFS.open("/wifi.json", "w");
+  ih::wifi_json_helper::current_wifi_to_json(file);
+  file.close();
+}
+
+void ih::home_manager::load_server_info_() {
+  File file = SPIFFS.open("/server.json", "r");
+  this->server_info_ = ih::home_server_info::from_json(file);
+  file.close();
+}
+
+void ih::home_manager::load_wifi_info_() {
+  File file = SPIFFS.open("/wifi.json", "r");
+  ih::wifi_json_helper::wifi_begin_from_json(file);
+  file.close();
 }
 
 void ih::home_manager::send_add_feature_message_if_connected_(const ih::feature& feature) {

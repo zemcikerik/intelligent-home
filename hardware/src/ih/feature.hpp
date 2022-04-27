@@ -43,7 +43,6 @@ struct dropdown_feature_state: public feature_state {
   std::vector<std::string> choices;
   std::string selected;
 
-  // TODO: do something about copying here
   dropdown_feature_state(std::vector<std::string> choices);
   dropdown_feature_state(std::vector<std::string> choices, std::string selected);
   void to_json(JsonObject& json) const override;
