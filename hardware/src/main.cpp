@@ -19,7 +19,6 @@ ih::device device{ "d081dc06-284b-4378-8ce5-24e71911c60d", "Power Outlet", "Cont
 auto relay_feature_state = std::make_shared<ih::boolean_feature_state>(false);
 ih::feature relay_feature{ "d081dc0a-284b-4378-8ce5-24e71911c60d", device.id, "Enabled", ih::feature_type::boolean, relay_feature_state };
 
-bool button_handled = false;
 void set_relay(bool enabled);
 
 void setup() {
@@ -49,27 +48,43 @@ void setup() {
 
   home_manager.enable_web_server();
   home_manager.begin();
+
+  xTaskCreate([](void*) {
+    while (true) {
+      const auto state = home_manager.get_state();
+
+      if (state > ih::home_state::waiting_for_network) {
+        digitalWrite(network_led, HIGH);
+        digitalWrite(ready_led, state == ih::home_state::ready ? HIGH : LOW);
+      } else {
+        digitalWrite(network_led, LOW);
+        digitalWrite(ready_led, LOW);
+      }
+
+      vTaskDelay(pdMS_TO_TICKS(200));
+    }
+  }, "Status LED Update", 1024, nullptr, 1, nullptr);
+
+  xTaskCreate([](void*) {
+    bool button_handled = false;
+
+    while (true) {
+      const std::uint8_t button_state = digitalRead(status_button);
+
+      if (!button_handled && button_state == LOW) {
+        set_relay(!relay_feature_state->enabled);
+        button_handled = true;
+      } else if (button_state == HIGH) {
+        button_handled = false;
+      }
+
+      vTaskDelay(pdMS_TO_TICKS(10));
+    }
+  }, "Switch Button", 4096, nullptr, 1, nullptr);
 }
 
 void loop() {
   home_manager.loop();
-
-  if (!button_handled && digitalRead(status_button) == LOW) {
-    set_relay(!relay_feature_state->enabled);
-    delay(200);
-  } else if (digitalRead(status_button) == HIGH) {
-    button_handled = false;
-  }
-
-  const auto state = home_manager.get_state();
-
-  if (state > ih::home_state::waiting_for_network) {
-    digitalWrite(network_led, HIGH);
-    digitalWrite(ready_led, state == ih::home_state::ready ? HIGH : LOW);
-  } else {
-    digitalWrite(network_led, LOW);
-    digitalWrite(ready_led, LOW);
-  }
 }
 
 void set_relay(bool enabled) {
