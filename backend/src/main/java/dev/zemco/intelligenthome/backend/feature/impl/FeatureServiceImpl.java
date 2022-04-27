@@ -52,7 +52,7 @@ public class FeatureServiceImpl implements FeatureService {
 
     @Override
     public void unregisterFeature(Feature feature) {
-        this.features.add(feature);
+        this.features.remove(feature);
         this.featureBroadcastService.broadcastFeatureRemoval(feature);
     }
 
